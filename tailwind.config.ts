@@ -10,7 +10,18 @@ const config: Config = {
     extend: {
       colors: {
         background: "var(--background)",
-        foreground: "var(--foreground)",
+        rule: "var(--rule)",
+        heading: "var(--heading)",
+        body: "var(--body)",
+        muted: "var(--muted)",
+        card: "var(--card)",
+      },
+      maxWidth: {
+        frame: "var(--frame-w)",
+        column: "var(--column-w)",
+      },
+      fontFamily: {
+        sans: ["Arial", "Helvetica", "sans-serif"],
       },
     },
   },

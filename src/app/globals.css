@@ -3,25 +3,23 @@
 @tailwind utilities;
 
 :root {
+  /* Frame */
+  --frame-w: 1240px; /* distance between the two vertical rules */
+  --column-w: 620px; /* centered reading column */
+
+  /* Color */
   --background: #ffffff;
-  --foreground: #171717;
+  --rule: #e6e6e6;
+  --heading: #1a1a1a;
+  --body: #3d4452;
+  --muted: #8c93a1;
+  --card: #f0f0f0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  color: var(--foreground);
   background: var(--background);
+  color: var(--body);
   font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+  -webkit-font-smoothing: antialiased;
 }

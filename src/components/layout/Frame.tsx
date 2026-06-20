@@ -1,0 +1,14 @@
+import { type ReactNode } from "react";
+
+/**
+ * Page frame: a centered max-width container. The rules are no longer drawn
+ * here — the Header owns its own short outer strokes, and the content frame
+ * (see page) owns the outer + inner rules that start below the nav divider.
+ */
+export default function Frame({ children }: { children: ReactNode }) {
+  return (
+    <div className="relative mx-auto min-h-screen max-w-frame px-5 sm:px-8 xl:px-0">
+      {children}
+    </div>
+  );
+}
