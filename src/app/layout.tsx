@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toast";
+import Providers from "@/components/Providers";
 
 const reformGrotesk = localFont({
   src: [
@@ -32,10 +33,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${reformGrotesk.variable} ${monument.variable}`}>
+    <html lang="en" className={`${reformGrotesk.variable} ${monument.variable}`} suppressHydrationWarning>
       <body>
-        {children}
-        <Toaster />
+        <Providers>
+          {children}
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );

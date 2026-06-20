@@ -1055,9 +1055,23 @@ body {
   --font-eyebrow: var(--font-monument);
 }
 
-/* Portfolio base: light mode only, Reform Grotesk body, Monument eyebrow. */
+/* Portfolio dark mode token overrides. */
+.dark {
+  --color-background: #111114;
+  --color-rule: #27272b;
+  --color-heading: #efefef;
+  --color-body: #8c93a1;
+  --color-muted: #6e7787;
+  --color-card: #1c1c20;
+}
+
+/* Portfolio base: Reform Grotesk body, Monument eyebrow. */
 html {
   color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 html,

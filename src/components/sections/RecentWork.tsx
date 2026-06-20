@@ -17,7 +17,7 @@ export default function RecentWork() {
       <Rail>
         <div className="pt-16">
           <SectionLabel>Recent work</SectionLabel>
-          <hr className="mt-3 border-0 border-t border-rule" />
+          <hr className="mt-1 border-0 border-t border-rule" />
         </div>
         <div className="pt-6">
           <ProjectText project={first} />

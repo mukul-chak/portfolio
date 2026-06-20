@@ -6,7 +6,7 @@ import { tv, type VariantProps } from "@/utils/tv";
 
 const buttonVariants = tv({
   base: [
-    "relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg",
+    "relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-[4px]",
     "text-sm font-medium transition-colors duration-100",
     "outline-none focus-visible:shadow-[var(--shadow-button-important-focus)]",
     "disabled:pointer-events-none disabled:opacity-50",
@@ -17,14 +17,14 @@ const buttonVariants = tv({
     },
     mode: {
       filled:  "bg-text-strong-950 text-bg-white-0 hover:opacity-90",
-      stroke:  "border border-stroke-soft-200 bg-bg-white-0 text-text-strong-950 shadow-xs hover:bg-bg-weak-50",
+      stroke:  "font-[family-name:var(--font-eyebrow)] border border-stroke-soft-200 bg-bg-white-0 text-text-strong-950 shadow-xs hover:bg-bg-weak-50",
       lighter: "bg-bg-weak-50 text-text-strong-950 hover:bg-bg-soft-200",
       ghost:   "bg-transparent text-text-sub-600 hover:bg-bg-weak-50 hover:text-text-strong-950",
     },
     size: {
       xs: "h-7 px-2.5 text-[13px]",
       sm: "h-8 px-3 text-xs",
-      md: "h-9 px-4",
+      md: "h-9 px-4 text-[16px]",
     },
   },
   defaultVariants: {
