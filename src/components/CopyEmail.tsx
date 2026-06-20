@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { Toast } from "@base-ui/react/toast";
+import { toast } from "@/components/ui/toast";
 import { EMAIL } from "@/content/site";
 import { copyText } from "@/lib/copyText";
 
 /** Global "c" hotkey: copies the email to the clipboard and shows a toast. */
 export default function CopyEmail() {
-  const toast = Toast.useToastManager();
-
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key !== "c" || e.metaKey || e.ctrlKey || e.altKey) return;
@@ -22,18 +20,21 @@ export default function CopyEmail() {
         return;
       }
       copyText(EMAIL).then((ok) => {
-        if (ok) {
-          toast.add({
-            title: "Email copied",
-            description: EMAIL,
-            timeout: 3000,
-          });
-        }
+        if (!ok) return;
+        toast.custom(
+          () => (
+            <div className="w-[260px] rounded-lg border border-rule bg-white px-4 py-3 shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+              <p className="text-[14px] font-bold text-heading">Email copied</p>
+              <p className="mt-0.5 text-[13px] text-muted">{EMAIL}</p>
+            </div>
+          ),
+          { duration: 3000 },
+        );
       });
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [toast]);
+  }, []);
 
   return null;
 }
