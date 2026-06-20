@@ -1,25 +1,26 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  /* Frame */
-  --frame-w: 1240px; /* distance between the two vertical rules */
-  --column-w: 620px; /* centered reading column */
+/* Design tokens (Tailwind v4 CSS-first theme).
+   Color tokens generate text, bg, and border utilities.
+   Container tokens generate max-w-frame and max-w-column. */
+@theme {
+  --color-background: #ffffff;
+  --color-rule: #e6e6e6;
+  --color-heading: #1a1a1a;
+  --color-body: #3d4452;
+  --color-muted: #8c93a1;
+  --color-card: #f0f0f0;
 
-  /* Color */
-  --background: #ffffff;
-  --rule: #e6e6e6;
-  --heading: #1a1a1a;
-  --body: #3d4452;
-  --muted: #8c93a1;
-  --card: #f0f0f0;
+  --container-frame: 1240px; /* distance between the outer vertical rules */
+  --container-column: 620px; /* centered reading column */
+
+  --font-sans: Arial, Helvetica, sans-serif;
 }
 
 html,
 body {
-  background: var(--background);
-  color: var(--body);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-body);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
