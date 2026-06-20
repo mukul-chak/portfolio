@@ -24,7 +24,7 @@ export default function CopyEmail() {
         toast.custom(
           () => (
             <div className="w-[260px] rounded-lg border border-rule bg-white px-4 py-3 shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
-              <p className="text-[14px] font-bold text-heading">Email copied</p>
+              <p className="text-[14px] font-medium text-heading">Email copied</p>
               <p className="mt-0.5 text-[13px] text-muted">{EMAIL}</p>
             </div>
           ),

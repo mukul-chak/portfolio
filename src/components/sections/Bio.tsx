@@ -4,7 +4,7 @@ import { EMAIL } from "@/content/site";
 
 export default function Bio() {
   return (
-    <section className="space-y-6 pt-10 text-[17px] leading-[1.65] text-body">
+    <section className="space-y-6 pt-3 text-[18px] leading-[1.65] text-slate-500">
       <p>
         I’m an art-director-turned-product designer with a knack for turning
         paper-napkin ideas into scalable digital products.

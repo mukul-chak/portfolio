@@ -1050,13 +1050,20 @@ body {
 
   --container-frame: 1240px;
   --container-column: 620px;
+
+  --font-sans: var(--font-reform);
+  --font-eyebrow: var(--font-monument);
 }
 
-/* Portfolio base: Arial and editorial defaults (overrides AlignUI body). */
+/* Portfolio base: light mode only, Reform Grotesk body, Monument eyebrow. */
+html {
+  color-scheme: light;
+}
+
 html,
 body {
   background: var(--color-background);
   color: var(--color-body);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-reform), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
 }

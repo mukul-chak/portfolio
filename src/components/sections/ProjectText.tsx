@@ -1,4 +1,4 @@
-import Button from "@/components/ui/Button";
+import * as Button from "@/components/ui/Button";
 import { type Project } from "@/content/projects";
 
 /**
@@ -9,14 +9,16 @@ import { type Project } from "@/content/projects";
 export default function ProjectText({ project }: { project: Project }) {
   return (
     <div>
-      <h3 className="text-[17px] font-bold leading-none text-heading">
+      <h3 className="text-[17px] font-medium leading-none text-heading">
         {project.title}
       </h3>
       <p className="mt-3 text-[17px] leading-[1.5] text-muted">
         {project.description}
       </p>
       <div className="mt-5 flex">
-        <Button href={project.caseStudyHref}>Read case study</Button>
+        <Button.Root asChild variant="neutral" mode="stroke">
+          <a href={project.caseStudyHref}>Read case study</a>
+        </Button.Root>
       </div>
     </div>
   );

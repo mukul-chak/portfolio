@@ -1,4 +1,5 @@
 import { EMAIL } from "@/content/site";
+import * as Button from "@/components/ui/Button";
 
 const NAV = [
   { label: "Profile", href: "#" },
@@ -14,26 +15,21 @@ const NAV = [
  */
 export default function Header() {
   return (
-    <header className="sticky top-0 z-20 bg-white/70 pt-6 backdrop-blur-md">
-      <div className="relative border-b border-rule pb-4">
-        {/* Two outer strokes, padded 12px from the nav's top and bottom. */}
+    <header className="sticky top-0 z-20 bg-white/70 backdrop-blur-md">
+      <div className="relative border-b border-rule">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 -top-3 bottom-3 border-x border-rule"
+          className="pointer-events-none absolute inset-x-0 inset-y-2 border-x border-rule"
         />
-        <div className="flex items-baseline justify-between px-3 leading-none">
-          <span className="text-[15px] font-bold text-heading sm:text-[17px]">
+        <div className="mx-auto flex max-w-column items-center justify-between px-4 py-2 leading-none">
+          <span className="text-[17px] font-medium text-heading">
             Mukul Chakravarthi
           </span>
-          <nav className="flex gap-4 text-[13px] text-muted sm:gap-8 sm:text-[15px]">
+          <nav className="flex gap-0.5">
             {NAV.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="rounded-sm transition-colors hover:text-heading focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-heading"
-              >
-                {item.label}
-              </a>
+              <Button.Root key={item.label} asChild variant="neutral" mode="ghost" size="xs" className="text-[17px] font-normal">
+                <a href={item.href}>{item.label}</a>
+              </Button.Root>
             ))}
           </nav>
         </div>
