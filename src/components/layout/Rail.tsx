@@ -15,7 +15,7 @@ export default function Rail({
 }) {
   return (
     <div
-      className={`mx-auto max-w-column border-rule px-3 md:border-x ${className}`}
+      className={`mx-auto max-w-column px-3 md:rule-x ${className}`}
     >
       {children}
     </div>

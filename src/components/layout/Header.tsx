@@ -13,7 +13,16 @@ const NAV = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [nameScrolled, setNameScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onNameScroll(e: Event) {
+      setNameScrolled((e as CustomEvent<boolean>).detail);
+    }
+    window.addEventListener("name-scrolled", onNameScroll);
+    return () => window.removeEventListener("name-scrolled", onNameScroll);
+  }, []);
 
   useEffect(() => {
     function onPointerDown(e: PointerEvent) {
@@ -33,11 +42,21 @@ export default function Header() {
           className="pointer-events-none absolute inset-x-0 inset-y-2 border-x border-rule"
         />
         <div className="relative px-4 py-2 leading-none">
-          <div className="mx-auto flex max-w-column items-center justify-between">
-            <span className="text-[17px] font-medium text-heading">
-              Mukul Chakravarthi
-            </span>
+          {/* Name: absolute overlay, crossfades in when body name scrolls out */}
+          <div
+            className={`pointer-events-none absolute inset-0 flex items-center transition-opacity duration-300 ${
+              nameScrolled ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <div className="mx-auto w-full max-w-column px-3">
+              <span className="whitespace-nowrap text-[17px] font-medium text-heading">
+                Mukul Chakravarthi
+              </span>
+            </div>
+          </div>
 
+          {/* Nav items: right-aligned, name is not in flex flow */}
+          <div className="mx-auto flex max-w-column items-center justify-end">
             <div className="flex items-center gap-1.5">
               {/* Desktop nav */}
               <nav className="hidden gap-0.5 md:flex">
