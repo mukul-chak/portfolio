@@ -855,6 +855,8 @@ body {
   --color-body: #3d4452;
   --color-muted: #8c93a1;
   --color-card: #f0f0f0;
+  /* Hover-preview caption text — slate-700 in light; overridden for dark below. */
+  --color-preview-caption: #334155;
 
   --container-frame: 1240px;
   --container-column: 620px;
@@ -871,6 +873,16 @@ body {
   --color-body: #8c93a1;
   --color-muted: #6e7787;
   --color-card: #1c1c20;
+  --color-preview-caption: #cbd5e1;
+}
+
+/* Spotlight: while Bio's hover-preview portal has content, fade in a
+   translucent scrim over the whole page. Pure CSS — reacts to the portal
+   target actually having children, no JS state to keep in sync. The preview
+   panel and the hovered link both render above the scrim (see Frame.tsx and
+   Bio.tsx) so they stay fully bright rather than being dimmed along with it. */
+body:has(#bio-preview-anchor:not(:empty)) .preview-scrim {
+  opacity: 0.5;
 }
 
 /* Portfolio base: Reform Grotesk body, Monument eyebrow. */
@@ -890,38 +902,38 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Dotted inner vertical rules (6px dash / 6px gap). */
+/* Dotted inner vertical rules (2px stroke / 1px gap). */
 @utility rule-x {
   background-image:
     repeating-linear-gradient(
       to bottom,
       var(--color-rule) 0px,
-      var(--color-rule) 6px,
-      transparent 6px,
-      transparent 12px
+      var(--color-rule) 2px,
+      transparent 2px,
+      transparent 3px
     ),
     repeating-linear-gradient(
       to bottom,
       var(--color-rule) 0px,
-      var(--color-rule) 6px,
-      transparent 6px,
-      transparent 12px
+      var(--color-rule) 2px,
+      transparent 2px,
+      transparent 3px
     );
-  background-size: 1px 12px, 1px 12px;
+  background-size: 1px 3px, 1px 3px;
   background-position: left 0 top 0, right 0 top 0;
   background-repeat: repeat-y, repeat-y;
 }
 
-/* Dotted horizontal rule (6px dash / 6px gap). */
+/* Dotted horizontal rule (2px stroke / 1px gap). */
 @utility rule-t {
   height: 1px;
   background-image: repeating-linear-gradient(
     to right,
     var(--color-rule) 0px,
-    var(--color-rule) 6px,
-    transparent 6px,
-    transparent 12px
+    var(--color-rule) 2px,
+    transparent 2px,
+    transparent 3px
   );
-  background-size: 12px 1px;
+  background-size: 3px 1px;
   background-repeat: repeat-x;
 }

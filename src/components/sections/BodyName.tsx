@@ -24,7 +24,7 @@ export default function BodyName() {
   return (
     <h1
       ref={ref}
-      className={`pt-[212px] text-[20px] font-medium text-heading transition-opacity duration-300 ${
+      className={`pt-[140px] text-[18px] font-medium text-heading transition-opacity duration-300 ${
         gone ? "opacity-0" : "opacity-100"
       }`}
     >

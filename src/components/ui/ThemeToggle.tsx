@@ -35,13 +35,22 @@ const OPTIONS = [
   { value: "dark",   label: "Dark",   Icon: MoonIcon },
 ] as const;
 
-export default function ThemeToggle() {
+export default function ThemeToggle({
+  orientation = "horizontal",
+}: {
+  orientation?: "horizontal" | "vertical";
+}) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   return (
-    <div className="flex items-center rounded-full bg-bg-weak-50 p-1 gap-0.5">
+    <div
+      className={[
+        "flex items-center rounded-full bg-bg-weak-50 p-1 gap-0.5",
+        orientation === "vertical" ? "flex-col" : "flex-row",
+      ].join(" ")}
+    >
       {OPTIONS.map(({ value, label, Icon }) => {
         const active = mounted && theme === value;
         return (

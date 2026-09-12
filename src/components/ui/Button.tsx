@@ -17,9 +17,11 @@ const buttonVariants = tv({
     },
     mode: {
       filled:  "bg-text-strong-950 text-bg-white-0 hover:opacity-90",
-      stroke:  "font-[family-name:var(--font-eyebrow)] border border-stroke-soft-200 bg-bg-white-0 text-text-strong-950 shadow-xs hover:bg-bg-weak-50",
+      stroke:  "font-[family-name:var(--font-eyebrow)] font-normal border border-stroke-soft-200 bg-bg-white-0 text-text-strong-950 shadow-xs hover:bg-bg-weak-50",
       lighter: "bg-bg-weak-50 text-text-strong-950 hover:bg-bg-soft-200",
       ghost:   "bg-transparent text-text-sub-600 hover:bg-bg-weak-50 hover:text-text-strong-950",
+      // Text-only — no box, no padding, no fixed height. Just the label.
+      link:    "bg-transparent text-text-sub-600 underline-offset-4 hover:underline hover:text-text-strong-950",
     },
     size: {
       xs: "h-7 px-2.5 text-[13px]",
@@ -27,6 +29,10 @@ const buttonVariants = tv({
       md: "h-9 px-4 text-[16px]",
     },
   },
+  compoundVariants: [
+    // link overrides size's height/padding regardless of which size is passed.
+    { mode: "link", class: "h-auto p-0" },
+  ],
   defaultVariants: {
     variant: "neutral",
     mode: "stroke",

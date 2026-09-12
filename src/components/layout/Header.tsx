@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { EMAIL } from "@/content/site";
 import * as Button from "@/components/ui/Button";
-import ThemeToggle from "@/components/ui/ThemeToggle";
+import LocationTime from "@/components/ui/LocationTime";
 
 const NAV = [
   { label: "Profile", href: "#" },
@@ -11,7 +11,13 @@ const NAV = [
   { label: "Email", href: `mailto:${EMAIL}` },
 ];
 
-export default function Header() {
+export default function Header({
+  city,
+  tz,
+}: {
+  city?: string;
+  tz?: string;
+}) {
   const [open, setOpen] = useState(false);
   const [nameScrolled, setNameScrolled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -101,17 +107,12 @@ export default function Header() {
                   </div>
                 )}
               </div>
-
-              {/* Theme toggle — inline on mobile, hidden on desktop */}
-              <div className="md:hidden">
-                <ThemeToggle />
-              </div>
             </div>
           </div>
 
-          {/* Theme toggle — outer stroke position on desktop only */}
+          {/* Location/time — outer stroke position on desktop only */}
           <div className="absolute right-4 top-1/2 hidden -translate-y-1/2 md:block">
-            <ThemeToggle />
+            <LocationTime city={city} tz={tz} />
           </div>
         </div>
       </div>
