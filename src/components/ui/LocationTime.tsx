@@ -53,7 +53,7 @@ export default function LocationTime({
   if (!time) return null;
 
   return (
-    <div className="whitespace-nowrap text-right font-[family-name:var(--font-eyebrow)] text-[14px] uppercase tracking-[0.12em] text-text-sub-600">
+    <div className="whitespace-nowrap text-right font-[family-name:var(--font-eyebrow)] text-[13px] uppercase tracking-[0.12em] text-text-sub-600">
       {resolvedCity ? `${resolvedCity}, ${time}` : time}
     </div>
   );
