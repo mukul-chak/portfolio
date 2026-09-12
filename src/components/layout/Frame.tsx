@@ -20,7 +20,7 @@ export default function Frame({ children }: { children: ReactNode }) {
           has to work this way round instead. */}
       <div
         aria-hidden
-        className="preview-scrim pointer-events-none fixed inset-0 z-40 bg-background opacity-0 transition-opacity duration-200"
+        className="preview-scrim pointer-events-none fixed inset-0 z-40 bg-background opacity-0 transition-opacity duration-200 ease-[var(--ease-out)]"
       />
       <div
         aria-hidden

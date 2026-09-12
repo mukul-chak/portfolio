@@ -16,7 +16,7 @@ export default function TopScrim() {
   return (
     <div
       aria-hidden
-      className={`pointer-events-none fixed inset-x-0 top-0 z-[9] h-28 bg-gradient-to-b from-background from-30% to-transparent transition-opacity duration-500 ease-out ${
+      className={`pointer-events-none fixed inset-x-0 top-0 z-[9] h-28 bg-gradient-to-b from-background from-30% to-transparent transition-opacity duration-500 ease-[var(--ease-out)] ${
         scrolled ? "opacity-100" : "opacity-0"
       }`}
     />

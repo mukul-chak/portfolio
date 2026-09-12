@@ -7,7 +7,11 @@ import { tv, type VariantProps } from "@/utils/tv";
 const buttonVariants = tv({
   base: [
     "relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-[4px]",
-    "text-sm font-medium transition-colors duration-100",
+    "motion-transform text-sm font-medium",
+    "transition-[color,background-color,border-color,text-decoration-color,fill,stroke,transform] duration-100 ease-out",
+    // Press feedback (Feedback purpose, tens/day frequency → kept subtle):
+    // scale(0.97) rather than a visible jump.
+    "active:scale-[0.97]",
     "outline-none focus-visible:shadow-[var(--shadow-button-important-focus)]",
     "disabled:pointer-events-none disabled:opacity-50",
   ],

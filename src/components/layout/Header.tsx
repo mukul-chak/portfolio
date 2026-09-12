@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { EMAIL } from "@/content/site";
 import * as Button from "@/components/ui/Button";
 import LocationTime from "@/components/ui/LocationTime";
+import { useReducedMotion } from "@/lib/useReducedMotion";
 
 const NAV = [
   { label: "Profile", href: "#" },
@@ -26,10 +27,27 @@ export default function Header({
   tz?: string;
 }) {
   const [open, setOpen] = useState(false);
+  // Mirrors Bio's hover-preview pattern: `menuRendered` stays true for one
+  // exit-duration after `open` goes false, so the dropdown can fade/scale
+  // out instead of vanishing on unmount.
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [menuRendered, setMenuRendered] = useState(false);
   const [progress, setProgress] = useState(0);
+  const reducedMotion = useReducedMotion();
   const menuRef = useRef<HTMLDivElement>(null);
   const gapRef = useRef<HTMLSpanElement>(null);
   const [gapWidth, setGapWidth] = useState(0);
+
+  useEffect(() => {
+    if (open) {
+      setMenuRendered(true);
+      const id = requestAnimationFrame(() => setMenuVisible(true));
+      return () => cancelAnimationFrame(id);
+    }
+    setMenuVisible(false);
+    const id = setTimeout(() => setMenuRendered(false), 180);
+    return () => clearTimeout(id);
+  }, [open]);
 
   useEffect(() => {
     function onNameScroll(e: Event) {
@@ -90,7 +108,13 @@ export default function Header({
                 </span>
                 <span
                   className="inline-block"
-                  style={{ transform: `translateX(-${gapWidth * (1 - easeOutCubic(progress))}px)` }}
+                  style={{
+                    // Reduced motion: drop the eased "snap" and track raw
+                    // scroll 1:1 instead — gentler, not zero, since the
+                    // travel itself is still directly under the user's own
+                    // scroll input.
+                    transform: `translateX(-${gapWidth * (1 - (reducedMotion ? progress : easeOutCubic(progress)))}px)`,
+                  }}
                 >
                   C
                 </span>
@@ -137,8 +161,13 @@ export default function Header({
                 >
                   {open ? "×" : "+"}
                 </Button.Root>
-                {open && (
-                  <div className="absolute right-0 top-full z-30 mt-1 min-w-[140px] rounded-lg border border-rule bg-background py-1 shadow-md">
+                {menuRendered && (
+                  <div
+                    className={`motion-transform absolute right-0 top-full z-30 mt-1 min-w-[140px] rounded-lg border border-rule bg-background py-1 shadow-md transition-[opacity,transform] duration-[180ms] ${
+                      menuVisible ? "opacity-100 scale-100" : "opacity-0 scale-[0.97]"
+                    }`}
+                    style={{ transitionTimingFunction: "var(--ease-out)", transformOrigin: "top right" }}
+                  >
                     {NAV.map((item) => (
                       <a
                         key={item.label}

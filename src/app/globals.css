@@ -861,6 +861,15 @@ body {
 
   --font-sans: var(--font-reform);
   --font-eyebrow: var(--font-monument);
+
+  /* Shared motion curves (Emil Kowalski's UI easing set) — every CSS
+     transition/animation on the page should reference these rather than
+     Tailwind's built-in (weaker) ease-out/ease-in-out or a hand-rolled
+     cubic-bezier. Header.tsx's easeOutCubic() is the one legitimate
+     exception: it shapes a scroll-linked JS value frame-by-frame rather
+     than a CSS transition, so it can't be expressed as a timing function. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 /* Portfolio dark mode token overrides. */
@@ -868,6 +877,17 @@ body {
   --color-background: #111114;
   --color-rule: #27272b;
   --color-card: #1c1c20;
+}
+
+/* Reduced motion: elements that move (translate/scale) opt into this class
+   on their transform, so it can be dropped while their opacity/color
+   transitions — which don't move anything and aid comprehension — are left
+   alone. Prefer targeting specific transitions here over a blanket `*`
+   override, which would also gut the fades this is meant to preserve. */
+@media (prefers-reduced-motion: reduce) {
+  .motion-transform {
+    transform: none !important;
+  }
 }
 
 /* Spotlight: while Bio's hover-preview portal has content, fade in a
