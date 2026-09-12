@@ -28,15 +28,23 @@ const buttonVariants = tv({
       sm: "h-8 px-3 text-xs",
       md: "h-9 px-4 text-[16px]",
     },
+    // Icon-only — see the compound variant below for the actual squaring.
+    square: {
+      true: "",
+      false: "",
+    },
   },
   compoundVariants: [
     // link overrides size's height/padding regardless of which size is passed.
     { mode: "link", class: "h-auto p-0" },
+    // Icon-only — square (width = height, via aspect-square), no horizontal padding.
+    { square: true, class: "aspect-square gap-0 px-0" },
   ],
   defaultVariants: {
     variant: "neutral",
     mode: "stroke",
     size: "md",
+    square: false,
   },
 });
 
@@ -47,12 +55,12 @@ interface ButtonProps
 }
 
 const Root = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, mode, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, mode, size, square, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     return (
       <Comp
         ref={ref}
-        className={buttonVariants({ variant, mode, size, className })}
+        className={buttonVariants({ variant, mode, size, square, className })}
         {...props}
       />
     );

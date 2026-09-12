@@ -3,7 +3,16 @@ import Rail from "@/components/layout/Rail";
 import SectionLabel from "@/components/ui/SectionLabel";
 import ProjectText from "@/components/sections/ProjectText";
 import Filmstrip from "@/components/sections/Filmstrip";
+import * as Button from "@/components/ui/Button";
 import { projects } from "@/content/projects";
+
+function PlusIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+      <path d="M7 1.5v11M1.5 7h11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 /**
  * Recent work: the section heading + first project share a rail (continuing the
@@ -18,7 +27,25 @@ export default function RecentWork() {
           with the elevated rule covering the 20px and stopping 4px before the carousel. */}
       <Rail className="pb-[20px]" elevateRule>
         <div className="pt-[120px]">
-          <div className="rule-t" />
+          {/* Centered exactly on the horizontal/vertical rule junction. Both
+              rules render as a 1px line whose visual center sits half a
+              pixel past its own top/left edge, hence the +0.5px nudge. */}
+          <div className="absolute left-[0.5px] top-[120.5px] z-20 hidden -translate-x-1/2 -translate-y-1/2 md:block">
+            <Button.Root
+              variant="neutral"
+              mode="ghost"
+              size="xs"
+              square
+              aria-label="Add"
+              className="text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
+            >
+              <PlusIcon />
+            </Button.Root>
+          </div>
+          {/* Inset 4px from the vertical rule on either side (Rail's own 16px
+              padding pulled back with a negative margin) — the standard gap
+              between a horizontal rule-t and the vertical rule it meets. */}
+          <div className="mx-[-12px] rule-t" />
           <SectionLabel className="mt-1">Recent work</SectionLabel>
         </div>
         <div className="pt-[24px]">

@@ -27,7 +27,13 @@ function measureBaselineFromTop(fontSizePx: number, lineHeightPx: number) {
   return halfLeading + ascent;
 }
 
-type ActivePreview = { key: string; top: number; left: number; width: number };
+type ActivePreview = {
+  key: string;
+  top: number;
+  left: number;
+  width: number;
+  strokeWidth: number;
+};
 
 export default function Bio() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -80,7 +86,13 @@ export default function Bio() {
       const width = (marginSpace * 2) / 3;
       const left = railRect.right - anchorRect.left + 16;
 
-      setActive({ key, top, left, width });
+      // The hugging strokes run edge-to-edge of the margin space (4px inset
+      // from the vertical rule on both sides), wider than the panel itself
+      // (16px inset). Since both insets share the same rail/frame edges, the
+      // stroke's offset relative to the panel reduces to a constant -12px.
+      const strokeWidth = marginSpace - 8;
+
+      setActive({ key, top, left, width, strokeWidth });
     };
   }
 
@@ -94,7 +106,7 @@ export default function Bio() {
   return (
     <section
       ref={sectionRef}
-      className="relative mt-2 space-y-6 text-[18px] leading-[1.65] text-slate-500"
+      className="relative mt-2 space-y-6 text-[18px] leading-[1.65] text-text-sub-600"
     >
       <p>
         An art-director-turned-product designer with a knack for turning
@@ -139,10 +151,22 @@ export default function Bio() {
             className="pointer-events-none absolute z-[45] hidden md:block"
             style={{ left: active.left, top: active.top, width: active.width }}
           >
+            {/* Solid strokes hugging the panel, 12px above/below — same style
+                as the outer frame's solid stroke (border-rule) — and running
+                to 4px from the vertical rule on either side, wider than the
+                panel itself (see strokeWidth above). */}
+            <div
+              className="absolute bottom-full mb-3 border-b border-rule"
+              style={{ left: -12, width: active.strokeWidth }}
+            />
             <div className="aspect-[1.6] w-full rounded-[4px] bg-card" />
-            <p className="mt-2 line-clamp-3 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-[color:var(--color-preview-caption)]">
+            <p className="mt-2 line-clamp-3 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600">
               {preview}
             </p>
+            <div
+              className="absolute top-full mt-3 border-b border-rule"
+              style={{ left: -12, width: active.strokeWidth }}
+            />
           </div>,
           anchor,
         )}

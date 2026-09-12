@@ -22,7 +22,7 @@ export default function InlineLink({
       {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className={`rounded-sm text-body underline decoration-rule decoration-1 underline-offset-[3px] transition-colors hover:text-heading hover:decoration-heading focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-heading ${className}`}
+      className={`rounded-sm text-text-sub-600 underline decoration-rule decoration-1 underline-offset-[3px] transition-colors hover:text-text-strong-950 hover:decoration-text-strong-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text-strong-950 ${className}`}
     >
       {children}
     </a>

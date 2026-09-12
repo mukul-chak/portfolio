@@ -55,7 +55,7 @@ export default function Header({
             }`}
           >
             <div className="mx-auto w-full max-w-column px-3">
-              <span className="whitespace-nowrap text-[17px] font-medium text-heading">
+              <span className="whitespace-nowrap text-[17px] font-medium text-text-strong-950">
                 Mukul Chakravarthi
               </span>
             </div>
@@ -99,7 +99,7 @@ export default function Header({
                         key={item.label}
                         href={item.href}
                         onClick={() => setOpen(false)}
-                        className="block px-4 py-2.5 text-[15px] text-body hover:bg-card"
+                        className="block px-4 py-2.5 text-[15px] text-text-sub-600 hover:bg-card"
                       >
                         {item.label}
                       </a>
