@@ -29,8 +29,8 @@ export default function CopyEmail() {
                 <path d="M4.5 8.5l2.5 2.5 4.5-5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <div>
-                <p className="text-[14px] font-medium text-heading">Email copied</p>
-                <p className="text-[14px] text-muted">{EMAIL}</p>
+                <p className="text-[14px] font-medium text-text-strong-950">Email copied</p>
+                <p className="text-[14px] text-text-soft-400">{EMAIL}</p>
               </div>
             </div>
           ),

@@ -35,10 +35,10 @@ export default function Filmstrip({
         <div className="flex gap-4">
           {cards.map((n) => (
             <div key={n} className="w-[300px] shrink-0 sm:w-[504px]">
-              <div className="flex aspect-[1.6] items-center justify-center rounded-[4px] bg-card text-2xl text-muted">
+              <div className="flex aspect-[1.6] items-center justify-center rounded-[4px] bg-card text-2xl text-text-soft-400">
                 {n}
               </div>
-              <div className="mt-2 flex items-baseline gap-6 overflow-hidden whitespace-nowrap font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-left text-slate-600">
+              <div className="mt-2 flex items-baseline gap-6 overflow-hidden whitespace-nowrap font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-left text-text-sub-600">
                 <span className="shrink-0 tabular-nums">{String(n).padStart(2, "0")}</span>
                 <span className="truncate">{captions?.[n - 1]}</span>
               </div>
@@ -46,8 +46,8 @@ export default function Filmstrip({
           ))}
         </div>
       </div>
-      {/* Solid divider between projects, 4px below the captions (not the dotted rule). */}
-      <div className="mt-1 border-b border-rule" />
+      {/* Solid divider between projects, 8px below the captions (not the dotted rule). */}
+      <div className="mt-2 border-b border-rule" />
     </div>
   );
 }
