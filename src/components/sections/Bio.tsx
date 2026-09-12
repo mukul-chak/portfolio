@@ -35,12 +35,31 @@ type ActivePreview = {
   strokeWidth: number;
 };
 
+const PREVIEW_EXIT_MS = 180;
+
 export default function Bio() {
   const sectionRef = useRef<HTMLElement>(null);
   const [active, setActive] = useState<ActivePreview | null>(null);
+  // `rendered` lags `active` on the way out only, so the panel can play an
+  // exit fade instead of unmounting the instant the pointer leaves. `visible`
+  // is the actual opacity/scale toggle — set a frame after mount so the
+  // entrance transition has a starting value to animate from.
+  const [rendered, setRendered] = useState<ActivePreview | null>(null);
+  const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (active) {
+      setRendered(active);
+      const id = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(id);
+    }
+    setVisible(false);
+    const id = setTimeout(() => setRendered(null), PREVIEW_EXIT_MS);
+    return () => clearTimeout(id);
+  }, [active]);
 
   // Portaled into a plain sibling anchor (not a descendant of this section) —
   // Bio's own section reliably triggers a page-wide layout shift when an
@@ -66,6 +85,12 @@ export default function Bio() {
 
   function showPreview(key: string) {
     return (e: MouseEvent<HTMLAnchorElement>) => {
+      // Guard against touch: a tap fires a synthetic mouseenter too, which
+      // would otherwise populate the anchor and trigger the page-wide
+      // spotlight scrim (globals.css) with no preview panel visible to
+      // explain it (the panel itself is hidden below md).
+      if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
       const anchor = document.getElementById("bio-preview-anchor");
       const frame = document.querySelector(".max-w-frame");
       const rail = sectionRef.current?.closest(".max-w-column");
@@ -100,7 +125,7 @@ export default function Bio() {
     setActive(null);
   }
 
-  const preview = active ? PREVIEW_CAPTIONS[active.key] : null;
+  const preview = rendered ? PREVIEW_CAPTIONS[rendered.key] : null;
   const anchor = typeof document !== "undefined" ? document.getElementById("bio-preview-anchor") : null;
 
   return (
@@ -119,7 +144,7 @@ export default function Bio() {
           external
           onMouseEnter={showPreview("ascend")}
           onMouseLeave={hidePreview}
-          className={active?.key === "ascend" ? "relative z-[45]" : ""}
+          className={rendered?.key === "ascend" ? "relative z-[45]" : ""}
         >
           Ascend
         </InlineLink>
@@ -130,7 +155,7 @@ export default function Bio() {
           href="#"
           onMouseEnter={showPreview("saag")}
           onMouseLeave={hidePreview}
-          className={active?.key === "saag" ? "relative z-[45]" : ""}
+          className={rendered?.key === "saag" ? "relative z-[45]" : ""}
         >
           SAAG
         </InlineLink>{" "}
@@ -143,13 +168,21 @@ export default function Bio() {
 
       {mounted &&
         anchor &&
-        active &&
+        rendered &&
         preview &&
         createPortal(
           <div
             aria-hidden
-            className="pointer-events-none absolute z-[45] hidden md:block"
-            style={{ left: active.left, top: active.top, width: active.width }}
+            className={`motion-transform pointer-events-none absolute z-[45] hidden md:block transition-[opacity,transform] duration-[180ms] ${
+              visible ? "opacity-100 scale-100" : "opacity-0 scale-[0.97]"
+            }`}
+            style={{
+              left: rendered.left,
+              top: rendered.top,
+              width: rendered.width,
+              transitionTimingFunction: "var(--ease-out)",
+              transformOrigin: "top left",
+            }}
           >
             {/* Solid strokes hugging the panel, 12px above/below — same style
                 as the outer frame's solid stroke (border-rule) — and running
@@ -157,7 +190,7 @@ export default function Bio() {
                 panel itself (see strokeWidth above). */}
             <div
               className="absolute bottom-full mb-3 border-b border-rule"
-              style={{ left: -12, width: active.strokeWidth }}
+              style={{ left: -12, width: rendered.strokeWidth }}
             />
             <div className="aspect-[1.6] w-full rounded-[4px] bg-card" />
             <p className="mt-2 line-clamp-3 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600">
@@ -165,7 +198,7 @@ export default function Bio() {
             </p>
             <div
               className="absolute top-full mt-3 border-b border-rule"
-              style={{ left: -12, width: active.strokeWidth }}
+              style={{ left: -12, width: rendered.strokeWidth }}
             />
           </div>,
           anchor,
