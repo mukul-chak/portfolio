@@ -185,7 +185,7 @@ export default function Header({
           </div>
 
           {/* Location/time — outer stroke position on desktop only */}
-          <div className="absolute right-4 top-1/2 hidden -translate-y-[calc(50%+4px)] md:block">
+          <div className="absolute right-4 top-1/2 hidden -translate-y-[calc(50%-2px)] md:block">
             <LocationTime city={city} tz={tz} />
           </div>
         </div>
