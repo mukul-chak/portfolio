@@ -13,6 +13,13 @@ const PREVIEW_CAPTIONS: Record<string, string> = {
   saag: "SAAG is a design and strategy studio advising on next-gen product experiences.",
 };
 
+// Order the links appear in the bio copy below — drives the numbered prefix
+// on the preview caption, matching Filmstrip's "01  Caption" format.
+const PREVIEW_ORDER: Record<string, number> = {
+  ascend: 1,
+  saag: 2,
+};
+
 // Font metrics (measured once) used to find each hovered line's true text
 // baseline within its line box, rather than the line box's own top/bottom.
 function measureBaselineFromTop(fontSizePx: number, lineHeightPx: number) {
@@ -193,9 +200,12 @@ export default function Bio() {
               style={{ left: -12, width: rendered.strokeWidth }}
             />
             <div className="aspect-[1.6] w-full rounded-[4px] bg-card" />
-            <p className="mt-2 line-clamp-3 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600">
-              {preview}
-            </p>
+            <div className="mt-2 flex items-baseline gap-6 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600">
+              <span className="shrink-0 tabular-nums">
+                {String(PREVIEW_ORDER[rendered.key]).padStart(2, "0")}
+              </span>
+              <p className="line-clamp-3">{preview}</p>
+            </div>
             <div
               className="absolute top-full mt-3 border-b border-rule"
               style={{ left: -12, width: rendered.strokeWidth }}
