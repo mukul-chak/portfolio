@@ -131,7 +131,7 @@ export default function Bio() {
   return (
     <section
       ref={sectionRef}
-      className="relative mt-2 space-y-6 text-[18px] leading-[1.65] text-text-sub-600"
+      className="relative mt-4 space-y-6 text-[18px] leading-[1.65] text-text-sub-600"
     >
       <p>
         An art-director-turned-product designer with a knack for turning
