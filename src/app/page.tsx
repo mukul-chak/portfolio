@@ -21,11 +21,23 @@ export default async function Home() {
       <BottomScrim />
       <CopyEmail />
       <Header city={city} tz={tz} />
+      {/* Outer vertical rule, pinned to the viewport (not page scroll): it used
+          to be a single absolute box starting 12px below Header's natural
+          in-flow position, which only produced a real 12px gap at scrollY 0 —
+          Header is sticky, so past that it just sat on top of the rule's
+          middle with zero clearance. Fixed + a static top offset (header's
+          own 45px height + the 12px gap) keeps that clearance at every
+          scroll position instead of just the first screen's worth. */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-[15]"
+        style={{ top: 57 }}
+      >
+        <div className="relative mx-auto h-full max-w-frame px-5 sm:px-8 xl:px-0">
+          <div className="absolute inset-y-0 inset-x-0 border-x border-rule" />
+        </div>
+      </div>
       <div className="relative">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 top-3 z-[15] border-x border-rule"
-        />
         <div className="relative pt-3">
           <Rail elevateRule>
             <BodyName />

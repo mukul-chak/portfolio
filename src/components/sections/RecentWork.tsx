@@ -51,6 +51,24 @@ export default function RecentWork() {
         <div className="pt-[24px]">
           <ProjectText project={first} />
         </div>
+        {/* Diagonally opposite the top-left plus: bottom-right junction of
+            this rail's vertical rule and the solid divider Filmstrip draws
+            above its carousel. 311px measured directly (divider's own
+            center, not just its top) from this Rail's top edge — Filmstrip
+            renders at frame width, wider than this rail, so the two lines
+            cross rather than share an endpoint. */}
+        <div className="absolute right-[0.5px] top-[311px] z-20 hidden translate-x-1/2 -translate-y-1/2 md:block">
+          <Button.Root
+            variant="neutral"
+            mode="ghost"
+            size="xs"
+            square
+            aria-label="Add"
+            className="text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
+          >
+            <PlusIcon />
+          </Button.Root>
+        </div>
       </Rail>
       <Filmstrip count={first.imageCount} captions={first.captions} />
 
