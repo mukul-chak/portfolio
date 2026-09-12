@@ -11,6 +11,13 @@ const NAV = [
   { label: "Email", href: `mailto:${EMAIL}` },
 ];
 
+// Snappy: C reaches its final position well before progress hits 1, rather
+// than crawling in lockstep with scroll for the whole zone. Only applied to
+// C's movement — the letter fades stay on raw (linear) progress.
+function easeOutCubic(t: number) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
 export default function Header({
   city,
   tz,
@@ -19,15 +26,31 @@ export default function Header({
   tz?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const [nameScrolled, setNameScrolled] = useState(false);
+  const [progress, setProgress] = useState(0);
   const menuRef = useRef<HTMLDivElement>(null);
+  const gapRef = useRef<HTMLSpanElement>(null);
+  const [gapWidth, setGapWidth] = useState(0);
 
   useEffect(() => {
     function onNameScroll(e: Event) {
-      setNameScrolled((e as CustomEvent<boolean>).detail);
+      setProgress((e as CustomEvent<number>).detail);
     }
-    window.addEventListener("name-scrolled", onNameScroll);
-    return () => window.removeEventListener("name-scrolled", onNameScroll);
+    window.addEventListener("name-scroll-progress", onNameScroll);
+    return () => window.removeEventListener("name-scroll-progress", onNameScroll);
+  }, []);
+
+  // Width of "ukul " — the substring between M and C — at this exact font/
+  // size/weight, so C can be pulled back to sit immediately after M (reading
+  // as "MC") and eased back out to its natural position as progress runs 0→1.
+  // Remeasured once the real webfont has swapped in, not just the fallback.
+  useEffect(() => {
+    function measure() {
+      if (gapRef.current) setGapWidth(gapRef.current.getBoundingClientRect().width);
+    }
+    measure();
+    document.fonts?.ready.then(measure);
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
   }, []);
 
   useEffect(() => {
@@ -48,14 +71,36 @@ export default function Header({
           className="pointer-events-none absolute inset-x-0 inset-y-2 border-x border-rule"
         />
         <div className="relative px-4 py-2 leading-none">
-          {/* Name: absolute overlay, crossfades in when body name scrolls out */}
-          <div
-            className={`pointer-events-none absolute inset-0 flex items-center transition-opacity duration-300 ${
-              nameScrolled ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <div className="mx-auto w-full max-w-column px-3">
-              <span className="whitespace-nowrap text-[17px] font-medium text-text-strong-950">
+          {/* Name: absolute overlay, positioned over the header at all times.
+              Desktop: "MC" sits here from the start and steadily spreads
+              into the full name as the bio title approaches (see progress,
+              driven by BodyName's scroll position). Mobile keeps the
+              original simple crossfade, unchanged. */}
+          <div className="pointer-events-none absolute inset-0 flex items-center">
+            <div className="mx-auto w-full max-w-column px-4">
+              <span
+                className="hidden whitespace-nowrap text-[18px] font-medium md:inline-block"
+                style={{
+                  color: `color-mix(in srgb, var(--color-text-disabled-300) ${(1 - progress) * 100}%, var(--color-text-strong-950) ${progress * 100}%)`,
+                }}
+              >
+                <span>M</span>
+                <span ref={gapRef} style={{ opacity: progress }}>
+                  ukul{" "}
+                </span>
+                <span
+                  className="inline-block"
+                  style={{ transform: `translateX(-${gapWidth * (1 - easeOutCubic(progress))}px)` }}
+                >
+                  C
+                </span>
+                <span style={{ opacity: progress }}>hakravarthi</span>
+              </span>
+              <span
+                className={`whitespace-nowrap text-[18px] font-medium text-text-strong-950 transition-opacity duration-300 md:hidden ${
+                  progress >= 1 ? "opacity-100" : "opacity-0"
+                }`}
+              >
                 Mukul Chakravarthi
               </span>
             </div>
