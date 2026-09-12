@@ -199,13 +199,13 @@ export default function Bio() {
               className="absolute bottom-full mb-3 border-b border-rule"
               style={{ left: -12, width: rendered.strokeWidth }}
             />
+            <span className="mb-2 block font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] tabular-nums text-text-sub-600">
+              {String(PREVIEW_ORDER[rendered.key]).padStart(2, "0")}
+            </span>
             <div className="aspect-[1.6] w-full rounded-[4px] bg-card" />
-            <div className="mt-2 flex items-baseline gap-6 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600">
-              <span className="shrink-0 tabular-nums">
-                {String(PREVIEW_ORDER[rendered.key]).padStart(2, "0")}
-              </span>
-              <p className="line-clamp-3">{preview}</p>
-            </div>
+            <p className="mt-2 line-clamp-3 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600">
+              {preview}
+            </p>
             <div
               className="absolute top-full mt-3 border-b border-rule"
               style={{ left: -12, width: rendered.strokeWidth }}
