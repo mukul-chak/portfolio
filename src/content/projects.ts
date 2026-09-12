@@ -5,10 +5,16 @@ export type Project = {
   caseStudyHref: string;
   // Placeholder image count until real assets land. Max 6.
   imageCount: number;
+  // Placeholder single-line caption per image, in image order. Replace with real copy.
+  captions: string[];
 };
 
 const PITHY =
   "A pithy description of what the product is, why it was important, and how quickly we built this.";
+
+// TODO: replace with real per-image captions.
+const placeholderCaptions = (n: number) =>
+  Array.from({ length: n }, (_, i) => `Caption for image ${i + 1} — replace with real copy.`);
 
 export const projects: Project[] = [
   {
@@ -17,6 +23,7 @@ export const projects: Project[] = [
     description: PITHY,
     caseStudyHref: "#",
     imageCount: 6,
+    captions: placeholderCaptions(6),
   },
   {
     slug: "cash-application",
@@ -24,6 +31,7 @@ export const projects: Project[] = [
     description: PITHY,
     caseStudyHref: "#",
     imageCount: 5,
+    captions: placeholderCaptions(5),
   },
   {
     slug: "project-three",
@@ -31,6 +39,7 @@ export const projects: Project[] = [
     description: PITHY,
     caseStudyHref: "#",
     imageCount: 4,
+    captions: placeholderCaptions(4),
   },
   {
     slug: "project-four",
@@ -38,5 +47,6 @@ export const projects: Project[] = [
     description: PITHY,
     caseStudyHref: "#",
     imageCount: 6,
+    captions: placeholderCaptions(6),
   },
 ];

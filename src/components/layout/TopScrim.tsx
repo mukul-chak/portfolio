@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from "react";
 
-export default function BottomScrim() {
+export default function TopScrim() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     function onScroll() {
-      if (window.scrollY > 10) setScrolled(true);
-      else setScrolled(false);
+      setScrolled(window.scrollY > 20);
     }
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -17,8 +16,8 @@ export default function BottomScrim() {
   return (
     <div
       aria-hidden
-      className={`pointer-events-none fixed inset-x-0 bottom-0 z-10 h-[27.5vh] bg-gradient-to-t from-background from-40% to-transparent transition-opacity duration-700 ease-out ${
-        scrolled ? "opacity-0" : "opacity-100"
+      className={`pointer-events-none fixed inset-x-0 top-0 z-[9] h-28 bg-gradient-to-b from-background from-30% to-transparent transition-opacity duration-500 ease-out ${
+        scrolled ? "opacity-100" : "opacity-0"
       }`}
     />
   );
