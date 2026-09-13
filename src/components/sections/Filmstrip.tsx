@@ -40,7 +40,7 @@ export default function Filmstrip({
           {cards.map((n) => (
             <div key={n} className="w-[300px] shrink-0 sm:w-[504px]">
               <div className="aspect-[1.6] rounded-[4px] bg-card" />
-              <div className="mt-2 flex items-baseline gap-6 overflow-hidden whitespace-nowrap font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-left text-text-sub-600">
+              <div className="mt-2 flex items-baseline gap-6 overflow-hidden whitespace-nowrap font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-left text-text-soft-400">
                 <span className="shrink-0 tabular-nums">{String(n).padStart(2, "0")}</span>
                 <span className="truncate">{captions?.[n - 1]}</span>
               </div>
