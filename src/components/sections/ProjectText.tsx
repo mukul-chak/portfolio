@@ -11,7 +11,7 @@ export default function ProjectText({ project }: { project: Project }) {
       <h3 className="text-[18px] font-medium leading-none text-text-strong-950">
         {project.title}
       </h3>
-      <p className="mt-1 text-[18px] leading-[1.5] text-text-soft-400">
+      <p className="mt-1 text-[18px] leading-[1.5] text-text-sub-600">
         {project.description}
       </p>
     </div>

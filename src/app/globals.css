@@ -847,18 +847,24 @@ body {
   padding: 0;
 }
 
-/* Portfolio design tokens (kept alongside AlignUI's, distinct names).
-   text-heading/text-body/text-muted have been migrated onto AlignUI's
-   semantic tokens (text-strong-950/text-sub-600/text-soft-400); rule is
-   now also migrated, onto stroke-soft-200 (AlignUI's stroke hierarchy has
-   no exact slate-100 tier — soft-200/slate-200 is the nearest, confirmed
-   with the user) — see the .dark block below for background/card, still
-   unmigrated. No dark-mode override needed for rule any more: it inherits
-   stroke-soft-200's own .dark remapping automatically. */
+/* Portfolio design tokens (kept alongside AlignUI's, distinct names) — all
+   four now migrated onto AlignUI's semantic tokens:
+   - text-heading/text-body/text-muted -> strong-950/sub-600/soft-400
+   - rule -> stroke-soft-200 (no exact slate-100 tier; soft-200/slate-200
+     is the nearest, confirmed with the user)
+   - background -> bg-white-0 (exact match in light, #ffffff; nearest in
+     dark, #0e121b vs the old #111114 — a few units off, not a real gap)
+   - card -> bg-weak-50 (no single tier fits both themes exactly — soft-200
+     is closer in light, weak-50 closer in dark; weak-50 chosen, confirmed
+     with the user, since the placeholder cards are most visually
+     prominent against the near-black dark background)
+   None of these need a .dark override any more: each inherits its
+   target's own .dark remapping automatically instead of shadowing it
+   with a disconnected raw color. */
 @theme {
-  --color-background: #ffffff;
+  --color-background: var(--color-bg-white-0);
   --color-rule: var(--color-stroke-soft-200);
-  --color-card: #f0f0f0;
+  --color-card: var(--color-bg-weak-50);
 
   --container-frame: 1240px;
   --container-column: 620px;
@@ -876,14 +882,9 @@ body {
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-/* Portfolio dark mode token overrides. rule is intentionally absent here
-   now — it resolves through stroke-soft-200, which already has its own
-   .dark value (neutral-800), so redefining it here would just shadow that
-   with a disconnected raw color again. */
-.dark {
-  --color-background: #111114;
-  --color-card: #1c1c20;
-}
+/* No portfolio dark-mode overrides left — background, rule, and card all
+   now resolve through AlignUI semantic tokens, each carrying its own
+   correct .dark remapping already. */
 
 /* Reduced motion: elements that move (translate/scale) opt into this class
    on their transform, so it can be dropped while their opacity/color

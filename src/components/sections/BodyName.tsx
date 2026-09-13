@@ -54,7 +54,7 @@ export default function BodyName() {
       <h1 ref={ref} className="pt-[140px] text-[18px] font-medium text-text-strong-950">
         Mukul Chakravarthi
       </h1>
-      <p className="text-[18px] font-normal text-text-soft-400">Product Designer</p>
+      <p className="text-[18px] font-normal text-text-sub-600">Product Designer</p>
     </div>
   );
 }
