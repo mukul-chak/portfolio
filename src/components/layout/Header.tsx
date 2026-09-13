@@ -19,6 +19,13 @@ function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3);
 }
 
+// Slight tracking between M and C in the neutral "MC" state only — added on
+// top of C's existing snap-to-M offset, on the same eased curve, so it
+// converges to exactly 0 by the time progress reaches 1. The real
+// "Mukul Chakravarthi" typesetting below is never touched by this — it's
+// purely an extra term in C's own transform.
+const MC_TRACKING_PX = 1.8;
+
 export default function Header({
   city,
   tz,
@@ -81,6 +88,17 @@ export default function Header({
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [open]);
 
+  // Reduced motion: drop the eased "snap" and track raw scroll 1:1 instead —
+  // gentler, not zero, since the travel itself is still directly under the
+  // user's own scroll input.
+  const eased = reducedMotion ? progress : easeOutCubic(progress);
+  // C's offset: pulled back to sit flush against M at progress 0, eased back
+  // out to its natural position by progress 1. MC_TRACKING_PX rides the same
+  // (1 - eased) factor, so the neutral state gets slight added tracking that
+  // converges to exactly 0 — never a leftover offset once C reaches its real,
+  // untracked position in "Mukul Chakravarthi".
+  const cOffset = (gapWidth - MC_TRACKING_PX) * (1 - eased);
+
   return (
     <header className="sticky top-0 z-20 bg-background/70 backdrop-blur-md">
       <div className="relative border-b border-rule">
@@ -108,13 +126,7 @@ export default function Header({
                 </span>
                 <span
                   className="inline-block"
-                  style={{
-                    // Reduced motion: drop the eased "snap" and track raw
-                    // scroll 1:1 instead — gentler, not zero, since the
-                    // travel itself is still directly under the user's own
-                    // scroll input.
-                    transform: `translateX(-${gapWidth * (1 - (reducedMotion ? progress : easeOutCubic(progress)))}px)`,
-                  }}
+                  style={{ transform: `translateX(-${cOffset}px)` }}
                 >
                   C
                 </span>
