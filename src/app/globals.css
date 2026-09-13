@@ -849,11 +849,15 @@ body {
 
 /* Portfolio design tokens (kept alongside AlignUI's, distinct names).
    text-heading/text-body/text-muted have been migrated onto AlignUI's
-   semantic tokens (text-strong-950/text-sub-600/text-soft-400) — see
-   the .dark block below for background/rule/card, still unmigrated. */
+   semantic tokens (text-strong-950/text-sub-600/text-soft-400); rule is
+   now also migrated, onto stroke-soft-200 (AlignUI's stroke hierarchy has
+   no exact slate-100 tier — soft-200/slate-200 is the nearest, confirmed
+   with the user) — see the .dark block below for background/card, still
+   unmigrated. No dark-mode override needed for rule any more: it inherits
+   stroke-soft-200's own .dark remapping automatically. */
 @theme {
   --color-background: #ffffff;
-  --color-rule: #e6e6e6;
+  --color-rule: var(--color-stroke-soft-200);
   --color-card: #f0f0f0;
 
   --container-frame: 1240px;
@@ -872,10 +876,12 @@ body {
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-/* Portfolio dark mode token overrides. */
+/* Portfolio dark mode token overrides. rule is intentionally absent here
+   now — it resolves through stroke-soft-200, which already has its own
+   .dark value (neutral-800), so redefining it here would just shadow that
+   with a disconnected raw color again. */
 .dark {
   --color-background: #111114;
-  --color-rule: #27272b;
   --color-card: #1c1c20;
 }
 
