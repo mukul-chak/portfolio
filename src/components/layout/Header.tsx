@@ -131,8 +131,13 @@ export default function Header({
         />
         {/* Junction of the header's own bottom border with its left/right
             edges — same x-position as the outer frame's vertical rule below
-            (both inset-x-0 against the same Frame content width). */}
-        <div className="absolute bottom-[-1px] left-0 z-20 hidden -translate-x-1/2 translate-y-1/2 md:block">
+            (both inset-x-0 against the same Frame content width).
+            left-[0.5px], not left-0: the outer rule's own border-x is a
+            real CSS border, whose 1px line sits INSIDE its box edge (the
+            box's own getBoundingClientRect().left is the border's outer
+            face, not its center) — center = edge + 0.5px, same convention
+            as everywhere else. left-0 was off by a real, measurable 0.5px. */}
+        <div className="absolute bottom-[-1px] left-[0.5px] z-20 hidden -translate-x-1/2 translate-y-1/2 md:block">
           <Button.Root
             variant="neutral"
             mode="ghost"
@@ -144,7 +149,7 @@ export default function Header({
             <PlusIcon />
           </Button.Root>
         </div>
-        <div className="absolute bottom-[-1px] right-0 z-20 hidden translate-x-1/2 translate-y-1/2 md:block">
+        <div className="absolute bottom-[-1px] right-[0.5px] z-20 hidden translate-x-1/2 translate-y-1/2 md:block">
           <Button.Root
             variant="neutral"
             mode="ghost"
