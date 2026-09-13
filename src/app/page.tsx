@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import Frame from "@/components/layout/Frame";
 import Rail from "@/components/layout/Rail";
 import Header from "@/components/layout/Header";
+import HeaderRuleConnector from "@/components/layout/HeaderRuleConnector";
 import Bio from "@/components/sections/Bio";
 import BodyName from "@/components/sections/BodyName";
 import RecentWork from "@/components/sections/RecentWork";
@@ -44,10 +45,15 @@ export default async function Home() {
       </div>
       <div className="relative">
         <div className="relative pt-3">
-          <Rail elevateRule>
-            <BodyName />
-            <Bio />
-          </Rail>
+          {/* Bridges Rail's own narrower column verticals up to the header's
+              bottom edge — the 12px pt-3 gap otherwise leaves them starting
+              in mid-air instead of touching the header. */}
+          <HeaderRuleConnector>
+            <Rail elevateRule>
+              <BodyName />
+              <Bio />
+            </Rail>
+          </HeaderRuleConnector>
           <RecentWork />
           <div className="h-24" />
         </div>
