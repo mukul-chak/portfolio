@@ -43,10 +43,10 @@ export default function RecentWork() {
                 <PlusIcon />
               </Button.Root>
             </div>
-            {/* Inset 4px from the vertical rule on either side (Rail's own 16px
-                padding pulled back with a negative margin) — the standard gap
-                between a horizontal rule-t and the vertical rule it meets. */}
-            <div className="mx-[-12px] rule-t" />
+            {/* Full 16px (Rail's own px-4) pulled back, not 4px short of it —
+                this line needs to actually touch both vertical rules, not
+                stop near them. */}
+            <div className="mx-[-16px] rule-t" />
             <SectionLabel className="mt-1">Recent work</SectionLabel>
           </div>
           <div className="pt-[24px]">
