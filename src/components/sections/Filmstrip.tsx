@@ -21,9 +21,13 @@ export default function Filmstrip({
   const cards = Array.from({ length: count }, (_, i) => i + 1);
   return (
     <div className="px-4 pt-1">
-      {/* Solid divider above the carousel, 8px above the images. */}
-      <div className="border-b border-rule" />
+      {/* Solid divider above the carousel, 8px above the images. Carries
+          data-rule-divider so RecentWork's junction button/connector
+          strokes (first project only) can measure its real position at
+          runtime instead of a hardcoded offset. */}
+      <div data-rule-divider className="border-b border-rule" />
       <div
+        data-carousel-row
         ref={drag.ref}
         onPointerDown={drag.onPointerDown}
         onPointerMove={drag.onPointerMove}

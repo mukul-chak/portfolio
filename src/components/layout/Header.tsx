@@ -107,8 +107,14 @@ export default function Header({
   // untracked position in "Mukul Chakravarthi".
   const cOffset = (gapWidth - MC_TRACKING_PX) * (1 - eased);
 
+  // z-[25]: above every z-20 element in the scrolling page (RecentWork's
+  // plus buttons, ThemeToggle) that could otherwise visually collide with
+  // the sticky header — equal z-index falls back to DOM order, and those
+  // render after Header, so they were painting on top of it. Still below
+  // the z-40 spotlight scrim, so the header keeps dimming with everything
+  // else during a hover preview.
   return (
-    <header className="sticky top-0 z-20 bg-background/70 backdrop-blur-md">
+    <header className="sticky top-0 z-[25] bg-background/70 backdrop-blur-md">
       <div className="relative border-b border-rule">
         {/* Reaches the header's own bottom edge (not inset-y-2 on both
             sides) so it runs seamlessly into the plus buttons below, and
