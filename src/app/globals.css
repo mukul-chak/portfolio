@@ -923,24 +923,26 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Dotted inner vertical rules (2px stroke / 1px gap). */
+/* Dotted vertical rules (4px stroke / 2px gap) — every vertical line on
+   the page, wide outer-frame edges included, now goes through this one
+   utility instead of some being a solid border-x. */
 @utility rule-x {
   background-image:
     repeating-linear-gradient(
       to bottom,
       var(--color-rule) 0px,
-      var(--color-rule) 2px,
-      transparent 2px,
-      transparent 3px
+      var(--color-rule) 4px,
+      transparent 4px,
+      transparent 6px
     ),
     repeating-linear-gradient(
       to bottom,
       var(--color-rule) 0px,
-      var(--color-rule) 2px,
-      transparent 2px,
-      transparent 3px
+      var(--color-rule) 4px,
+      transparent 4px,
+      transparent 6px
     );
-  background-size: 1px 3px, 1px 3px;
+  background-size: 1px 6px, 1px 6px;
   background-position: left 0 top 0, right 0 top 0;
   background-repeat: repeat-y, repeat-y;
 }

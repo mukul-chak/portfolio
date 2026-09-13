@@ -42,8 +42,11 @@ export default async function Home() {
               child fills its ancestor's padding box (ignoring the padding
               above), which silently pushed this to the viewport's raw
               edges instead of Frame's own content edges. A normal child
-              sizes to the content box, same as everything else in Frame. */}
-          <div className="h-full border-x border-rule" />
+              sizes to the content box, same as everything else in Frame.
+              rule-x, not border-x border-rule: every vertical line on the
+              page is now the same 4px/2px dotted pattern, not a mix of
+              solid and dotted. */}
+          <div className="h-full rule-x" />
         </div>
       </div>
       <div className="relative">

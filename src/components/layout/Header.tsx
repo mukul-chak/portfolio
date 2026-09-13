@@ -124,10 +124,12 @@ export default function Header({
             bottom-[-1px], not bottom-0: an absolutely-positioned child's
             inset resolves against its containing block's *padding* edge,
             which sits 1px above this ancestor's own border-b (its border
-            edge) — bottom-0 alone left a 1px gap short of it. */}
+            edge) — bottom-0 alone left a 1px gap short of it. rule-x, not
+            border-x border-rule: matches the now-dotted outer rule below
+            it instead of being the one remaining solid vertical. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-[-1px] top-2 border-x border-rule"
+          className="pointer-events-none absolute inset-x-0 bottom-[-1px] top-2 rule-x"
         />
         {/* Junction of the header's own bottom border with its left/right
             edges — same x-position as the outer frame's vertical rule below
