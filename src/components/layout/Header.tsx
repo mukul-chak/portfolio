@@ -12,6 +12,14 @@ const NAV = [
   { label: "Email", href: `mailto:${EMAIL}` },
 ];
 
+function PlusIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+      <path d="M7 1.5v11M1.5 7h11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 // Snappy: C reaches its final position well before progress hits 1, rather
 // than crawling in lockstep with scroll for the whole zone. Only applied to
 // C's movement — the letter fades stay on raw (linear) progress.
@@ -106,6 +114,33 @@ export default function Header({
           aria-hidden
           className="pointer-events-none absolute inset-x-0 inset-y-2 border-x border-rule"
         />
+        {/* Junction of the header's own bottom border with its left/right
+            edges — same x-position as the outer frame's vertical rule below
+            (both inset-x-0 against the same Frame content width). */}
+        <div className="absolute bottom-[-1px] left-0 z-20 hidden -translate-x-1/2 translate-y-1/2 md:block">
+          <Button.Root
+            variant="neutral"
+            mode="ghost"
+            size="xs"
+            square
+            aria-label="Add"
+            className="text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
+          >
+            <PlusIcon />
+          </Button.Root>
+        </div>
+        <div className="absolute bottom-[-1px] right-0 z-20 hidden translate-x-1/2 translate-y-1/2 md:block">
+          <Button.Root
+            variant="neutral"
+            mode="ghost"
+            size="xs"
+            square
+            aria-label="Add"
+            className="text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
+          >
+            <PlusIcon />
+          </Button.Root>
+        </div>
         <div className="relative px-4 py-2 leading-none">
           {/* Name: absolute overlay, positioned over the header at all times.
               Desktop: "MC" sits here from the start and steadily spreads

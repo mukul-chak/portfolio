@@ -33,8 +33,13 @@ export default async function Home() {
         className="pointer-events-none fixed inset-x-0 bottom-0 z-[15]"
         style={{ top: 57 }}
       >
-        <div className="relative mx-auto h-full max-w-frame px-5 sm:px-8 xl:px-0">
-          <div className="absolute inset-y-0 inset-x-0 border-x border-rule" />
+        <div className="mx-auto h-full max-w-frame px-5 sm:px-8 xl:px-0">
+          {/* Plain block, not absolute — an absolutely-positioned inset-0
+              child fills its ancestor's padding box (ignoring the padding
+              above), which silently pushed this to the viewport's raw
+              edges instead of Frame's own content edges. A normal child
+              sizes to the content box, same as everything else in Frame. */}
+          <div className="h-full border-x border-rule" />
         </div>
       </div>
       <div className="relative">
