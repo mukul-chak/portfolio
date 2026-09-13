@@ -53,7 +53,7 @@ export default function RecentWork() {
             <div className="mx-[-16px] rule-t" />
             <SectionLabel className="mt-1">Recent work</SectionLabel>
           </div>
-          <div className="pt-[24px]">
+          <div className="pt-[40px]">
             <ProjectText project={first} />
           </div>
         </Rail>
