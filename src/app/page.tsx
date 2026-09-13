@@ -22,16 +22,16 @@ export default async function Home() {
       <CopyEmail />
       <Header city={city} tz={tz} />
       {/* Outer vertical rule, pinned to the viewport (not page scroll): it used
-          to be a single absolute box starting 12px below Header's natural
-          in-flow position, which only produced a real 12px gap at scrollY 0 —
-          Header is sticky, so past that it just sat on top of the rule's
-          middle with zero clearance. Fixed + a static top offset (header's
-          own 45px height + the 12px gap) keeps that clearance at every
-          scroll position instead of just the first screen's worth. */}
+          to be a single absolute box starting below Header's natural in-flow
+          position, which only held at scrollY 0 — Header is sticky, so past
+          that it just sat on top of the rule's middle. Fixed + a static top
+          offset (header's own 45px height, no added gap) keeps it flush with
+          the header at every scroll position, running seamlessly through
+          Header's own bottom-corner plus buttons with no break. */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-x-0 bottom-0 z-[15]"
-        style={{ top: 57 }}
+        style={{ top: 45 }}
       >
         <div className="mx-auto h-full max-w-frame px-5 sm:px-8 xl:px-0">
           {/* Plain block, not absolute — an absolutely-positioned inset-0

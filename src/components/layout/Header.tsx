@@ -110,9 +110,18 @@ export default function Header({
   return (
     <header className="sticky top-0 z-20 bg-background/70 backdrop-blur-md">
       <div className="relative border-b border-rule">
+        {/* Reaches the header's own bottom edge (not inset-y-2 on both
+            sides) so it runs seamlessly into the plus buttons below, and
+            from there into the page's outer rule — no gap at either
+            junction. Top keeps its 8px clearance; only the bottom, where
+            the strokes now need to be continuous, touches the edge.
+            bottom-[-1px], not bottom-0: an absolutely-positioned child's
+            inset resolves against its containing block's *padding* edge,
+            which sits 1px above this ancestor's own border-b (its border
+            edge) — bottom-0 alone left a 1px gap short of it. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 inset-y-2 border-x border-rule"
+          className="pointer-events-none absolute inset-x-0 bottom-[-1px] top-2 border-x border-rule"
         />
         {/* Junction of the header's own bottom border with its left/right
             edges — same x-position as the outer frame's vertical rule below
