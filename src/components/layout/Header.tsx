@@ -144,7 +144,7 @@ export default function Header({
             size="xs"
             square
             aria-label="Add"
-            className="text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
+            className="h-[18px] w-[18px] text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
           >
             <PlusIcon />
           </Button.Root>
@@ -156,7 +156,7 @@ export default function Header({
             size="xs"
             square
             aria-label="Add"
-            className="text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
+            className="h-[18px] w-[18px] text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
           >
             <PlusIcon />
           </Button.Root>
