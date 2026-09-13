@@ -17,7 +17,7 @@ export default function BottomScrim() {
   return (
     <div
       aria-hidden
-      className={`pointer-events-none fixed inset-x-0 bottom-0 z-10 h-[27.5vh] bg-gradient-to-t from-background from-40% to-transparent transition-opacity duration-700 ease-[var(--ease-out)] ${
+      className={`pointer-events-none fixed inset-x-0 bottom-0 z-[16] h-[27.5vh] bg-gradient-to-t from-background from-40% to-transparent transition-opacity duration-700 ease-[var(--ease-out)] ${
         scrolled ? "opacity-0" : "opacity-100"
       }`}
     />

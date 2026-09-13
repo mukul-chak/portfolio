@@ -50,12 +50,11 @@ export default function BodyName() {
   }, []);
 
   return (
-    <h1
-      ref={ref}
-      className="pt-[140px] text-[18px] font-medium text-text-strong-950"
-      style={{ opacity: 1 - progress }}
-    >
-      Mukul Chakravarthi
-    </h1>
+    <div style={{ opacity: 1 - progress }}>
+      <h1 ref={ref} className="pt-[140px] text-[18px] font-medium text-text-strong-950">
+        Mukul Chakravarthi
+      </h1>
+      <p className="text-[18px] font-normal text-text-sub-600">Product Designer</p>
+    </div>
   );
 }

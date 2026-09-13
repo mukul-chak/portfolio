@@ -21,9 +21,13 @@ export default function Filmstrip({
   const cards = Array.from({ length: count }, (_, i) => i + 1);
   return (
     <div className="px-4 pt-1">
-      {/* Solid divider above the carousel, 8px above the images. */}
-      <div className="border-b border-rule" />
+      {/* Solid divider above the carousel, 8px above the images. Carries
+          data-rule-divider so RecentWork's junction button/connector
+          strokes (first project only) can measure its real position at
+          runtime instead of a hardcoded offset. */}
+      <div data-rule-divider className="border-b border-rule" />
       <div
+        data-carousel-row
         ref={drag.ref}
         onPointerDown={drag.onPointerDown}
         onPointerMove={drag.onPointerMove}
@@ -35,10 +39,8 @@ export default function Filmstrip({
         <div className="flex gap-4">
           {cards.map((n) => (
             <div key={n} className="w-[300px] shrink-0 sm:w-[504px]">
-              <div className="flex aspect-[1.6] items-center justify-center rounded-[4px] bg-card text-2xl text-text-soft-400">
-                {n}
-              </div>
-              <div className="mt-2 flex items-baseline gap-6 overflow-hidden whitespace-nowrap font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-left text-text-sub-600">
+              <div className="aspect-[1.6] rounded-[4px] bg-card" />
+              <div className="mt-2 flex items-baseline gap-6 overflow-hidden whitespace-nowrap font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-left text-text-soft-400">
                 <span className="shrink-0 tabular-nums">{String(n).padStart(2, "0")}</span>
                 <span className="truncate">{captions?.[n - 1]}</span>
               </div>
@@ -46,8 +48,11 @@ export default function Filmstrip({
           ))}
         </div>
       </div>
-      {/* Solid divider between projects, 8px below the captions (not the dotted rule). */}
-      <div className="mt-2 border-b border-rule" />
+      {/* Solid divider between projects, 8px below the captions (not the
+          dotted rule). data-rule-divider-close lets the NEXT project's
+          RailCarouselConnector reach backward and bridge its own rule-x
+          up to this line, closing the gap from below. */}
+      <div data-rule-divider-close className="mt-2 border-b border-rule" />
     </div>
   );
 }

@@ -13,6 +13,13 @@ const PREVIEW_CAPTIONS: Record<string, string> = {
   saag: "SAAG is a design and strategy studio advising on next-gen product experiences.",
 };
 
+// Order the links appear in the bio copy below — drives the numbered prefix
+// on the preview caption, matching Filmstrip's "01  Caption" format.
+const PREVIEW_ORDER: Record<string, number> = {
+  ascend: 1,
+  saag: 2,
+};
+
 // Font metrics (measured once) used to find each hovered line's true text
 // baseline within its line box, rather than the line box's own top/bottom.
 function measureBaselineFromTop(fontSizePx: number, lineHeightPx: number) {
@@ -111,11 +118,12 @@ export default function Bio() {
       const width = (marginSpace * 2) / 3;
       const left = railRect.right - anchorRect.left + 16;
 
-      // The hugging strokes run edge-to-edge of the margin space (4px inset
-      // from the vertical rule on both sides), wider than the panel itself
-      // (16px inset). Since both insets share the same rail/frame edges, the
-      // stroke's offset relative to the panel reduces to a constant -12px.
-      const strokeWidth = marginSpace - 8;
+      // The hugging strokes run the FULL margin space, touching the rail's
+      // right vertical rule and the frame's outer vertical rule exactly (0px
+      // gap on both sides) — wider than the panel itself (16px inset). Since
+      // both edges share the same rail/frame boundary, the stroke's offset
+      // relative to the panel reduces to a constant -16px.
+      const strokeWidth = marginSpace;
 
       setActive({ key, top, left, width, strokeWidth });
     };
@@ -131,7 +139,7 @@ export default function Bio() {
   return (
     <section
       ref={sectionRef}
-      className="relative mt-2 space-y-6 text-[18px] leading-[1.65] text-text-sub-600"
+      className="relative mt-4 space-y-6 text-[18px] leading-[1.65] text-text-sub-600"
     >
       <p>
         An art-director-turned-product designer with a knack for turning
@@ -186,19 +194,22 @@ export default function Bio() {
           >
             {/* Solid strokes hugging the panel, 12px above/below — same style
                 as the outer frame's solid stroke (border-rule) — and running
-                to 4px from the vertical rule on either side, wider than the
-                panel itself (see strokeWidth above). */}
+                edge-to-edge, touching the rail's and frame's vertical rules
+                on either side (see strokeWidth above). */}
             <div
               className="absolute bottom-full mb-3 border-b border-rule"
-              style={{ left: -12, width: rendered.strokeWidth }}
+              style={{ left: -16, width: rendered.strokeWidth }}
             />
+            <span className="mb-2 block font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] tabular-nums text-text-sub-600">
+              {String(PREVIEW_ORDER[rendered.key]).padStart(2, "0")}
+            </span>
             <div className="aspect-[1.6] w-full rounded-[4px] bg-card" />
             <p className="mt-2 line-clamp-3 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600">
               {preview}
             </p>
             <div
               className="absolute top-full mt-3 border-b border-rule"
-              style={{ left: -12, width: rendered.strokeWidth }}
+              style={{ left: -16, width: rendered.strokeWidth }}
             />
           </div>,
           anchor,

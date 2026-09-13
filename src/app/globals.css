@@ -847,14 +847,24 @@ body {
   padding: 0;
 }
 
-/* Portfolio design tokens (kept alongside AlignUI's, distinct names).
-   text-heading/text-body/text-muted have been migrated onto AlignUI's
-   semantic tokens (text-strong-950/text-sub-600/text-soft-400) — see
-   the .dark block below for background/rule/card, still unmigrated. */
+/* Portfolio design tokens (kept alongside AlignUI's, distinct names) — all
+   four now migrated onto AlignUI's semantic tokens:
+   - text-heading/text-body/text-muted -> strong-950/sub-600/soft-400
+   - rule -> stroke-soft-200 (no exact slate-100 tier; soft-200/slate-200
+     is the nearest, confirmed with the user)
+   - background -> bg-white-0 (exact match in light, #ffffff; nearest in
+     dark, #0e121b vs the old #111114 — a few units off, not a real gap)
+   - card -> bg-weak-50 (no single tier fits both themes exactly — soft-200
+     is closer in light, weak-50 closer in dark; weak-50 chosen, confirmed
+     with the user, since the placeholder cards are most visually
+     prominent against the near-black dark background)
+   None of these need a .dark override any more: each inherits its
+   target's own .dark remapping automatically instead of shadowing it
+   with a disconnected raw color. */
 @theme {
-  --color-background: #ffffff;
-  --color-rule: #e6e6e6;
-  --color-card: #f0f0f0;
+  --color-background: var(--color-bg-white-0);
+  --color-rule: var(--color-stroke-soft-200);
+  --color-card: var(--color-bg-weak-50);
 
   --container-frame: 1240px;
   --container-column: 620px;
@@ -872,12 +882,9 @@ body {
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-/* Portfolio dark mode token overrides. */
-.dark {
-  --color-background: #111114;
-  --color-rule: #27272b;
-  --color-card: #1c1c20;
-}
+/* No portfolio dark-mode overrides left — background, rule, and card all
+   now resolve through AlignUI semantic tokens, each carrying its own
+   correct .dark remapping already. */
 
 /* Reduced motion: elements that move (translate/scale) opt into this class
    on their transform, so it can be dropped while their opacity/color
@@ -916,38 +923,40 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Dotted inner vertical rules (2px stroke / 1px gap). */
+/* Dotted vertical rules (4px stroke / 2px gap) — every vertical line on
+   the page, wide outer-frame edges included, now goes through this one
+   utility instead of some being a solid border-x. */
 @utility rule-x {
   background-image:
     repeating-linear-gradient(
       to bottom,
       var(--color-rule) 0px,
-      var(--color-rule) 2px,
-      transparent 2px,
-      transparent 3px
+      var(--color-rule) 4px,
+      transparent 4px,
+      transparent 6px
     ),
     repeating-linear-gradient(
       to bottom,
       var(--color-rule) 0px,
-      var(--color-rule) 2px,
-      transparent 2px,
-      transparent 3px
+      var(--color-rule) 4px,
+      transparent 4px,
+      transparent 6px
     );
-  background-size: 1px 3px, 1px 3px;
+  background-size: 1px 6px, 1px 6px;
   background-position: left 0 top 0, right 0 top 0;
   background-repeat: repeat-y, repeat-y;
 }
 
-/* Dotted horizontal rule (2px stroke / 1px gap). */
+/* Dotted horizontal rule (4px stroke / 2px gap) — matches rule-x. */
 @utility rule-t {
   height: 1px;
   background-image: repeating-linear-gradient(
     to right,
     var(--color-rule) 0px,
-    var(--color-rule) 2px,
-    transparent 2px,
-    transparent 3px
+    var(--color-rule) 4px,
+    transparent 4px,
+    transparent 6px
   );
-  background-size: 3px 1px;
+  background-size: 6px 1px;
   background-repeat: repeat-x;
 }

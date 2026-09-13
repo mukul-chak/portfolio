@@ -27,9 +27,14 @@ export default function Frame({ children }: { children: ReactNode }) {
         className="pointer-events-none fixed inset-x-0 top-0 z-10 h-24 bg-gradient-to-b from-background from-30% to-transparent"
       />
       <TopScrim />
+      {/* z-[16]: above the narrow rule-x column verticals (z-[15]) so this
+          fade actually covers them, per "narrower verticals should fall
+          under the bottom scroll fade" — but below the wide outer frame
+          rule (bumped to z-[17] in page.tsx), which stays crisp/unaffected,
+          out of scope for that request. */}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-10 h-32 bg-gradient-to-t from-background from-20% to-transparent"
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-[16] h-32 bg-gradient-to-t from-background from-20% to-transparent"
       />
       <div className="fixed bottom-6 right-6 z-20">
         <ThemeToggle orientation="vertical" />

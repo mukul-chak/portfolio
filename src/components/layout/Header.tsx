@@ -12,12 +12,27 @@ const NAV = [
   { label: "Email", href: `mailto:${EMAIL}` },
 ];
 
+function PlusIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+      <path d="M7 1.5v11M1.5 7h11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 // Snappy: C reaches its final position well before progress hits 1, rather
 // than crawling in lockstep with scroll for the whole zone. Only applied to
 // C's movement — the letter fades stay on raw (linear) progress.
 function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3);
 }
+
+// Slight tracking between M and C in the neutral "MC" state only — added on
+// top of C's existing snap-to-M offset, on the same eased curve, so it
+// converges to exactly 0 by the time progress reaches 1. The real
+// "Mukul Chakravarthi" typesetting below is never touched by this — it's
+// purely an extra term in C's own transform.
+const MC_TRACKING_PX = 1.8;
 
 export default function Header({
   city,
@@ -81,13 +96,73 @@ export default function Header({
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [open]);
 
+  // Reduced motion: drop the eased "snap" and track raw scroll 1:1 instead —
+  // gentler, not zero, since the travel itself is still directly under the
+  // user's own scroll input.
+  const eased = reducedMotion ? progress : easeOutCubic(progress);
+  // C's offset: pulled back to sit flush against M at progress 0, eased back
+  // out to its natural position by progress 1. MC_TRACKING_PX rides the same
+  // (1 - eased) factor, so the neutral state gets slight added tracking that
+  // converges to exactly 0 — never a leftover offset once C reaches its real,
+  // untracked position in "Mukul Chakravarthi".
+  const cOffset = (gapWidth - MC_TRACKING_PX) * (1 - eased);
+
+  // z-[25]: above every z-20 element in the scrolling page (RecentWork's
+  // plus buttons, ThemeToggle) that could otherwise visually collide with
+  // the sticky header — equal z-index falls back to DOM order, and those
+  // render after Header, so they were painting on top of it. Still below
+  // the z-40 spotlight scrim, so the header keeps dimming with everything
+  // else during a hover preview.
   return (
-    <header className="sticky top-0 z-20 bg-background/70 backdrop-blur-md">
+    <header className="sticky top-0 z-[25] bg-background/70 backdrop-blur-md">
       <div className="relative border-b border-rule">
+        {/* Reaches the header's own bottom edge (not inset-y-2 on both
+            sides) so it runs seamlessly into the plus buttons below, and
+            from there into the page's outer rule — no gap at either
+            junction. Top keeps its 8px clearance; only the bottom, where
+            the strokes now need to be continuous, touches the edge.
+            bottom-[-1px], not bottom-0: an absolutely-positioned child's
+            inset resolves against its containing block's *padding* edge,
+            which sits 1px above this ancestor's own border-b (its border
+            edge) — bottom-0 alone left a 1px gap short of it. rule-x, not
+            border-x border-rule: matches the now-dotted outer rule below
+            it instead of being the one remaining solid vertical. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 inset-y-2 border-x border-rule"
+          className="pointer-events-none absolute inset-x-0 bottom-[-1px] top-2 rule-x"
         />
+        {/* Junction of the header's own bottom border with its left/right
+            edges — same x-position as the outer frame's vertical rule below
+            (both inset-x-0 against the same Frame content width).
+            left-[0.5px], not left-0: the outer rule's own border-x is a
+            real CSS border, whose 1px line sits INSIDE its box edge (the
+            box's own getBoundingClientRect().left is the border's outer
+            face, not its center) — center = edge + 0.5px, same convention
+            as everywhere else. left-0 was off by a real, measurable 0.5px. */}
+        <div className="absolute bottom-[-1px] left-[0.5px] z-20 hidden -translate-x-1/2 translate-y-1/2 md:block">
+          <Button.Root
+            variant="neutral"
+            mode="ghost"
+            size="xs"
+            square
+            aria-label="Add"
+            className="h-[20px] w-[20px] text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
+          >
+            <PlusIcon />
+          </Button.Root>
+        </div>
+        <div className="absolute bottom-[-1px] right-[0.5px] z-20 hidden translate-x-1/2 translate-y-1/2 md:block">
+          <Button.Root
+            variant="neutral"
+            mode="ghost"
+            size="xs"
+            square
+            aria-label="Add"
+            className="h-[20px] w-[20px] text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
+          >
+            <PlusIcon />
+          </Button.Root>
+        </div>
         <div className="relative px-4 py-2 leading-none">
           {/* Name: absolute overlay, positioned over the header at all times.
               Desktop: "MC" sits here from the start and steadily spreads
@@ -108,13 +183,7 @@ export default function Header({
                 </span>
                 <span
                   className="inline-block"
-                  style={{
-                    // Reduced motion: drop the eased "snap" and track raw
-                    // scroll 1:1 instead — gentler, not zero, since the
-                    // travel itself is still directly under the user's own
-                    // scroll input.
-                    transform: `translateX(-${gapWidth * (1 - (reducedMotion ? progress : easeOutCubic(progress)))}px)`,
-                  }}
+                  style={{ transform: `translateX(-${cOffset}px)` }}
                 >
                   C
                 </span>
@@ -185,7 +254,7 @@ export default function Header({
           </div>
 
           {/* Location/time — outer stroke position on desktop only */}
-          <div className="absolute right-4 top-1/2 hidden -translate-y-1/2 md:block">
+          <div className="absolute right-4 top-1/2 hidden -translate-y-[calc(50%-2px)] md:block">
             <LocationTime city={city} tz={tz} />
           </div>
         </div>

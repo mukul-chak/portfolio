@@ -9,7 +9,7 @@ export default function SectionLabel({
   className?: string;
 }) {
   return (
-    <p className={`font-[family-name:var(--font-eyebrow)] text-[16px] text-text-soft-400 ${className}`}>
+    <p className={`font-[family-name:var(--font-eyebrow)] text-[16px] text-text-sub-600 ${className}`}>
       {children}
     </p>
   );
