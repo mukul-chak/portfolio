@@ -12,7 +12,11 @@ function PlusIcon() {
 }
 
 type Measurements = {
-  x: number;
+  // Visual center of the rail's right rule-x line — the line's own right
+  // edge sits at ruleRect.right (background-position: right 0), so its
+  // 1px column spans [right-1, right] and its center is right-0.5. Same
+  // +0.5px convention as the top-left button's left-[0.5px].
+  centerX: number;
   buttonTop: number;
   aboveTop: number;
   aboveHeight: number;
@@ -53,7 +57,7 @@ export default function CarouselJunctionButton({ children }: { children: ReactNo
       const dividerCenterY = dividerRect.top + dividerRect.height / 2;
 
       setM({
-        x: ruleRect.right - elRect.left,
+        centerX: ruleRect.right - elRect.left - 0.5,
         buttonTop: dividerCenterY - elRect.top,
         aboveTop: ruleRect.bottom - elRect.top,
         aboveHeight: dividerRect.top - ruleRect.bottom,
@@ -79,16 +83,20 @@ export default function CarouselJunctionButton({ children }: { children: ReactNo
           <div
             aria-hidden
             className="pointer-events-none absolute w-px rule-x hidden md:block"
-            style={{ left: m.x, top: m.aboveTop, height: m.aboveHeight }}
+            style={{ left: m.centerX - 0.5, top: m.aboveTop, height: m.aboveHeight }}
           />
           <div
             aria-hidden
             className="pointer-events-none absolute w-px rule-x hidden md:block"
-            style={{ left: m.x, top: m.belowTop, height: m.belowHeight }}
+            style={{ left: m.centerX - 0.5, top: m.belowTop, height: m.belowHeight }}
           />
+          {/* left + -translate-x-1/2, same as the top-left button
+              (left-[0.5px] -translate-x-1/2) — not a mirrored right-anchored
+              +translate-x-1/2. Both buttons anchor the same way; only the
+              coordinate differs. */}
           <div
-            className="absolute z-20 hidden translate-x-1/2 -translate-y-1/2 md:block"
-            style={{ left: m.x, top: m.buttonTop }}
+            className="absolute z-20 hidden -translate-x-1/2 -translate-y-1/2 md:block"
+            style={{ left: m.centerX, top: m.buttonTop }}
           >
             <Button.Root
               variant="neutral"
