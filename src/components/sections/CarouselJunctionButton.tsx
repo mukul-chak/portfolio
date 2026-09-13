@@ -120,9 +120,10 @@ export default function CarouselJunctionButton({
           {m.buttonTop !== null && (
             // left + -translate-x-1/2, same as the top-left button
             // (left-[0.5px] -translate-x-1/2) — not a mirrored
-            // right-anchored +translate-x-1/2.
+            // right-anchored +translate-x-1/2. z-[15], matching the rule-x
+            // it sits on, so it falls under the bottom scroll fade too.
             <div
-              className="absolute z-20 hidden -translate-x-1/2 -translate-y-1/2 md:block"
+              className="absolute z-[15] hidden -translate-x-1/2 -translate-y-1/2 md:block"
               style={{ left: m.rightX, top: m.buttonTop }}
             >
               <Button.Root

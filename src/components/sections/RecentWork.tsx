@@ -30,8 +30,12 @@ export default function RecentWork() {
           <div className="pt-[120px]">
             {/* Centered exactly on the horizontal/vertical rule junction. Both
                 rules render as a 1px line whose visual center sits half a
-                pixel past its own top/left edge, hence the +0.5px nudge. */}
-            <div className="absolute left-[0.5px] top-[120.5px] z-20 hidden -translate-x-1/2 -translate-y-1/2 md:block">
+                pixel past its own top/left edge, hence the +0.5px nudge.
+                z-[15], matching the narrow rule-x it sits on (not z-20) —
+                so it falls under the bottom scroll fade (z-[16]) the same
+                way the rule itself does; still paints above the rule-x
+                overlay since it renders later in Rail's own DOM order. */}
+            <div className="absolute left-[0.5px] top-[120.5px] z-[15] hidden -translate-x-1/2 -translate-y-1/2 md:block">
               <Button.Root
                 variant="neutral"
                 mode="ghost"
