@@ -28,10 +28,13 @@ export default async function Home() {
           that it just sat on top of the rule's middle. Fixed + a static top
           offset (header's own 45px height, no added gap) keeps it flush with
           the header at every scroll position, running seamlessly through
-          Header's own bottom-corner plus buttons with no break. */}
+          Header's own bottom-corner plus buttons with no break.
+          z-[17]: stays above the bottom fade overlays (z-[16]) — only the
+          narrower rule-x column verticals (z-[15]) fall under that fade,
+          by request; this wide outer rule is intentionally unaffected. */}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-[15]"
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-[17]"
         style={{ top: 45 }}
       >
         <div className="mx-auto h-full max-w-frame px-5 sm:px-8 xl:px-0">
