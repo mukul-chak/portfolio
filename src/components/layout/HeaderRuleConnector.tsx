@@ -56,7 +56,13 @@ export default function HeaderRuleConnector({ children }: { children: ReactNode 
           <div
             key={i}
             aria-hidden
-            className="pointer-events-none absolute w-px rule-x hidden md:block"
+            // z-[15], matching the outer frame rule: this segment sits at
+            // y 45-57, inside Frame's always-on top gradient overlay
+            // (z-[9], no opacity toggle unlike TopScrim) — without an
+            // explicit z-index this rendered at the implicit ~0 layer,
+            // right underneath it, and the gradient washed out the faint
+            // dotted line almost completely at that height.
+            className="pointer-events-none absolute z-[15] w-px rule-x hidden md:block"
             style={{ left: seg.x - 0.5, top: seg.top, height: seg.height }}
           />
         ))}
