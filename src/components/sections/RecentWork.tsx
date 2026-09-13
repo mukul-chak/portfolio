@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import Rail from "@/components/layout/Rail";
 import SectionLabel from "@/components/ui/SectionLabel";
 import ProjectText from "@/components/sections/ProjectText";
@@ -26,7 +25,7 @@ export default function RecentWork() {
     <>
       {/* pb-[20px] + Filmstrip's own pt-1 (4px, no rule) = 24px title→carousel gap,
           with the elevated rule covering the 20px and stopping 4px before the carousel. */}
-      <CarouselJunctionButton>
+      <CarouselJunctionButton showButton>
         <Rail className="pb-[20px]" elevateRule>
           <div className="pt-[120px]">
             {/* Centered exactly on the horizontal/vertical rule junction. Both
@@ -58,7 +57,12 @@ export default function RecentWork() {
       </CarouselJunctionButton>
 
       {rest.map((project) => (
-        <Fragment key={project.slug}>
+        // Not a bare Fragment — CarouselJunctionButton needs a real DOM
+        // wrapper to (a) anchor its own rail/divider connectors and (b)
+        // reach the PREVIOUS project's own wrapper via previousElementSibling
+        // to bridge the divider that closes it, so the rule reads as one
+        // continuous line across the project boundary, not two disjoint ones.
+        <CarouselJunctionButton key={project.slug}>
           {/* mt-1 (4px, no rule) keeps the carousel's 4px stroke-gap above this rail;
               pt-[68px] is the rest of the 72px carousel→title gap, covered by the
               elevated rule. pb-[20px] does the same for THIS rail's own trailing
@@ -67,7 +71,7 @@ export default function RecentWork() {
             <ProjectText project={project} />
           </Rail>
           <Filmstrip count={project.imageCount} captions={project.captions} />
-        </Fragment>
+        </CarouselJunctionButton>
       ))}
     </>
   );

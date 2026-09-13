@@ -50,8 +50,11 @@ export default function Filmstrip({
           ))}
         </div>
       </div>
-      {/* Solid divider between projects, 8px below the captions (not the dotted rule). */}
-      <div className="mt-2 border-b border-rule" />
+      {/* Solid divider between projects, 8px below the captions (not the
+          dotted rule). data-rule-divider-close lets the NEXT project's
+          RailCarouselConnector reach backward and bridge its own rule-x
+          up to this line, closing the gap from below. */}
+      <div data-rule-divider-close className="mt-2 border-b border-rule" />
     </div>
   );
 }
