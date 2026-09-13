@@ -947,16 +947,16 @@ body {
   background-repeat: repeat-y, repeat-y;
 }
 
-/* Dotted horizontal rule (2px stroke / 1px gap). */
+/* Dotted horizontal rule (4px stroke / 2px gap) — matches rule-x. */
 @utility rule-t {
   height: 1px;
   background-image: repeating-linear-gradient(
     to right,
     var(--color-rule) 0px,
-    var(--color-rule) 2px,
-    transparent 2px,
-    transparent 3px
+    var(--color-rule) 4px,
+    transparent 4px,
+    transparent 6px
   );
-  background-size: 3px 1px;
+  background-size: 6px 1px;
   background-repeat: repeat-x;
 }
