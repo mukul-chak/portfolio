@@ -175,29 +175,13 @@ export default function Header({
                   color: `color-mix(in srgb, var(--color-text-disabled-300) ${(1 - progress) * 100}%, var(--color-text-strong-950) ${progress * 100}%)`,
                 }}
               >
-                {/* M and C only: no fill in the neutral "MC" state — just a
-                    subtle slate-200 (stroke-soft-200) outline — filling in
-                    to solid strong-950 by the time the name joins, on the
-                    same progress driving everything else. ukul/hakravarthi
-                    keep the plain inherited fill above, untouched. */}
-                <span
-                  style={{
-                    WebkitTextStroke: "1px var(--color-stroke-soft-200)",
-                    color: `color-mix(in srgb, transparent ${(1 - progress) * 100}%, var(--color-text-strong-950) ${progress * 100}%)`,
-                  }}
-                >
-                  M
-                </span>
+                <span>M</span>
                 <span ref={gapRef} style={{ opacity: progress }}>
                   ukul{" "}
                 </span>
                 <span
                   className="inline-block"
-                  style={{
-                    transform: `translateX(-${cOffset}px)`,
-                    WebkitTextStroke: "1px var(--color-stroke-soft-200)",
-                    color: `color-mix(in srgb, transparent ${(1 - progress) * 100}%, var(--color-text-strong-950) ${progress * 100}%)`,
-                  }}
+                  style={{ transform: `translateX(-${cOffset}px)` }}
                 >
                   C
                 </span>
