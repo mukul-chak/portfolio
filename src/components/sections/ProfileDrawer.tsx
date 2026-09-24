@@ -52,18 +52,28 @@ export default function ProfileDrawer({
             return (
               <p
                 key={i}
-                className={`mb-12 text-[22px] font-medium leading-[1.35] text-text-strong-950 md:ml-[18%] md:w-[46%] ${
+                // Hanging opening quote: a negative first-line indent equal to
+                // the “ glyph's own advance (measured at 0.298em in this face)
+                // lifts it out of the measure, so the text edge stays flush
+                // with the lines below it. Done by indent rather than CSS
+                // hanging-punctuation, which only Safari supports — and which
+                // would double-hang there on top of this.
+                // Indent only from md: below that the quote has no margin to
+                // hang into and would cross the drawer's 16px padding.
+                className={`mb-12 text-[20px] font-medium leading-[1.35] tracking-[-0.25px] text-text-sub-600 md:ml-[18%] md:w-[46%] md:[text-indent:-0.3em] ${
                   first ? "" : "mt-12"
                 }`}
               >
+                {"“"}
                 {withEmphasis(block.text)}
+                {"”"}
               </p>
             );
           }
 
           return (
             <div key={i} className={`relative ${first ? "" : "mt-10"}`}>
-              <p className="text-[18px] leading-[1.6] text-text-strong-950 md:w-[64%]">
+              <p className="text-[16px] leading-[1.6] text-text-sub-600 md:w-[64%]">
                 {withEmphasis(block.text)}
               </p>
               {block.annotation && (
