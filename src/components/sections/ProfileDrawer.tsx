@@ -36,18 +36,25 @@ export default function ProfileDrawer({
 }) {
   return (
     <Drawer open={open} onClose={onClose} title="Profile">
-      <div className="relative py-10 pb-20">
+      <div className="relative pt-4 pb-20">
         <div
           aria-hidden
           className="absolute inset-y-0 right-[28%] hidden w-px bg-rule md:block"
         />
 
         {profileBlocks.map((block, i) => {
+          // Index, not first:mt-0 — the divider above is this container's
+          // first DOM child, so :first-child would land on that instead and
+          // leave the opening paragraph with a full top margin.
+          const first = i === 0;
+
           if (block.type === "pullquote") {
             return (
               <p
                 key={i}
-                className="my-12 text-[26px] font-medium leading-[1.3] text-text-strong-950 md:ml-[18%] md:w-[46%]"
+                className={`mb-12 text-[26px] font-medium leading-[1.3] text-text-strong-950 md:ml-[18%] md:w-[46%] ${
+                  first ? "" : "mt-12"
+                }`}
               >
                 {withEmphasis(block.text)}
               </p>
@@ -55,7 +62,7 @@ export default function ProfileDrawer({
           }
 
           return (
-            <div key={i} className="relative mt-10 first:mt-0">
+            <div key={i} className={`relative ${first ? "" : "mt-10"}`}>
               <p className="text-[18px] leading-[1.6] text-text-strong-950 md:w-[64%]">
                 {withEmphasis(block.text)}
               </p>
@@ -64,7 +71,10 @@ export default function ProfileDrawer({
                 // the annotation to the paragraph it belongs to — no measuring,
                 // and it survives any reflow. Absolute so a tall annotation
                 // never pushes the next paragraph down.
-                <aside className="mt-8 border-t border-rule pt-3 md:absolute md:right-0 md:top-0 md:mt-0 md:w-[25%]">
+                // No rule above it in the side column. Below md the
+                // annotation falls inline under its paragraph, where the rule
+                // is the only thing separating the two, so it's kept there.
+                <aside className="mt-8 border-t border-rule pt-3 md:absolute md:right-0 md:top-0 md:mt-0 md:w-[25%] md:border-t-0 md:pt-0">
                   <p className="text-[13px] tabular-nums text-text-sub-600">
                     {block.annotation.index}
                   </p>
