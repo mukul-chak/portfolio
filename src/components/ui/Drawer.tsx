@@ -143,15 +143,17 @@ export default function Drawer({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`motion-transform absolute inset-y-0 right-0 flex w-full flex-col border-l border-rule bg-background transition-transform duration-[300ms] ease-[var(--ease-out)] md:w-[62%] md:max-w-[900px] ${
+        className={`motion-transform absolute inset-y-0 right-0 flex w-full flex-col border-l border-rule bg-background transition-transform duration-[300ms] ease-[var(--ease-out)] md:w-[calc(62%-80px)] md:max-w-[820px] ${
           visible ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Fixed header: stroke, title row, stroke — the row's padding is the
-            same top and bottom, so the title sits equidistant between them. */}
-        <div className="shrink-0 px-6 md:px-10">
+        {/* Fixed header: stroke, title row, stroke. 16px above the row; 6px
+            below it — the close button is the tallest thing in the row, so
+            the row's own bottom edge is the button's, and pb sets the gap
+            from the button down to the stroke. */}
+        <div className="shrink-0 px-4">
           <div className="border-t border-rule" />
-          <div className="flex items-center justify-between py-4">
+          <div className="flex items-center justify-between pt-4 pb-[6px]">
             <h2 className="text-[16px] text-text-strong-950">{title}</h2>
             <button
               ref={closeRef}
@@ -167,7 +169,7 @@ export default function Drawer({
         </div>
 
         {/* Only this scrolls; the header above stays put. */}
-        <div className="flex-1 overflow-y-auto px-6 md:px-10">{children}</div>
+        <div className="flex-1 overflow-y-auto px-4">{children}</div>
       </div>
     </div>,
     document.body,
