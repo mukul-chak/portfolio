@@ -148,12 +148,12 @@ export default function Drawer({
         }`}
       >
         {/* Fixed header: 16px down from the top of the screen, then stroke,
-            6px, title row, 6px, stroke. The close button is the tallest
+            4px, title row, 4px, stroke. The close button is the tallest
             thing in the row, so the row's own edges are the button's and
-            the 6px gaps are measured from it. */}
+            the 4px gaps are measured from it. */}
         <div className="shrink-0 px-4 pt-4">
           <div className="border-t border-rule" />
-          <div className="flex items-center justify-between py-[6px]">
+          <div className="flex items-center justify-between py-[4px]">
             <h2 className="text-[16px] text-text-strong-950">{title}</h2>
             <button
               ref={closeRef}
