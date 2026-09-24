@@ -48,19 +48,38 @@ export default function Drawer({
 
   useEffect(() => setMounted(true), []);
 
-  // Mount, then animate in on the next frame; on close, stay mounted for one
-  // transition so the exit actually plays — same pattern as Bio's hover
-  // preview and the header's mobile menu.
+  // Mount on open; on close, stay mounted for one transition so the exit
+  // actually plays.
   useEffect(() => {
     if (open) {
       setRendered(true);
-      const id = requestAnimationFrame(() => setVisible(true));
-      return () => cancelAnimationFrame(id);
+      return;
     }
     setVisible(false);
     const id = setTimeout(() => setRendered(false), TRANSITION_MS);
     return () => clearTimeout(id);
   }, [open]);
+
+  // Then, once the closed state is actually in the DOM, flip it open.
+  //
+  // This is deliberately a separate effect keyed on `rendered`, not a
+  // requestAnimationFrame inside the one above: scheduling the flip in the
+  // same effect that mounts starts the frame countdown BEFORE React has
+  // committed the panel, so the callback can land in the same commit as the
+  // mount. The panel then renders straight to its open position, the browser
+  // never paints an offscreen state to transition from, and the drawer just
+  // appears. That raced — it animated under some timings and not others.
+  //
+  // Reading a layout property first forces the browser to compute the closed
+  // transform, so the flip is a change from a known previous value rather
+  // than the element's first painted style.
+  useEffect(() => {
+    if (!rendered || !open) return;
+    const panel = panelRef.current;
+    if (panel) void panel.getBoundingClientRect();
+    const id = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(id);
+  }, [rendered, open]);
 
   // Scroll-lock the page behind, compensating for the scrollbar's width so
   // the page doesn't shift sideways as its scrollbar disappears. Set on both
