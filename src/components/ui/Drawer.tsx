@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
-// Drawer tier of the project's motion scale (200–500ms). Shared by the slide,
-// the scrim fade, and the unmount delay, so the panel finishes leaving before
-// it's removed from the DOM.
-const TRANSITION_MS = 300;
+// Emil Kowalski's drawer recipe: 500ms on --ease-drawer (the iOS/Ionic curve
+// Vaul uses). Shared by the slide, the scrim fade, and the unmount delay, so
+// the panel finishes leaving before it's removed from the DOM.
+const TRANSITION_MS = 500;
 
 function CloseIcon() {
   return (
@@ -134,7 +134,9 @@ export default function Drawer({
       <div
         aria-hidden
         onClick={onClose}
-        className={`absolute inset-0 bg-background transition-opacity duration-[300ms] ease-[var(--ease-out)] ${
+        // Same duration and curve as the panel, so the two read as one
+        // surface arriving rather than two things moving independently.
+        className={`absolute inset-0 bg-background transition-opacity duration-[500ms] ease-[var(--ease-drawer)] ${
           visible ? "opacity-60" : "opacity-0"
         }`}
       />
@@ -143,7 +145,7 @@ export default function Drawer({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`motion-transform absolute inset-y-0 right-0 flex w-full flex-col border-l border-rule bg-background transition-transform duration-[300ms] ease-[var(--ease-out)] md:w-[62%] md:max-w-[620px] ${
+        className={`motion-transform absolute inset-y-0 right-0 flex w-full flex-col border-l border-rule bg-background transition-transform duration-[500ms] ease-[var(--ease-drawer)] md:w-[62%] md:max-w-[620px] ${
           visible ? "translate-x-0" : "translate-x-full"
         }`}
       >

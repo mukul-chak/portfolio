@@ -880,6 +880,10 @@ body {
      than a CSS transition, so it can't be expressed as a timing function. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  /* iOS-like drawer curve (Ionic) — the one Vaul uses for sheets. Long,
+     flat tail: it leaves fast and settles slowly, which is what makes a
+     large moving surface feel weighted rather than flung. */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /* No portfolio dark-mode overrides left — background, rule, and card all
