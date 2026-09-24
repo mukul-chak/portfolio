@@ -174,17 +174,22 @@ export default function Drawer({
             the 4px gaps are measured from it. */}
         <div className="shrink-0 px-4 pt-4">
           <div className="border-t border-rule" />
-          <div className="flex items-center justify-between py-[4px]">
-            <h2 className="text-[16px] text-text-strong-950">{title}</h2>
+          {/* Close button leads, title 6px after it. The button's box is 32px
+              for the tap target but the icon inside is 14px, leaving 9px of
+              dead space on each side — the two -9px margins cancel that, so
+              the 6px gap and the left edge both measure from the icon itself
+              rather than from its invisible box. */}
+          <div className="flex items-center gap-[6px] py-[4px]">
             <button
               ref={closeRef}
               type="button"
               onClick={onClose}
               aria-label={`Close ${title}`}
-              className="-mr-2 flex h-8 w-8 items-center justify-center rounded-[4px] text-text-soft-400 transition-colors duration-100 ease-out hover:bg-bg-weak-50 hover:text-text-strong-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text-strong-950"
+              className="-ml-[9px] -mr-[9px] flex h-8 w-8 items-center justify-center rounded-[4px] text-text-soft-400 transition-colors duration-100 ease-out hover:bg-bg-weak-50 hover:text-text-strong-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text-strong-950"
             >
               <CloseIcon />
             </button>
+            <h2 className="text-[16px] text-text-strong-950">{title}</h2>
           </div>
           <div className="border-b border-rule" />
         </div>
