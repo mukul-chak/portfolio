@@ -52,7 +52,7 @@ export default function ProfileDrawer({
             return (
               <p
                 key={i}
-                className={`mb-12 text-[26px] font-medium leading-[1.3] text-text-strong-950 md:ml-[18%] md:w-[46%] ${
+                className={`mb-12 text-[22px] font-medium leading-[1.35] text-text-strong-950 md:ml-[18%] md:w-[46%] ${
                   first ? "" : "mt-12"
                 }`}
               >
