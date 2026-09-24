@@ -4,10 +4,13 @@ import { useState, useEffect, useRef } from "react";
 import { EMAIL } from "@/content/site";
 import * as Button from "@/components/ui/Button";
 import LocationTime from "@/components/ui/LocationTime";
+import ProfileDrawer from "@/components/sections/ProfileDrawer";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
-const NAV = [
-  { label: "Profile", href: "#" },
+// `panel` items open a drawer instead of navigating. Profile is the only one
+// for now; Writing can take a panel id the same way once it has content.
+const NAV: { label: string; href?: string; panel?: "profile" }[] = [
+  { label: "Profile", panel: "profile" },
   { label: "Writing", href: "#" },
   { label: "Email", href: `mailto:${EMAIL}` },
 ];
@@ -47,6 +50,8 @@ export default function Header({
   // out instead of vanishing on unmount.
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuRendered, setMenuRendered] = useState(false);
+  // Which nav drawer is open, if any.
+  const [panel, setPanel] = useState<"profile" | null>(null);
   const [progress, setProgress] = useState(0);
   const reducedMotion = useReducedMotion();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -207,13 +212,16 @@ export default function Header({
                 {NAV.map((item) => (
                   <Button.Root
                     key={item.label}
-                    asChild
+                    asChild={!item.panel}
                     variant="neutral"
                     mode="ghost"
                     size="xs"
                     className="text-[17px] font-normal"
+                    {...(item.panel
+                      ? { onClick: () => setPanel(item.panel!) }
+                      : {})}
                   >
-                    <a href={item.href}>{item.label}</a>
+                    {item.panel ? item.label : <a href={item.href}>{item.label}</a>}
                   </Button.Root>
                 ))}
               </nav>
@@ -237,16 +245,30 @@ export default function Header({
                     }`}
                     style={{ transitionTimingFunction: "var(--ease-out)", transformOrigin: "top right" }}
                   >
-                    {NAV.map((item) => (
-                      <a
-                        key={item.label}
-                        href={item.href}
-                        onClick={() => setOpen(false)}
-                        className="block px-4 py-2.5 text-[15px] text-text-sub-600 hover:bg-card"
-                      >
-                        {item.label}
-                      </a>
-                    ))}
+                    {NAV.map((item) =>
+                      item.panel ? (
+                        <button
+                          key={item.label}
+                          type="button"
+                          onClick={() => {
+                            setOpen(false);
+                            setPanel(item.panel!);
+                          }}
+                          className="block w-full px-4 py-2.5 text-left text-[15px] text-text-sub-600 hover:bg-card"
+                        >
+                          {item.label}
+                        </button>
+                      ) : (
+                        <a
+                          key={item.label}
+                          href={item.href}
+                          onClick={() => setOpen(false)}
+                          className="block px-4 py-2.5 text-[15px] text-text-sub-600 hover:bg-card"
+                        >
+                          {item.label}
+                        </a>
+                      ),
+                    )}
                   </div>
                 )}
               </div>
@@ -259,6 +281,10 @@ export default function Header({
           </div>
         </div>
       </div>
+
+      {/* Portals to <body>, so the header's own stacking context doesn't
+          trap it beneath the page. */}
+      <ProfileDrawer open={panel === "profile"} onClose={() => setPanel(null)} />
     </header>
   );
 }
