@@ -3,16 +3,8 @@ import SectionLabel from "@/components/ui/SectionLabel";
 import ProjectText from "@/components/sections/ProjectText";
 import Filmstrip from "@/components/sections/Filmstrip";
 import CarouselJunctionButton from "@/components/sections/CarouselJunctionButton";
-import * as Button from "@/components/ui/Button";
+import RuleJunction from "@/components/ui/RuleJunction";
 import { projects } from "@/content/projects";
-
-function PlusIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-      <path d="M7 1.5v11M1.5 7h11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 /**
  * Recent work: the section heading + first project share a rail (continuing the
@@ -25,28 +17,17 @@ export default function RecentWork() {
     <>
       {/* pb-[20px] + Filmstrip's own pt-1 (4px, no rule) = 24px title→carousel gap,
           with the elevated rule covering the 20px and stopping 4px before the carousel. */}
-      <CarouselJunctionButton showButton>
+      <CarouselJunctionButton>
         <Rail className="pb-[20px]" elevateRule>
           <div className="pt-[120px]">
-            {/* Centered exactly on the horizontal/vertical rule junction. Both
-                rules render as a 1px line whose visual center sits half a
-                pixel past its own top/left edge, hence the +0.5px nudge.
-                z-[15], matching the narrow rule-x it sits on (not z-20) —
-                so it falls under the bottom scroll fade (z-[16]) the same
-                way the rule itself does; still paints above the rule-x
-                overlay since it renders later in Rail's own DOM order. */}
-            <div className="absolute left-[0.5px] top-[120.5px] z-[15] hidden -translate-x-1/2 -translate-y-1/2 md:block">
-              <Button.Root
-                variant="neutral"
-                mode="ghost"
-                size="xs"
-                square
-                aria-label="Add"
-                className="h-[20px] w-[20px] text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
-              >
-                <PlusIcon />
-              </Button.Root>
-            </div>
+            {/* Both ends of this rule, where it crosses the column verticals.
+                top-[120.5px]: the rule starts at 120px (the pt above) and is
+                1px tall, so its visual centre is 120.5. z-[15] matches the
+                rule-x these sit on, so they fall under the bottom scroll fade
+                exactly as the rules do; they still paint above the rule-x
+                overlay, rendering later in Rail's own DOM order. */}
+            <RuleJunction className="left-[0.5px] top-[120.5px] z-[15] -translate-x-1/2 -translate-y-1/2" />
+            <RuleJunction className="right-[0.5px] top-[120.5px] z-[15] translate-x-1/2 -translate-y-1/2" />
             {/* Full 16px (Rail's own px-4) pulled back, not 4px short of it —
                 this line needs to actually touch both vertical rules, not
                 stop near them. */}
@@ -60,7 +41,7 @@ export default function RecentWork() {
         <Filmstrip count={first.imageCount} captions={first.captions} />
       </CarouselJunctionButton>
 
-      {rest.map((project) => (
+      {rest.map((project, i) => (
         // Not a bare Fragment — CarouselJunctionButton needs a real DOM
         // wrapper to (a) anchor its own rail/divider connectors and (b)
         // reach the PREVIOUS project's own wrapper via previousElementSibling
@@ -74,7 +55,11 @@ export default function RecentWork() {
           <Rail className="mt-1 pt-[68px] pb-[20px]" elevateRule>
             <ProjectText project={project} />
           </Rail>
-          <Filmstrip count={project.imageCount} captions={project.captions} />
+          <Filmstrip
+            count={project.imageCount}
+            captions={project.captions}
+            last={i === rest.length - 1}
+          />
         </CarouselJunctionButton>
       ))}
     </>

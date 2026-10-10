@@ -1,21 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import * as Button from "@/components/ui/Button";
-
-function PlusIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-      <path d="M7 1.5v11M1.5 7h11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 type Segment = { x: number; top: number; height: number };
 
 type Measurements = {
-  rightX: number;
-  buttonTop: number | null;
   above: [Segment, Segment]; // [left, right]
   incoming: [Segment, Segment] | null; // [left, right]
 };
@@ -31,8 +20,8 @@ type Measurements = {
  * it touches one, touches the other, and stops. It never continues past a
  * divider into the carousel's own gap, because there is no rule on the far
  * side to reach (the carousel intentionally has none — "filmstrip breaks
- * the rail"). Optionally also renders a plus button at the rail/divider
- * junction (first project only, by request).
+ * the rail"). The plus marks at those junctions belong to Filmstrip, which
+ * draws one at every rule crossing on its own two dividers.
  *
  * All positions are measured at runtime (getBoundingClientRect), not
  * hardcoded — a hardcoded px offset here previously drifted out of sync
@@ -40,10 +29,8 @@ type Measurements = {
  */
 export default function CarouselJunctionButton({
   children,
-  showButton = false,
 }: {
   children: ReactNode;
-  showButton?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [m, setM] = useState<Measurements | null>(null);
@@ -59,7 +46,6 @@ export default function CarouselJunctionButton({
       const elRect = el.getBoundingClientRect();
       const ruleRect = rule.getBoundingClientRect();
       const dividerRect = divider.getBoundingClientRect();
-      const dividerCenterY = dividerRect.top + dividerRect.height / 2;
 
       // rule-x draws its left line at the box's left edge and its right
       // line at the box's right edge — same box, both edges, so one
@@ -88,18 +74,13 @@ export default function CarouselJunctionButton({
         ];
       }
 
-      setM({
-        rightX,
-        buttonTop: showButton ? dividerCenterY - elRect.top : null,
-        above,
-        incoming,
-      });
+      setM({ above, incoming });
     }
     measure();
     document.fonts?.ready.then(measure);
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
-  }, [showButton]);
+  }, []);
 
   return (
     <div ref={ref} className="relative">
@@ -117,27 +98,6 @@ export default function CarouselJunctionButton({
               style={{ left: seg.x - 0.5, top: seg.top, height: seg.height }}
             />
           ))}
-          {m.buttonTop !== null && (
-            // left + -translate-x-1/2, same as the top-left button
-            // (left-[0.5px] -translate-x-1/2) — not a mirrored
-            // right-anchored +translate-x-1/2. z-[15], matching the rule-x
-            // it sits on, so it falls under the bottom scroll fade too.
-            <div
-              className="absolute z-[15] hidden -translate-x-1/2 -translate-y-1/2 md:block"
-              style={{ left: m.rightX, top: m.buttonTop }}
-            >
-              <Button.Root
-                variant="neutral"
-                mode="ghost"
-                size="xs"
-                square
-                aria-label="Add"
-                className="h-[20px] w-[20px] text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
-              >
-                <PlusIcon />
-              </Button.Root>
-            </div>
-          )}
         </>
       )}
     </div>
