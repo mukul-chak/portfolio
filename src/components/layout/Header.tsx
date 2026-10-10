@@ -5,7 +5,11 @@ import { EMAIL } from "@/content/site";
 import * as Button from "@/components/ui/Button";
 import LocationTime from "@/components/ui/LocationTime";
 import ProfileDrawer from "@/components/sections/ProfileDrawer";
+import RuleJunction from "@/components/ui/RuleJunction";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { measureNameMark, type NameMark } from "@/lib/measureNameMark";
+import { phase } from "@/lib/phase";
+import type { NameHandoff } from "@/components/sections/BodyName";
 
 // `panel` items open a drawer instead of navigating. Profile is the only one
 // for now; Writing can take a panel id the same way once it has content.
@@ -15,27 +19,29 @@ const NAV: { label: string; href?: string; panel?: "profile" }[] = [
   { label: "Email", href: `mailto:${EMAIL}` },
 ];
 
-function PlusIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-      <path d="M7 1.5v11M1.5 7h11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-    </svg>
-  );
-}
+const FULL_NAME = "Mukul Chakravarthi";
 
-// Snappy: C reaches its final position well before progress hits 1, rather
-// than crawling in lockstep with scroll for the whole zone. Only applied to
-// C's movement — the letter fades stay on raw (linear) progress.
-function easeOutCubic(t: number) {
-  return 1 - Math.pow(1 - t, 3);
-}
-
-// Slight tracking between M and C in the neutral "MC" state only — added on
-// top of C's existing snap-to-M offset, on the same eased curve, so it
-// converges to exactly 0 by the time progress reaches 1. The real
-// "Mukul Chakravarthi" typesetting below is never touched by this — it's
-// purely an extra term in C's own transform.
-const MC_TRACKING_PX = 1.8;
+// The marks travel linearly across the whole run — no easing. Any ease-out
+// spends most of the journey in the first fraction of the scroll and then
+// crawls, which is exactly what made this read as a snap. Linear means the
+// pair opens at a constant rate the entire way down, from the resting state
+// at the top of the page to the merge at the bottom of the run.
+//
+// Timed against real layout rather than chosen fractions (see NameHandoff):
+//
+//   marks open   0 ─────────────────────────────────── 1
+//   crossfade                          clearedNav ──── 1
+//
+// clearedNav is the moment the body name's bottom passes below the nav bar.
+// Nothing of the header's own name exists before then: it used to start at a
+// flat 0.5, which put it on screen while the body name was still ~90px short
+// of the bar, with two copies of the name visible at once and neither of
+// them arriving at anything.
+//
+// The crossfade runs on one window for both, so the marks dissolve at the
+// same rate the letters resolve — and since each mark is sitting on the
+// upright it stands in for (the M's, then the i's), the handover happens in
+// place rather than as two separate events.
 
 export default function Header({
   city,
@@ -52,11 +58,15 @@ export default function Header({
   const [menuRendered, setMenuRendered] = useState(false);
   // Which nav drawer is open, if any.
   const [panel, setPanel] = useState<"profile" | null>(null);
-  const [progress, setProgress] = useState(0);
+  const [handoff, setHandoff] = useState<NameHandoff>({
+    progress: 0,
+    clearedNav: 1,
+    enteredNav: 1,
+  });
   const reducedMotion = useReducedMotion();
   const menuRef = useRef<HTMLDivElement>(null);
-  const gapRef = useRef<HTMLSpanElement>(null);
-  const [gapWidth, setGapWidth] = useState(0);
+  const nameRef = useRef<HTMLSpanElement>(null);
+  const [mark, setMark] = useState<NameMark | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -71,24 +81,22 @@ export default function Header({
 
   useEffect(() => {
     function onNameScroll(e: Event) {
-      setProgress((e as CustomEvent<number>).detail);
+      setHandoff((e as CustomEvent<NameHandoff>).detail);
     }
     window.addEventListener("name-scroll-progress", onNameScroll);
     return () => window.removeEventListener("name-scroll-progress", onNameScroll);
   }, []);
 
-  // Width of "ukul " — the substring between M and C — at this exact font/
-  // size/weight, so C can be pulled back to sit immediately after M (reading
-  // as "MC") and eased back out to its natural position as progress runs 0→1.
-  // Remeasured once the real webfont has swapped in, not just the fallback.
+  // The two marks are derived from the M itself (see measureNameMark), so
+  // they have to be measured against the real webfont, not the fallback that
+  // renders first. No resize listener: every value here is font-intrinsic and
+  // the name's size is fixed, so nothing about them is viewport-dependent.
   useEffect(() => {
     function measure() {
-      if (gapRef.current) setGapWidth(gapRef.current.getBoundingClientRect().width);
+      if (nameRef.current) setMark(measureNameMark(nameRef.current, FULL_NAME));
     }
     measure();
     document.fonts?.ready.then(measure);
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
   }, []);
 
   useEffect(() => {
@@ -101,16 +109,26 @@ export default function Header({
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [open]);
 
-  // Reduced motion: drop the eased "snap" and track raw scroll 1:1 instead —
-  // gentler, not zero, since the travel itself is still directly under the
-  // user's own scroll input.
-  const eased = reducedMotion ? progress : easeOutCubic(progress);
-  // C's offset: pulled back to sit flush against M at progress 0, eased back
-  // out to its natural position by progress 1. MC_TRACKING_PX rides the same
-  // (1 - eased) factor, so the neutral state gets slight added tracking that
-  // converges to exactly 0 — never a leftover offset once C reaches its real,
-  // untracked position in "Mukul Chakravarthi".
-  const cOffset = (gapWidth - MC_TRACKING_PX) * (1 - eased);
+  const { progress, clearedNav } = handoff;
+  // The left mark never moves. The right one runs from the M's own second
+  // upright out to the name's last one, opening the space the name fills.
+  // Snapped to the same device-pixel grid the rest state was measured on, so
+  // the mark stays exactly as crisp in motion as it is parked — otherwise it
+  // thins and thickens as it drifts across sub-pixel phases.
+  //
+  // Reduced motion holds the pair at rest instead: the marks stay as the
+  // nav's resting identity — dropping them would leave it empty until the
+  // name arrives — and the handover becomes a plain crossfade from the two
+  // uprights to the name, with nothing travelling.
+  const travelled = reducedMotion ? 0 : progress;
+  const rightX = mark
+    ? Math.round(
+        (mark.rightRestX + (mark.rightOpenX - mark.rightRestX) * travelled) * mark.dpr,
+      ) / mark.dpr
+    : 0;
+  const crossfade = phase(progress, clearedNav, 1);
+  const nameOpacity = crossfade;
+  const markOpacity = 1 - crossfade;
 
   // z-[25]: above every z-20 element in the scrolling page (RecentWork's
   // plus buttons, ThemeToggle) that could otherwise visually collide with
@@ -136,37 +154,28 @@ export default function Header({
           aria-hidden
           className="pointer-events-none absolute inset-x-0 bottom-[-1px] top-2 rule-x"
         />
-        {/* Junction of the header's own bottom border with its left/right
-            edges — same x-position as the outer frame's vertical rule below
-            (both inset-x-0 against the same Frame content width).
-            left-[0.5px], not left-0: the outer rule's own border-x is a
-            real CSS border, whose 1px line sits INSIDE its box edge (the
-            box's own getBoundingClientRect().left is the border's outer
-            face, not its center) — center = edge + 0.5px, same convention
-            as everywhere else. left-0 was off by a real, measurable 0.5px. */}
-        <div className="absolute bottom-[-1px] left-[0.5px] z-20 hidden -translate-x-1/2 translate-y-1/2 md:block">
-          <Button.Root
-            variant="neutral"
-            mode="ghost"
-            size="xs"
-            square
-            aria-label="Add"
-            className="h-[20px] w-[20px] text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
-          >
-            <PlusIcon />
-          </Button.Root>
-        </div>
-        <div className="absolute bottom-[-1px] right-[0.5px] z-20 hidden translate-x-1/2 translate-y-1/2 md:block">
-          <Button.Root
-            variant="neutral"
-            mode="ghost"
-            size="xs"
-            square
-            aria-label="Add"
-            className="h-[20px] w-[20px] text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
-          >
-            <PlusIcon />
-          </Button.Root>
+        {/* Every crossing of the header's own bottom border: the outer frame
+            rule at both page edges, and the narrower column rules inside it.
+
+            bottom-[-0.5px] with translate-y-1/2: this ancestor's padding box
+            ends where its 1px border-b begins, so the line's visual centre is
+            half a pixel past that edge — bottom-0 centres the mark on the
+            padding edge, a real half-pixel high, and bottom-[-1px] the same
+            distance low.
+
+            left-[0.5px], not left-0: the rule's 1px line sits inside its own
+            box edge, so centre = edge + 0.5px. Same convention everywhere. */}
+        <RuleJunction className="bottom-[-0.5px] left-[0.5px] z-20 -translate-x-1/2 translate-y-1/2" />
+        <RuleJunction className="bottom-[-0.5px] right-[0.5px] z-20 translate-x-1/2 translate-y-1/2" />
+        {/* The column rules cross the same border 310px further in on each
+            side. Addressed as the edges of a box given the identical
+            mx-auto max-w-column centring that places those rules, so the two
+            agree by construction rather than by a measured offset. */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 hidden md:block">
+          <div className="relative mx-auto h-full max-w-column">
+            <RuleJunction className="pointer-events-auto bottom-[-0.5px] left-[0.5px] z-20 -translate-x-1/2 translate-y-1/2" />
+            <RuleJunction className="pointer-events-auto bottom-[-0.5px] right-[0.5px] z-20 translate-x-1/2 translate-y-1/2" />
+          </div>
         </div>
         <div className="relative px-4 py-2 leading-none">
           {/* Name: absolute overlay, positioned over the header at all times.
@@ -176,30 +185,69 @@ export default function Header({
               original simple crossfade, unchanged. */}
           <div className="pointer-events-none absolute inset-0 flex items-center">
             <div className="mx-auto w-full max-w-column px-4">
-              <span
-                className="hidden whitespace-nowrap text-[18px] font-medium md:inline-block"
-                style={{
-                  color: `color-mix(in srgb, var(--color-text-disabled-300) ${(1 - progress) * 100}%, var(--color-text-strong-950) ${progress * 100}%)`,
-                }}
-              >
-                <span>M</span>
-                <span ref={gapRef} style={{ opacity: progress }}>
-                  ukul{" "}
-                </span>
+              <span className="hidden whitespace-nowrap text-[18px] font-medium md:inline-block">
+                {/* Each mark hangs off a zero-width inline-block sitting at
+                    the name's own text origin. Two things fall out of that,
+                    both of which would otherwise need measuring:
+
+                    - Vertical. An empty inline-block takes its baseline from
+                      its bottom margin edge, so a box of exactly cap height
+                      lands on the cap band — no ascent/descent arithmetic,
+                      and no risk of the font's reported metrics disagreeing
+                      with the line box the browser actually built.
+                    - Horizontal. Zero width means it contributes nothing to
+                      the flow, so the name starts where it always did and
+                      the inner offsets are straight from the text origin —
+                      the same origin measureNameMark returned them against. */}
+                {mark && (
+                  <>
+                    <span
+                      aria-hidden
+                      className="relative inline-block w-0 align-baseline"
+                      style={{ height: mark.capHeight }}
+                    >
+                      <span
+                        className="absolute top-0 h-full bg-text-strong-950"
+                        style={{
+                          left: mark.leftX,
+                          width: mark.strokeWidth,
+                          opacity: markOpacity,
+                        }}
+                      />
+                    </span>
+                    <span
+                      aria-hidden
+                      className="relative inline-block w-0 align-baseline"
+                      style={{ height: mark.capHeight }}
+                    >
+                      <span
+                        className="absolute top-0 h-full bg-text-strong-950"
+                        style={{
+                          left: rightX,
+                          width: mark.strokeWidth,
+                          opacity: markOpacity,
+                        }}
+                      />
+                    </span>
+                  </>
+                )}
+                {/* Always rendered at full width, opacity-only: the right
+                    mark's open position is this text's own ink edge, so the
+                    name has to be laid out even while it's invisible. */}
                 <span
-                  className="inline-block"
-                  style={{ transform: `translateX(-${cOffset}px)` }}
+                  ref={nameRef}
+                  className="text-text-strong-950"
+                  style={{ opacity: nameOpacity }}
                 >
-                  C
+                  {FULL_NAME}
                 </span>
-                <span style={{ opacity: progress }}>hakravarthi</span>
               </span>
               <span
                 className={`whitespace-nowrap text-[18px] font-medium text-text-strong-950 transition-opacity duration-300 md:hidden ${
                   progress >= 1 ? "opacity-100" : "opacity-0"
                 }`}
               >
-                Mukul Chakravarthi
+                {FULL_NAME}
               </span>
             </div>
           </div>
