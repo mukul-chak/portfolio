@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { EMAIL } from "@/content/site";
 import * as Button from "@/components/ui/Button";
 import LocationTime from "@/components/ui/LocationTime";
+import Avatar from "@/components/ui/Avatar";
 import ProfileDrawer from "@/components/sections/ProfileDrawer";
-import { useReducedMotion } from "@/lib/useReducedMotion";
 
 // `panel` items open a drawer instead of navigating. Profile is the only one
 // for now; Writing can take a panel id the same way once it has content.
@@ -23,20 +23,6 @@ function PlusIcon() {
   );
 }
 
-// Snappy: C reaches its final position well before progress hits 1, rather
-// than crawling in lockstep with scroll for the whole zone. Only applied to
-// C's movement — the letter fades stay on raw (linear) progress.
-function easeOutCubic(t: number) {
-  return 1 - Math.pow(1 - t, 3);
-}
-
-// Slight tracking between M and C in the neutral "MC" state only — added on
-// top of C's existing snap-to-M offset, on the same eased curve, so it
-// converges to exactly 0 by the time progress reaches 1. The real
-// "Mukul Chakravarthi" typesetting below is never touched by this — it's
-// purely an extra term in C's own transform.
-const MC_TRACKING_PX = 1.8;
-
 export default function Header({
   city,
   tz,
@@ -53,10 +39,7 @@ export default function Header({
   // Which nav drawer is open, if any.
   const [panel, setPanel] = useState<"profile" | null>(null);
   const [progress, setProgress] = useState(0);
-  const reducedMotion = useReducedMotion();
   const menuRef = useRef<HTMLDivElement>(null);
-  const gapRef = useRef<HTMLSpanElement>(null);
-  const [gapWidth, setGapWidth] = useState(0);
 
   useEffect(() => {
     if (open) {
@@ -77,20 +60,6 @@ export default function Header({
     return () => window.removeEventListener("name-scroll-progress", onNameScroll);
   }, []);
 
-  // Width of "ukul " — the substring between M and C — at this exact font/
-  // size/weight, so C can be pulled back to sit immediately after M (reading
-  // as "MC") and eased back out to its natural position as progress runs 0→1.
-  // Remeasured once the real webfont has swapped in, not just the fallback.
-  useEffect(() => {
-    function measure() {
-      if (gapRef.current) setGapWidth(gapRef.current.getBoundingClientRect().width);
-    }
-    measure();
-    document.fonts?.ready.then(measure);
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
-
   useEffect(() => {
     function onPointerDown(e: PointerEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -100,17 +69,6 @@ export default function Header({
     if (open) document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [open]);
-
-  // Reduced motion: drop the eased "snap" and track raw scroll 1:1 instead —
-  // gentler, not zero, since the travel itself is still directly under the
-  // user's own scroll input.
-  const eased = reducedMotion ? progress : easeOutCubic(progress);
-  // C's offset: pulled back to sit flush against M at progress 0, eased back
-  // out to its natural position by progress 1. MC_TRACKING_PX rides the same
-  // (1 - eased) factor, so the neutral state gets slight added tracking that
-  // converges to exactly 0 — never a leftover offset once C reaches its real,
-  // untracked position in "Mukul Chakravarthi".
-  const cOffset = (gapWidth - MC_TRACKING_PX) * (1 - eased);
 
   // z-[25]: above every z-20 element in the scrolling page (RecentWork's
   // plus buttons, ThemeToggle) that could otherwise visually collide with
@@ -169,38 +127,33 @@ export default function Header({
           </Button.Root>
         </div>
         <div className="relative px-4 py-2 leading-none">
-          {/* Name: absolute overlay, positioned over the header at all times.
-              Desktop: "MC" sits here from the start and steadily spreads
-              into the full name as the bio title approaches (see progress,
-              driven by BodyName's scroll position). Mobile keeps the
-              original simple crossfade, unchanged. */}
+          {/* Avatar and name share one spot and crossfade: the avatar holds
+              the header on its own, then hands over to the full name as the
+              bio title arrives (progress, driven by BodyName's scroll
+              position). Both are absolute against a 32px-tall box so neither
+              one shifts the other as they fade, and the box is centred in the
+              header so the name's own centre lands where it did before — the
+              join with the bio title is still pixel-aligned.
+
+              Desktop and mobile are one element now. They were split only
+              because the old "MC" treatment needed letter-level choreography
+              that had no mobile equivalent. */}
           <div className="pointer-events-none absolute inset-0 flex items-center">
             <div className="mx-auto w-full max-w-column px-4">
-              <span
-                className="hidden whitespace-nowrap text-[18px] font-medium md:inline-block"
-                style={{
-                  color: `color-mix(in srgb, var(--color-text-disabled-300) ${(1 - progress) * 100}%, var(--color-text-strong-950) ${progress * 100}%)`,
-                }}
-              >
-                <span>M</span>
-                <span ref={gapRef} style={{ opacity: progress }}>
-                  ukul{" "}
+              <div className="relative h-8 w-full">
+                <span
+                  className="absolute left-0 top-0"
+                  style={{ opacity: 1 - progress }}
+                >
+                  <Avatar />
                 </span>
                 <span
-                  className="inline-block"
-                  style={{ transform: `translateX(-${cOffset}px)` }}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 whitespace-nowrap text-[18px] font-medium text-text-strong-950"
+                  style={{ opacity: progress }}
                 >
-                  C
+                  Mukul Chakravarthi
                 </span>
-                <span style={{ opacity: progress }}>hakravarthi</span>
-              </span>
-              <span
-                className={`whitespace-nowrap text-[18px] font-medium text-text-strong-950 transition-opacity duration-300 md:hidden ${
-                  progress >= 1 ? "opacity-100" : "opacity-0"
-                }`}
-              >
-                Mukul Chakravarthi
-              </span>
+              </div>
             </div>
           </div>
 
