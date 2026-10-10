@@ -21,6 +21,25 @@ const NAV: { label: string; href?: string; panel?: "profile" }[] = [
 
 const FULL_NAME = "Mukul Chakravarthi";
 
+// 20px in a 36px button. strokeWidth 1.5 rather than the 1.2 used on the
+// 14px rule-junction marks — at this size 1.2 reads thin next to the nav's
+// own type.
+function PlusIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
+      <path d="M10 3.75v12.5M3.75 10h12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
+      <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 // The marks travel linearly across the whole run — no easing. Any ease-out
 // spends most of the journey in the first fraction of the scroll and then
 // crawls, which is exactly what made this read as a snap. Linear means the
@@ -186,13 +205,15 @@ export default function Header({
         </div>
         <div className="relative px-4 py-2 leading-none">
           {/* Name: absolute overlay, positioned over the header at all times.
-              Desktop: "MC" sits here from the start and steadily spreads
-              into the full name as the bio title approaches (see progress,
-              driven by BodyName's scroll position). Mobile keeps the
-              original simple crossfade, unchanged. */}
+              The two marks rest here and open into the full name as the bio
+              title approaches (see progress, driven by BodyName's scroll
+              position) — at every breakpoint. Mobile used to get a plain
+              binary crossfade instead; there's nothing width-dependent in
+              the marks, and at 375px the name still ends well clear of the
+              menu button, so there was no reason to keep two behaviours. */}
           <div className="pointer-events-none absolute inset-0 flex items-center">
             <div className="mx-auto w-full max-w-column px-4">
-              <span className="hidden whitespace-nowrap text-[18px] font-medium md:inline-block">
+              <span className="inline-block whitespace-nowrap text-[18px] font-medium">
                 {/* Each mark hangs off a zero-width inline-block sitting at
                     the name's own text origin. Two things fall out of that,
                     both of which would otherwise need measuring:
@@ -249,13 +270,6 @@ export default function Header({
                   {FULL_NAME}
                 </span>
               </span>
-              <span
-                className={`whitespace-nowrap text-[18px] font-medium text-text-strong-950 transition-opacity duration-300 md:hidden ${
-                  progress >= 1 ? "opacity-100" : "opacity-0"
-                }`}
-              >
-                {FULL_NAME}
-              </span>
             </div>
           </div>
 
@@ -283,15 +297,24 @@ export default function Header({
 
               {/* Mobile + menu */}
               <div className="relative md:hidden" ref={menuRef}>
+                {/* square + size md: AlignUI's icon-only button, 36px
+                    against the 28px this used to be. The glyph is a real
+                    icon now rather than a "+"/"×" character, which rendered
+                    small for its type size and sat off-centre in the box.
+                    Colour comes from ghost mode's own text-sub-600, which
+                    measures 7.13:1 light and ~12:1 dark — comfortably AA in
+                    both, unlike a hardcoded value would have to be checked
+                    twice. */}
                 <Button.Root
                   variant="neutral"
                   mode="ghost"
-                  size="xs"
-                  className="text-[20px] font-normal"
+                  size="md"
+                  square
                   onClick={() => setOpen((v) => !v)}
-                  aria-label="Menu"
+                  aria-label={open ? "Close menu" : "Open menu"}
+                  aria-expanded={open}
                 >
-                  {open ? "×" : "+"}
+                  {open ? <CloseIcon /> : <PlusIcon />}
                 </Button.Root>
                 {menuRendered && (
                   <div
