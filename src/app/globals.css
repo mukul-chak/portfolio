@@ -605,7 +605,12 @@
      sizes it was visibly faint. neutral-300 takes it to ~12:1 while staying
      clearly below the white used for headings, so the hierarchy survives. */
   --color-text-sub-600: var(--color-neutral-300);
-  --color-text-soft-400: var(--color-neutral-500);
+  /* Re-tuned alongside sub-600, for the same reason: AlignUI's neutral-500
+     here measured 4.17:1, which is an outright WCAG AA failure for the
+     carousel captions, not merely faint. neutral-400 takes it to 7.13:1 and
+     keeps one clear step below sub-600, so the ramp stays ordered:
+     white / 300 / 400 / 600. */
+  --color-text-soft-400: var(--color-neutral-400);
   --color-text-disabled-300: var(--color-neutral-600);
   --color-text-white-0: var(--color-neutral-950);
 
