@@ -38,6 +38,13 @@ const FULL_NAME = "Mukul Chakravarthi";
 // of the bar, with two copies of the name visible at once and neither of
 // them arriving at anything.
 //
+// The crossfade is back-loaded, not linear. Run straight, the name was
+// already half-opaque with the mark still a tenth of its journey short —
+// legible enough to read as arrived while the thing opening the space for
+// it was visibly still moving. Squaring holds it back through most of the
+// mark's final approach and resolves it in the last of it, so the name
+// lands with the mark rather than ahead of it.
+//
 // The crossfade runs on one window for both, so the marks dissolve at the
 // same rate the letters resolve — and since each mark is sitting on the
 // upright it stands in for (the M's, then the i's), the handover happens in
@@ -126,7 +133,7 @@ export default function Header({
         (mark.rightRestX + (mark.rightOpenX - mark.rightRestX) * travelled) * mark.dpr,
       ) / mark.dpr
     : 0;
-  const crossfade = phase(progress, clearedNav, 1);
+  const crossfade = Math.pow(phase(progress, clearedNav, 1), 2);
   const nameOpacity = crossfade;
   const markOpacity = 1 - crossfade;
 
