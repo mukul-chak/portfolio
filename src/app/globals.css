@@ -598,7 +598,13 @@
   --color-bg-white-0: var(--color-neutral-950);
 
   --color-text-strong-950: var(--color-neutral-0);
-  --color-text-sub-600: var(--color-neutral-400);
+  /* Re-tuned for this project: AlignUI ships neutral-400 here, which is
+     7.13:1 on the dark background — passing AAA on paper, but WCAG 2's ratio
+     is symmetric and doesn't model dark-mode perception, where light glyphs
+     bloom and read thinner than the same ratio does in light mode. At body
+     sizes it was visibly faint. neutral-300 takes it to ~12:1 while staying
+     clearly below the white used for headings, so the hierarchy survives. */
+  --color-text-sub-600: var(--color-neutral-300);
   --color-text-soft-400: var(--color-neutral-500);
   --color-text-disabled-300: var(--color-neutral-600);
   --color-text-white-0: var(--color-neutral-950);
