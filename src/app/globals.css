@@ -876,6 +876,12 @@ body {
   --color-background: var(--color-bg-white-0);
   --color-rule: var(--color-stroke-soft-200);
   --color-card: var(--color-bg-weak-50);
+  /* Accordion hatch. The rule colour at reduced strength — the rules are
+     already the lightest stroke in the system, and a solid field of them
+     at full weight reads as a block of tone rather than as texture.
+     Derived from the token rather than being a new colour, so it tracks
+     stroke-soft-200 through both themes. */
+  --color-hatch: color-mix(in oklab, var(--color-stroke-soft-200) 55%, transparent);
 
   --container-frame: 1240px;
   --container-column: 620px;
@@ -974,6 +980,28 @@ body {
 }
 
 /* Dotted horizontal rule (4px stroke / 2px gap) — matches rule-x. */
+/* 45-degree hatch, lines 16px apart. The period of a repeating gradient is
+   measured perpendicular to its stripes, so 16px here is the gap you see,
+   not the diagonal distance.
+   Two directions rather than one that rotates: a background-image can't be
+   transitioned, so an open accordion cross-fades between these instead of
+   switching instantly while its height is still moving. */
+@utility hatch {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--color-hatch) 0 1px,
+    transparent 1px 16px
+  );
+}
+
+@utility hatch-mirror {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-hatch) 0 1px,
+    transparent 1px 16px
+  );
+}
+
 @utility rule-t {
   height: 1px;
   background-image: repeating-linear-gradient(

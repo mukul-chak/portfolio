@@ -141,16 +141,32 @@ export default function RuleAccordion({
         onClick={toggle}
         aria-expanded={open}
         aria-controls={contentId}
-        className={`group block w-full cursor-pointer text-left ${
+        className={`group relative block w-full cursor-pointer text-left ${
           sharesRuleAbove && anchorId ? "scroll-mt-[61px]" : ""
         }`}
       >
+        {/* Hatch, mirrored while open to signal the state. Two stacked
+            layers cross-fading rather than one element whose direction
+            flips: background-image isn't an animatable property, so a
+            single layer would snap to the other diagonal while the section
+            was still opening. Same 200ms and curve as the height, so the
+            two read as one gesture. */}
+        <span
+          aria-hidden
+          className="hatch pointer-events-none absolute inset-0 transition-opacity ease-[var(--ease-out)]"
+          style={{ opacity: open ? 0 : 1, transitionDuration: `${DURATION_MS}ms` }}
+        />
+        <span
+          aria-hidden
+          className="hatch-mirror pointer-events-none absolute inset-0 transition-opacity ease-[var(--ease-out)]"
+          style={{ opacity: open ? 1 : 0, transitionDuration: `${DURATION_MS}ms` }}
+        />
         {/* py-1 against the label's own 24px line box gives the 32px band.
             The row is column-width so the title and chevron line up with the
             column rules, while the button itself spans the full band — the
             whole strip between the two rules is the target, not just the
             text. */}
-        <div className="mx-auto flex max-w-column items-center justify-between px-4 py-1">
+        <div className="relative mx-auto flex max-w-column items-center justify-between px-4 py-1">
           <SectionLabel>{title}</SectionLabel>
           <span
             className={`motion-transform text-text-sub-600 transition-[transform,color] duration-200 ease-[var(--ease-out)] group-hover:text-text-strong-950 ${

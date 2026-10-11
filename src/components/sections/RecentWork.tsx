@@ -3,7 +3,18 @@ import ProjectText from "@/components/sections/ProjectText";
 import Filmstrip from "@/components/sections/Filmstrip";
 import CarouselJunctionButton from "@/components/sections/CarouselJunctionButton";
 import RuleAccordion from "@/components/ui/RuleAccordion";
+import * as Button from "@/components/ui/Button";
 import { projects } from "@/content/projects";
+import { EMAIL } from "@/content/site";
+
+// Placeholder destinations — the real URLs land later. Email keeps the
+// address the rest of the site already uses.
+const CONTACTS: { label: string; href: string }[] = [
+  { label: EMAIL, href: `mailto:${EMAIL}` },
+  { label: "LinkedIn", href: "#" },
+  { label: "X (Twitter)", href: "#" },
+  { label: "Are.na", href: "#" },
+];
 
 /**
  * Recent work: the projects, wrapped in an accordion titled by the section.
@@ -71,6 +82,32 @@ export default function RecentWork() {
           two 1px lines against each other. */}
       <RuleAccordion title="About" anchorId="about" defaultOpen={false} sharesRuleAbove>
         {null}
+      </RuleAccordion>
+
+      <RuleAccordion title="Contact" defaultOpen={false} sharesRuleAbove>
+        {/* Ghost is the tertiary mode here — no container until hover,
+            which is what the row should read as.
+            px-2 against the default px-4, with the row pulled back by the
+            same 8px: that lands the first label on the column's own text
+            inset, level with the titles above it, while leaving the hover
+            fill 8px clear of the column rule. At the default padding the
+            fill would sit right on the rule. */}
+        <div className="mx-auto max-w-column px-4 pt-4 pb-6">
+          <div className="-ml-2 flex flex-wrap items-center gap-x-8 gap-y-1">
+            {CONTACTS.map((c) => (
+              <Button.Root
+                key={c.label}
+                asChild
+                variant="neutral"
+                mode="ghost"
+                size="md"
+                className="px-2 font-normal"
+              >
+                <a href={c.href}>{c.label}</a>
+              </Button.Root>
+            ))}
+          </div>
+        </div>
       </RuleAccordion>
     </>
   );
