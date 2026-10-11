@@ -4,8 +4,6 @@ import { useId, useState, type ReactNode } from "react";
 import SectionLabel from "@/components/ui/SectionLabel";
 import RuleJunction from "@/components/ui/RuleJunction";
 
-const TRANSITION_MS = 400;
-
 function Chevron() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -67,20 +65,7 @@ export default function RuleAccordion({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(defaultOpen);
-  // True only while the rows transition is actually running. Drives two
-  // things that must NOT be tied to `open` alone:
-  //
-  // - overflow. Clipping is needed while the content slides, but the content
-  //   carries junction marks that sit half outside the frame's own width, so
-  //   leaving it clipped once open would shave them off.
-  // - visibility. Hiding collapsed content takes it out of the tab order,
-  //   but applying it during the collapse would make the content vanish
-  //   instead of sliding away.
-  const [animating, setAnimating] = useState(false);
   const contentId = useId();
-
-  const clipped = !open || animating;
-  const closed = !open && !animating;
 
   return (
     <>
@@ -88,10 +73,7 @@ export default function RuleAccordion({
 
       <button
         type="button"
-        onClick={() => {
-          setAnimating(true);
-          setOpen((v) => !v);
-        }}
+        onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls={contentId}
         className="group block w-full cursor-pointer text-left"
@@ -115,30 +97,20 @@ export default function RuleAccordion({
 
       <Rule />
 
-      {/* grid-template-rows 0fr→1fr, so the content animates to its own
-          height without that height ever being measured or hardcoded. */}
-      <div
-        id={contentId}
-        className="grid transition-[grid-template-rows] ease-[var(--ease-out)] motion-reduce:transition-none"
-        style={{
-          gridTemplateRows: open ? "1fr" : "0fr",
-          transitionDuration: `${TRANSITION_MS}ms`,
-        }}
-        onTransitionEnd={(e) => {
-          if (e.propertyName === "grid-template-rows") setAnimating(false);
-        }}
-      >
-        {/* min-w-0: a grid item defaults to min-width:auto, so it refuses to
-            shrink below its content's intrinsic width — and the carousels
-            are a flex row of fixed-width cards several thousand pixels
-            wide. Without this the column sizes to that instead of to the
-            frame, and the whole section is dragged off to the right. */}
-        <div
-          className={`min-w-0 ${clipped ? "overflow-hidden" : ""}`}
-          style={closed ? { visibility: "hidden" } : undefined}
-        >
-          {children}
-        </div>
+      {/* Toggled outright, with no height animation.
+          grid-template-rows 0fr→1fr was tried here and stuttered: it's some
+          2100px of content across four carousels, and the browser has to
+          re-lay out all of it every frame. Going straight to the end state
+          is the honest version — and it takes the grid with it, along with
+          the min-width:0 that a grid item needs to stop sizing itself to the
+          carousels' intrinsic width, and the overflow/visibility juggling
+          that only existed to keep the junction marks unclipped mid-slide.
+
+          The `hidden` attribute rather than a class: it removes the content
+          from layout, the accessibility tree and the tab order in one go,
+          and nothing here sets a `display` that would override it. */}
+      <div id={contentId} hidden={!open}>
+        {children}
       </div>
     </>
   );
