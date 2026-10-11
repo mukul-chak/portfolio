@@ -62,6 +62,16 @@ export default function RecentWork() {
           </CarouselJunctionButton>
         ))}
       </RuleAccordion>
+
+      {/* Empty for now — the bar, its chevron and the anchor exist so the
+          nav has somewhere to land; the content comes later.
+          sharesRuleAbove: whatever ends Recent work already draws this
+          section's upper boundary — its lower rule when it's shut, its last
+          project divider when it's open — so drawing another here would put
+          two 1px lines against each other. */}
+      <RuleAccordion title="About" anchorId="about" defaultOpen={false} sharesRuleAbove>
+        {null}
+      </RuleAccordion>
     </>
   );
 }

@@ -4,22 +4,23 @@ import { useState, useEffect, useRef } from "react";
 import { EMAIL } from "@/content/site";
 import * as Button from "@/components/ui/Button";
 import LocationTime from "@/components/ui/LocationTime";
-import ProfileDrawer from "@/components/sections/ProfileDrawer";
 import RuleJunction from "@/components/ui/RuleJunction";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { measureNameMark, type NameMark } from "@/lib/measureNameMark";
 import { phase } from "@/lib/phase";
 import type { NameHandoff } from "@/components/sections/BodyName";
 
-// `panel` items open a drawer instead of navigating; everything else is a
-// plain link, so in-page targets are ordinary hrefs and keep anchor
-// behaviour — keyboard, middle-click, the lot — without a scroll handler.
+// All plain links now: in-page targets are ordinary hrefs, so they keep
+// anchor behaviour — keyboard, middle-click, a shareable URL — without a
+// scroll handler. About points at its own accordion rather than opening the
+// drawer it used to; ProfileDrawer and Drawer are deliberately left in the
+// codebase, unwired, for whatever wants them next.
 //
 // Contact keeps the mailto it has always had, pending a decision on what it
 // should actually do.
-const NAV: { label: string; href?: string; panel?: "profile" }[] = [
+const NAV: { label: string; href: string }[] = [
   { label: "Work", href: "#work" },
-  { label: "About", panel: "profile" },
+  { label: "About", href: "#about" },
   { label: "Contact", href: `mailto:${EMAIL}` },
 ];
 
@@ -86,8 +87,6 @@ export default function Header({
   // out instead of vanishing on unmount.
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuRendered, setMenuRendered] = useState(false);
-  // Which nav drawer is open, if any.
-  const [panel, setPanel] = useState<"profile" | null>(null);
   const [handoff, setHandoff] = useState<NameHandoff>({
     progress: 0,
     clearedNav: 1,
@@ -285,16 +284,13 @@ export default function Header({
                 {NAV.map((item) => (
                   <Button.Root
                     key={item.label}
-                    asChild={!item.panel}
+                    asChild
                     variant="neutral"
                     mode="ghost"
                     size="xs"
                     className="text-[17px] font-normal"
-                    {...(item.panel
-                      ? { onClick: () => setPanel(item.panel!) }
-                      : {})}
                   >
-                    {item.panel ? item.label : <a href={item.href}>{item.label}</a>}
+                    <a href={item.href}>{item.label}</a>
                   </Button.Root>
                 ))}
               </nav>
@@ -327,30 +323,16 @@ export default function Header({
                     }`}
                     style={{ transitionTimingFunction: "var(--ease-out)", transformOrigin: "top right" }}
                   >
-                    {NAV.map((item) =>
-                      item.panel ? (
-                        <button
-                          key={item.label}
-                          type="button"
-                          onClick={() => {
-                            setOpen(false);
-                            setPanel(item.panel!);
-                          }}
-                          className="block w-full px-4 py-2.5 text-left text-[15px] text-text-sub-600 hover:bg-card"
-                        >
-                          {item.label}
-                        </button>
-                      ) : (
-                        <a
-                          key={item.label}
-                          href={item.href}
-                          onClick={() => setOpen(false)}
-                          className="block px-4 py-2.5 text-[15px] text-text-sub-600 hover:bg-card"
-                        >
-                          {item.label}
-                        </a>
-                      ),
-                    )}
+                    {NAV.map((item) => (
+                      <a
+                        key={item.label}
+                        href={item.href}
+                        onClick={() => setOpen(false)}
+                        className="block px-4 py-2.5 text-[15px] text-text-sub-600 hover:bg-card"
+                      >
+                        {item.label}
+                      </a>
+                    ))}
                   </div>
                 )}
               </div>
@@ -364,9 +346,6 @@ export default function Header({
         </div>
       </div>
 
-      {/* Portals to <body>, so the header's own stacking context doesn't
-          trap it beneath the page. */}
-      <ProfileDrawer open={panel === "profile"} onClose={() => setPanel(null)} />
     </header>
   );
 }
