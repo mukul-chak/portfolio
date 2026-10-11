@@ -33,7 +33,7 @@ export default function Footer() {
             below sm, two up at sm, and the column padding only applies
             where the separators do — stacked blocks sit flush to the
             content edge instead. */}
-        <div className="relative grid grid-cols-1 gap-y-8 pt-12 pb-10 text-[13px] leading-[1.5] text-text-sub-600 sm:grid-cols-2 sm:gap-x-8 md:grid-cols-4 md:gap-x-0 md:gap-y-0">
+        <div className="relative grid grid-cols-1 gap-y-8 pt-12 pb-10 text-[14px] leading-[1.5] text-text-sub-600 sm:grid-cols-2 sm:gap-x-8 md:grid-cols-4 md:gap-x-0 md:gap-y-0">
           {[25, 50, 75].map((pct) => (
             <div
               key={pct}
@@ -43,10 +43,11 @@ export default function Footer() {
             />
           ))}
 
-          {/* No left padding: the name sits on the outer rule itself. The
-              last column drops its right padding for the same reason, so
-              both outer edges of the footer land on the frame's own lines. */}
-          <div className="md:pr-4">
+          {/* Indented like the other columns rather than sitting on the
+              outer rule, so every column's text starts the same distance
+              from the line to its left. The last column still drops its
+              right padding, so its measure ends on the outer rule. */}
+          <div className="md:px-4">
             <p className="text-text-strong-950">Mukul Chakravarthi</p>
             <p>San Francisco, CA</p>
             <p>{EMAIL}</p>
