@@ -104,7 +104,10 @@ export default function RecentWork() {
               halves would overflow it at 375px. This way the second column
               starts where the email ends and LinkedIn / Are.na line up,
               which plain flex-wrap never did. */}
-          <div className="-ml-2 grid grid-cols-[max-content_1fr] items-center gap-x-4 gap-y-1 md:flex md:flex-wrap md:gap-x-8">
+          {/* justify-items-start: a grid item stretches to its cell by
+              default, and Button.Root centres its own label, so the links
+              sat centred in each column rather than flush left. */}
+          <div className="-ml-2 grid grid-cols-[max-content_1fr] items-center justify-items-start gap-x-4 gap-y-1 md:flex md:flex-wrap md:gap-x-8">
             <CopyEmailButton label={EMAIL} className="px-2 font-normal" />
             {SOCIALS.map((c) => (
               <Button.Root
