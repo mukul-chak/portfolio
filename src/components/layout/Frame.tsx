@@ -36,14 +36,19 @@ export default function Frame({ children }: { children: ReactNode }) {
         aria-hidden
         className="pointer-events-none fixed inset-x-0 bottom-0 z-[16] h-32 bg-gradient-to-t from-background from-20% to-transparent"
       />
-      {/* Horizontal on mobile, vertical from md. The offsets add the safe
-          area to the 24px so the control clears the home indicator and the
-          browser's own bottom chrome, which is what was clipping it. */}
+      {/* Horizontal on mobile, vertical from md.
+          The 24px offsets stay in classes and the safe area is added as
+          margin on top, rather than folded into a calc() for `bottom`.
+          That would tie the two together: if the env() failed to parse,
+          the whole declaration drops and the control loses its offsets
+          altogether instead of just its inset clearance — a fixed element
+          with no bottom/right falls back to its static position, which
+          here is off up the page. */}
       <div
-        className="fixed z-20"
+        className="fixed bottom-6 right-6 z-20"
         style={{
-          bottom: "calc(1.5rem + env(safe-area-inset-bottom))",
-          right: "calc(1.5rem + env(safe-area-inset-right))",
+          marginBottom: "env(safe-area-inset-bottom, 0px)",
+          marginRight: "env(safe-area-inset-right, 0px)",
         }}
       >
         <ThemeToggle orientation="responsive" />

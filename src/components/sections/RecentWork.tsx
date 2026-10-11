@@ -107,8 +107,8 @@ export default function RecentWork() {
           {/* justify-items-start: a grid item stretches to its cell by
               default, and Button.Root centres its own label, so the links
               sat centred in each column rather than flush left. */}
-          <div className="-ml-2 grid grid-cols-[max-content_1fr] items-center justify-items-start gap-x-4 gap-y-1 md:flex md:flex-wrap md:gap-x-8">
-            <CopyEmailButton label={EMAIL} className="px-2 font-normal" />
+          <div className="-ml-2 grid grid-cols-[max-content_1fr] items-center justify-items-start gap-x-4 gap-y-0 md:flex md:flex-wrap md:gap-x-8">
+            <CopyEmailButton label={EMAIL} className="h-8 px-2 font-normal" />
             {SOCIALS.map((c) => (
               <Button.Root
                 key={c.label}
@@ -116,7 +116,7 @@ export default function RecentWork() {
                 variant="neutral"
                 mode="ghost"
                 size="md"
-                className="px-2 font-normal"
+                className="h-8 px-2 font-normal"
               >
                 <a href={c.href}>{c.label}</a>
               </Button.Root>
