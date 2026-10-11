@@ -13,15 +13,12 @@ function Chevron() {
 }
 
 /**
- * A frame-width rule carrying a plus at each vertical it crosses — the outer
- * frame pair and the inner column pair.
+ * A frame-width rule carrying a plus where it meets the outer frame rules.
  *
- * The column marks are addressed as the edges of a box given the same
- * mx-auto max-w-column centring that places the column rules themselves, so
- * the two agree by construction rather than by a measured offset. Layering
- * follows the rule each mark sits on, as everywhere else: z-[18] on the outer
- * rule, which is exempt from the bottom scroll fade, z-[15] on the column
- * rules, which fade with it.
+ * Only the outer pair. The column rules cross these too, but a mark at each
+ * would put four pluses on every accordion edge and crowd the band; the
+ * section's own boundaries read better marked at the frame. z-[18] matches
+ * the outer rule these sit on, which is exempt from the bottom scroll fade.
  */
 function Rule({ id, className = "" }: { id?: string; className?: string }) {
   return (
@@ -29,12 +26,6 @@ function Rule({ id, className = "" }: { id?: string; className?: string }) {
       <div className="rule-t" />
       <RuleJunction className="left-[0.5px] top-[0.5px] z-[18] -translate-x-1/2 -translate-y-1/2" />
       <RuleJunction className="right-[0.5px] top-[0.5px] z-[18] translate-x-1/2 -translate-y-1/2" />
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="relative mx-auto h-full max-w-column">
-          <RuleJunction className="pointer-events-auto left-[0.5px] top-[0.5px] z-[15] -translate-x-1/2 -translate-y-1/2" />
-          <RuleJunction className="pointer-events-auto right-[0.5px] top-[0.5px] z-[15] translate-x-1/2 -translate-y-1/2" />
-        </div>
-      </div>
     </div>
   );
 }
@@ -56,12 +47,21 @@ export default function RuleAccordion({
   title,
   anchorId,
   defaultOpen = true,
+  sharesRuleAbove = false,
   children,
 }: {
   title: string;
-  /** id + scroll offset for in-page links; lands on the top rule. */
+  /** id + scroll offset for in-page links; lands on the rule above the title. */
   anchorId?: string;
   defaultOpen?: boolean;
+  /**
+   * Omit this accordion's own upper rule and sit directly beneath whatever
+   * line already ends the section above — the previous accordion's lower
+   * rule when that one is shut, its last divider when it's open. Stacking
+   * two accordions each drawing their own boundary would put two 1px lines
+   * against each other.
+   */
+  sharesRuleAbove?: boolean;
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -69,14 +69,19 @@ export default function RuleAccordion({
 
   return (
     <>
-      <Rule id={anchorId} className={anchorId ? "scroll-mt-[61px]" : ""} />
+      {!sharesRuleAbove && (
+        <Rule id={anchorId} className={anchorId ? "scroll-mt-[61px]" : ""} />
+      )}
 
       <button
+        {...(sharesRuleAbove && anchorId ? { id: anchorId } : {})}
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls={contentId}
-        className="group block w-full cursor-pointer text-left"
+        className={`group block w-full cursor-pointer text-left ${
+          sharesRuleAbove && anchorId ? "scroll-mt-[61px]" : ""
+        }`}
       >
         {/* py-1 against the label's own 24px line box gives the 32px band.
             The row is column-width so the title and chevron line up with the
