@@ -35,7 +35,10 @@ export default function ProfileDrawer({
   onClose: () => void;
 }) {
   return (
-    <Drawer open={open} onClose={onClose} title="Profile">
+    // Titled About, matching the nav item that opens it. The component and
+    // its `panel` id stay "profile" — that's the content, and renaming them
+    // would churn every call site for a label change.
+    <Drawer open={open} onClose={onClose} title="About">
       <div className="relative pt-4 pb-20">
         <div
           aria-hidden
