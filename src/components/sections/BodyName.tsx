@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import { phase } from "@/lib/phase";
+import Avatar from "@/components/ui/Avatar";
 
 // The header's own height — the y at which something has passed below the nav.
 const TRIGGER_Y = 45;
@@ -87,7 +88,13 @@ export default function BodyName() {
 
   return (
     <div style={{ opacity: 1 - phase(progress, enteredNav, clearedNav) }}>
-      <h1 ref={ref} className="pt-[140px] text-[18px] font-medium text-text-strong-950">
+      {/* 84 + 32 + 24 = the 140px this h1 used to carry as its own top
+          padding, so the name stays exactly where it was and the header
+          handoff — which measures this element's position — is untouched. */}
+      <div className="pt-[84px]">
+        <Avatar />
+      </div>
+      <h1 ref={ref} className="mt-6 text-[18px] font-medium text-text-strong-950">
         Mukul Chakravarthi
       </h1>
       <p className="text-[18px] font-normal text-text-sub-600">Product Designer</p>

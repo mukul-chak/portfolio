@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import SectionLabel from "@/components/ui/SectionLabel";
 import RuleJunction from "@/components/ui/RuleJunction";
 
@@ -11,6 +11,14 @@ import RuleJunction from "@/components/ui/RuleJunction";
 // grid-template-rows and stuttered; half the frames and a measured pixel
 // height instead of fr sizing is the difference.
 const DURATION_MS = 200;
+
+/**
+ * Dispatched by in-page nav links so the section they point at opens as well
+ * as scrolls. A plain hash change can't carry this on its own: clicking the
+ * same link twice leaves the hash untouched and fires no event, so a section
+ * closed by hand would never reopen from the nav.
+ */
+export const SECTION_TARGET_EVENT = "section-target";
 
 function Chevron() {
   return (
@@ -84,14 +92,24 @@ export default function RuleAccordion({
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
-  function toggle() {
+  // Mirrors `open` for setSection, which has to stay referentially stable so
+  // the listener effect below isn't torn down and re-run on every toggle —
+  // re-running it would re-check the hash and reopen a section the visitor
+  // had just closed by hand.
+  const openRef = useRef(open);
+  useEffect(() => {
+    openRef.current = open;
+  }, [open]);
+
+  const setSection = useCallback((next: boolean) => {
+    if (next === openRef.current) return;
     const el = contentRef.current;
     if (!el) {
-      setOpen((v) => !v);
+      setOpen(next);
       return;
     }
     window.clearTimeout(timer.current);
-    const opening = !open;
+    const opening = next;
     setAnimating(true);
 
     if (opening) {
@@ -127,7 +145,31 @@ export default function RuleAccordion({
       setAnimating(false);
       if (opening) setHeight("auto");
     }, DURATION_MS + 60);
-  }
+  }, []);
+
+  // Open when this section is the target of an in-page link. The hash is
+  // read once on mount, for someone arriving on /#contact directly; after
+  // that it's driven by events, so re-renders can't reopen a closed section.
+  useEffect(() => {
+    if (!anchorId) return;
+    if (window.location.hash.slice(1) === anchorId) setSection(true);
+  }, [anchorId, setSection]);
+
+  useEffect(() => {
+    if (!anchorId) return;
+    const onHash = () => {
+      if (window.location.hash.slice(1) === anchorId) setSection(true);
+    };
+    const onTarget = (e: Event) => {
+      if ((e as CustomEvent<string>).detail === anchorId) setSection(true);
+    };
+    window.addEventListener("hashchange", onHash);
+    window.addEventListener(SECTION_TARGET_EVENT, onTarget);
+    return () => {
+      window.removeEventListener("hashchange", onHash);
+      window.removeEventListener(SECTION_TARGET_EVENT, onTarget);
+    };
+  }, [anchorId, setSection]);
 
   return (
     <>
@@ -138,7 +180,7 @@ export default function RuleAccordion({
       <button
         {...(sharesRuleAbove && anchorId ? { id: anchorId } : {})}
         type="button"
-        onClick={toggle}
+        onClick={() => setSection(!openRef.current)}
         aria-expanded={open}
         aria-controls={contentId}
         className={`group relative block w-full cursor-pointer text-left ${

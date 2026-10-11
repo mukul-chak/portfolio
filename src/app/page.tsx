@@ -8,6 +8,7 @@ import BodyName from "@/components/sections/BodyName";
 import RecentWork from "@/components/sections/RecentWork";
 import CopyEmail from "@/components/CopyEmail";
 import BottomScrim from "@/components/layout/BottomScrim";
+import Footer from "@/components/layout/Footer";
 
 export default async function Home() {
   // Vercel injects geo headers at the edge — no third-party API, no rate limits.
@@ -18,7 +19,8 @@ export default async function Home() {
   const tz = h.get("x-vercel-ip-timezone") ?? undefined;
 
   return (
-    <Frame>
+    <>
+      <Frame>
       <BottomScrim />
       <CopyEmail />
       <Header city={city} tz={tz} />
@@ -61,13 +63,15 @@ export default async function Home() {
             </Rail>
           </HeaderRuleConnector>
           <RecentWork />
-          {/* Trailing room. 96px left a collapsed Recent work sitting on
-              the very bottom edge on short viewports — below the fold at
-              scroll-top, and under the bottom fade once you got there.
-              This is enough to scroll the last bar clear of both. */}
-          <div className="h-[32vh]" />
+          {/* The footer provides the trailing room now, so this is just the
+              gap between the last section and the band — the 32vh that used
+              to be here existed only to keep a collapsed bar off the very
+              bottom edge, which the footer does by being there. */}
+          <div className="h-14" />
         </div>
       </div>
-    </Frame>
+      </Frame>
+      <Footer />
+    </>
   );
 }

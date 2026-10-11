@@ -1,28 +1,39 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { EMAIL } from "@/content/site";
 import * as Button from "@/components/ui/Button";
 import LocationTime from "@/components/ui/LocationTime";
 import RuleJunction from "@/components/ui/RuleJunction";
+import { SECTION_TARGET_EVENT } from "@/components/ui/RuleAccordion";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { measureNameMark, type NameMark } from "@/lib/measureNameMark";
 import { phase } from "@/lib/phase";
 import type { NameHandoff } from "@/components/sections/BodyName";
 
-// All plain links now: in-page targets are ordinary hrefs, so they keep
-// anchor behaviour — keyboard, middle-click, a shareable URL — without a
-// scroll handler. About points at its own accordion rather than opening the
-// drawer it used to; ProfileDrawer and Drawer are deliberately left in the
-// codebase, unwired, for whatever wants them next.
+// All plain links: in-page targets are ordinary hrefs, so they keep anchor
+// behaviour — keyboard, middle-click, a shareable URL — without a scroll
+// handler. ProfileDrawer and Drawer are left in the codebase, unwired, for
+// whatever wants them next.
 //
-// Contact keeps the mailto it has always had, pending a decision on what it
-// should actually do.
+// Contact points at its own section rather than a mailto; the address lives
+// inside it, and copies rather than opening a mail client.
 const NAV: { label: string; href: string }[] = [
   { label: "Work", href: "#work" },
   { label: "About", href: "#about" },
-  { label: "Contact", href: `mailto:${EMAIL}` },
+  { label: "Contact", href: "#contact" },
 ];
+
+/**
+ * Tell the targeted section to open, alongside the browser's own scroll.
+ * Dispatched on click rather than left to `hashchange`, which doesn't fire
+ * when the hash is already the one being clicked.
+ */
+function targetSection(href: string) {
+  if (!href.startsWith("#")) return;
+  window.dispatchEvent(
+    new CustomEvent(SECTION_TARGET_EVENT, { detail: href.slice(1) }),
+  );
+}
 
 const FULL_NAME = "Mukul Chakravarthi";
 
@@ -290,7 +301,9 @@ export default function Header({
                     size="xs"
                     className="text-[17px] font-normal"
                   >
-                    <a href={item.href}>{item.label}</a>
+                    <a href={item.href} onClick={() => targetSection(item.href)}>
+                      {item.label}
+                    </a>
                   </Button.Root>
                 ))}
               </nav>
@@ -327,7 +340,10 @@ export default function Header({
                       <a
                         key={item.label}
                         href={item.href}
-                        onClick={() => setOpen(false)}
+                        onClick={() => {
+                          setOpen(false);
+                          targetSection(item.href);
+                        }}
                         className="block px-4 py-2.5 text-[15px] text-text-sub-600 hover:bg-card"
                       >
                         {item.label}

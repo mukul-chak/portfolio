@@ -17,10 +17,17 @@ export async function copyEmailWithToast() {
   if (!ok) return false;
   toast.custom(
     () => (
-      <div
-        className="flex w-[260px] items-start gap-3 rounded border border-rule bg-background px-4 py-3"
-        style={{ boxShadow: "var(--shadow-tooltip)" }}
-      >
+      // AlignUI's alert at its default `small`, which is what their toast is
+      // built from: px-2.5 py-2, gap-2, rounded-lg, and the stroke variant's
+      // shadow-regular-md.
+      //
+      // No fixed width — their alerts size to content, and the 260px this
+      // used to carry left 45px of empty space to the right of the longest
+      // line.
+      //
+      // An inset ring rather than a border: a 1px border would add 2px back
+      // to each axis of a box that now has no slack to absorb it.
+      <div className="inset-ring-1 inset-ring-stroke-soft-200 flex items-start gap-2 rounded-[2px] bg-background px-2.5 py-2 shadow-regular-md">
         <svg className="mt-0.5 shrink-0" width="16" height="16" viewBox="0 0 16 16" fill="none">
           {/* No exact AlignUI 700 tier (same gap flagged for the
               header MC animation earlier) — strong-950/white-0 is the
@@ -41,8 +48,8 @@ export async function copyEmailWithToast() {
           />
         </svg>
         <div>
-          <p className="text-[14px] font-medium text-text-strong-950">Email copied</p>
-          <p className="text-[14px] text-text-sub-600">{EMAIL}</p>
+          <p className="text-label-sm text-text-strong-950">Email copied</p>
+          <p className="text-paragraph-sm text-text-sub-600">{EMAIL}</p>
         </div>
       </div>
     ),
