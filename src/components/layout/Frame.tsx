@@ -9,7 +9,13 @@ import ThemeToggle from "@/components/ui/ThemeToggle";
  */
 export default function Frame({ children }: { children: ReactNode }) {
   return (
-    <div className="relative mx-auto min-h-screen max-w-frame px-5 sm:px-8 xl:px-0">
+    // No min-h-screen. It filled the viewport back when the page ended
+    // here, but with a footer below it pads this container to the full
+    // height on a short page — and that filler lands between the last
+    // ruled gap and the footer, so the column verticals stopped short of
+    // the band with blank space under them. The footer is the page's
+    // bottom now, so the height comes from the content.
+    <div className="relative mx-auto max-w-frame px-5 sm:px-8 xl:px-0">
       {/* Anchor for Bio's hover-preview portal. */}
       <div id="bio-preview-anchor" className="relative" />
       {/* Spotlight scrim: a translucent layer over the whole page, shown only
