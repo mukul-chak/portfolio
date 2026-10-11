@@ -84,7 +84,7 @@ export default function RecentWork() {
         {null}
       </RuleAccordion>
 
-      <RuleAccordion title="Contact" defaultOpen={false} sharesRuleAbove>
+      <RuleAccordion title="Contact" anchorId="contact" defaultOpen={false} sharesRuleAbove>
         {/* Ghost is the tertiary mode here — no container until hover,
             which is what the row should read as.
             px-2 against the default px-4, with the row pulled back by the
