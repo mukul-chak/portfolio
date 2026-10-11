@@ -27,7 +27,7 @@ export async function copyEmailWithToast() {
       //
       // An inset ring rather than a border: a 1px border would add 2px back
       // to each axis of a box that now has no slack to absorb it.
-      <div className="inset-ring-1 inset-ring-stroke-soft-200 flex items-start gap-2 rounded-lg bg-background px-2.5 py-2 shadow-regular-md">
+      <div className="inset-ring-1 inset-ring-stroke-soft-200 flex items-start gap-2 rounded-[2px] bg-background px-2.5 py-2 shadow-regular-md">
         <svg className="mt-0.5 shrink-0" width="16" height="16" viewBox="0 0 16 16" fill="none">
           {/* No exact AlignUI 700 tier (same gap flagged for the
               header MC animation earlier) — strong-950/white-0 is the
