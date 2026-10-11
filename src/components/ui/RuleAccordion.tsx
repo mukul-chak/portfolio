@@ -28,7 +28,7 @@ function Chevron() {
  * section's own boundaries read better marked at the frame. z-[18] matches
  * the outer rule these sit on, which is exempt from the bottom scroll fade.
  */
-function Rule({ id, className = "" }: { id?: string; className?: string }) {
+export function AccordionRule({ id, className = "" }: { id?: string; className?: string }) {
   return (
     <div id={id} className={`relative ${className}`}>
       <div className="rule-t" />
@@ -132,7 +132,7 @@ export default function RuleAccordion({
   return (
     <>
       {!sharesRuleAbove && (
-        <Rule id={anchorId} className={anchorId ? "scroll-mt-[61px]" : ""} />
+        <AccordionRule id={anchorId} className={anchorId ? "scroll-mt-[61px]" : ""} />
       )}
 
       <button
@@ -178,7 +178,7 @@ export default function RuleAccordion({
         </div>
       </button>
 
-      <Rule />
+      <AccordionRule />
 
       {/* overflow is hidden while closed and while moving, but released
           once open: the content carries junction marks that sit half

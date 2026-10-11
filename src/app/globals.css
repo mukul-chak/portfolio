@@ -980,7 +980,7 @@ body {
 }
 
 /* Dotted horizontal rule (4px stroke / 2px gap) — matches rule-x. */
-/* 45-degree hatch, lines 16px apart. The period of a repeating gradient is
+/* 45-degree hatch, lines 12px apart. The period of a repeating gradient is
    measured perpendicular to its stripes, so 16px here is the gap you see,
    not the diagonal distance.
    Two directions rather than one that rotates: a background-image can't be
@@ -990,7 +990,7 @@ body {
   background-image: repeating-linear-gradient(
     45deg,
     var(--color-hatch) 0 1px,
-    transparent 1px 16px
+    transparent 1px 12px
   );
 }
 
@@ -998,7 +998,7 @@ body {
   background-image: repeating-linear-gradient(
     -45deg,
     var(--color-hatch) 0 1px,
-    transparent 1px 16px
+    transparent 1px 12px
   );
 }
 

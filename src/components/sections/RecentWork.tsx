@@ -2,15 +2,15 @@ import Rail from "@/components/layout/Rail";
 import ProjectText from "@/components/sections/ProjectText";
 import Filmstrip from "@/components/sections/Filmstrip";
 import CarouselJunctionButton from "@/components/sections/CarouselJunctionButton";
-import RuleAccordion from "@/components/ui/RuleAccordion";
+import RuleAccordion, { AccordionRule } from "@/components/ui/RuleAccordion";
+import CopyEmailButton from "@/components/ui/CopyEmailButton";
 import * as Button from "@/components/ui/Button";
 import { projects } from "@/content/projects";
 import { EMAIL } from "@/content/site";
 
-// Placeholder destinations — the real URLs land later. Email keeps the
-// address the rest of the site already uses.
-const CONTACTS: { label: string; href: string }[] = [
-  { label: EMAIL, href: `mailto:${EMAIL}` },
+// Placeholder destinations — the real URLs land later. The email isn't
+// here: it copies rather than navigates, so it's a button (see below).
+const SOCIALS: { label: string; href: string }[] = [
   { label: "LinkedIn", href: "#" },
   { label: "X (Twitter)", href: "#" },
   { label: "Are.na", href: "#" },
@@ -92,9 +92,14 @@ export default function RecentWork() {
             inset, level with the titles above it, while leaving the hover
             fill 8px clear of the column rule. At the default padding the
             fill would sit right on the rule. */}
-        <div className="mx-auto max-w-column px-4 pt-4 pb-6">
+        {/* A Rail, so the column verticals run down either side of the
+            links the way they do beside every other block on the page.
+            They start at the accordion's lower rule and terminate on the
+            closing one below, rather than ending in mid-air. */}
+        <Rail className="pt-4 pb-6" elevateRule>
           <div className="-ml-2 flex flex-wrap items-center gap-x-8 gap-y-1">
-            {CONTACTS.map((c) => (
+            <CopyEmailButton label={EMAIL} className="px-2 font-normal" />
+            {SOCIALS.map((c) => (
               <Button.Root
                 key={c.label}
                 asChild
@@ -107,7 +112,10 @@ export default function RecentWork() {
               </Button.Root>
             ))}
           </div>
-        </div>
+        </Rail>
+        {/* Closes the section, and gives the rail's verticals something to
+            land on. Inside the content, so it collapses with it. */}
+        <AccordionRule />
       </RuleAccordion>
     </>
   );
