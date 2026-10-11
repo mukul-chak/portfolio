@@ -43,10 +43,10 @@ export default function Footer() {
             />
           ))}
 
-          {/* Indented like the other columns rather than sitting on the
-              outer rule, so every column's text starts the same distance
-              from the line to its left. The last column still drops its
-              right padding, so its measure ends on the outer rule. */}
+          {/* Every column carries the same 16px on both sides, including
+              the outer two — so the first column's text and the last
+              column's measure sit the same distance inside the frame's
+              own rules rather than on them. */}
           <div className="md:px-4">
             <p className="text-text-strong-950">Mukul Chakravarthi</p>
             <p>San Francisco, CA</p>
@@ -80,7 +80,7 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="md:pl-4">
+          <div className="md:px-4">
             <p>
               The internet is a vast space with eons of interesting content. I’m
               grateful you chose to spend some of yours here.

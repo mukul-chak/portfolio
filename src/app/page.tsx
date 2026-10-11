@@ -63,11 +63,17 @@ export default async function Home() {
             </Rail>
           </HeaderRuleConnector>
           <RecentWork />
-          {/* The footer provides the trailing room now, so this is just the
-              gap between the last section and the band — the 32vh that used
-              to be here existed only to keep a collapsed bar off the very
-              bottom edge, which the footer does by being there. */}
-          <div className="h-14" />
+          {/* The gap between the last section and the footer band — the
+              32vh that used to be here existed only to keep a collapsed
+              bar off the very bottom edge, which the footer now does by
+              being there.
+              Ruled, so the column verticals carry on through it: they
+              start at whatever closes the last accordion and stop at the
+              footer's top edge, rather than the page losing them for the
+              last 56px before the band. */}
+          <Rail elevateRule>
+            <div className="h-14" />
+          </Rail>
         </div>
       </div>
       </Frame>
