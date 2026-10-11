@@ -97,7 +97,14 @@ export default function RecentWork() {
             They start at the accordion's lower rule and terminate on the
             closing one below, rather than ending in mid-air. */}
         <Rail className="pt-4 pb-6" elevateRule>
-          <div className="-ml-2 flex flex-wrap items-center gap-x-8 gap-y-1">
+          {/* Two aligned columns on mobile, one row from md.
+              grid-cols-[max-content_1fr] rather than grid-cols-2: the first
+              column sizes to the email, which is far the longest label and
+              carries whitespace-nowrap from the button base, so equal
+              halves would overflow it at 375px. This way the second column
+              starts where the email ends and LinkedIn / Are.na line up,
+              which plain flex-wrap never did. */}
+          <div className="-ml-2 grid grid-cols-[max-content_1fr] items-center gap-x-4 gap-y-1 md:flex md:flex-wrap md:gap-x-8">
             <CopyEmailButton label={EMAIL} className="px-2 font-normal" />
             {SOCIALS.map((c) => (
               <Button.Root

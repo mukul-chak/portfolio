@@ -36,8 +36,17 @@ export default function Frame({ children }: { children: ReactNode }) {
         aria-hidden
         className="pointer-events-none fixed inset-x-0 bottom-0 z-[16] h-32 bg-gradient-to-t from-background from-20% to-transparent"
       />
-      <div className="fixed bottom-6 right-6 z-20">
-        <ThemeToggle orientation="vertical" />
+      {/* Horizontal on mobile, vertical from md. The offsets add the safe
+          area to the 24px so the control clears the home indicator and the
+          browser's own bottom chrome, which is what was clipping it. */}
+      <div
+        className="fixed z-20"
+        style={{
+          bottom: "calc(1.5rem + env(safe-area-inset-bottom))",
+          right: "calc(1.5rem + env(safe-area-inset-right))",
+        }}
+      >
+        <ThemeToggle orientation="responsive" />
       </div>
       {children}
     </div>

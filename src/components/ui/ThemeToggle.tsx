@@ -38,7 +38,8 @@ const OPTIONS = [
 export default function ThemeToggle({
   orientation = "horizontal",
 }: {
-  orientation?: "horizontal" | "vertical";
+  /** "responsive" lays out as a row on mobile and a column from md. */
+  orientation?: "horizontal" | "vertical" | "responsive";
 }) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -48,7 +49,11 @@ export default function ThemeToggle({
     <div
       className={[
         "flex items-center rounded-full bg-bg-weak-50 p-1 gap-0.5",
-        orientation === "vertical" ? "flex-col" : "flex-row",
+        orientation === "vertical"
+          ? "flex-col"
+          : orientation === "responsive"
+            ? "flex-row md:flex-col"
+            : "flex-row",
       ].join(" ")}
     >
       {OPTIONS.map(({ value, label, Icon }) => {
@@ -59,7 +64,10 @@ export default function ThemeToggle({
             onClick={() => setTheme(value)}
             aria-label={label}
             className={[
-              "flex h-7 w-7 items-center justify-center rounded-full transition-colors duration-100",
+              // 40px on touch, back to 28 from md where there's a cursor.
+              // 28 clears WCAG 2.2's 24px minimum but is a mean target for
+              // a thumb, and this control sits in the corner of the screen.
+              "flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-100 md:h-7 md:w-7",
               active
                 ? "bg-bg-white-0 text-text-strong-950 shadow-xs"
                 : "text-text-soft-400 hover:text-text-sub-600",
