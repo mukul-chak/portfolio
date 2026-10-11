@@ -61,7 +61,11 @@ export default async function Home() {
             </Rail>
           </HeaderRuleConnector>
           <RecentWork />
-          <div className="h-24" />
+          {/* Trailing room. 96px left a collapsed Recent work sitting on
+              the very bottom edge on short viewports — below the fold at
+              scroll-top, and under the bottom fade once you got there.
+              This is enough to scroll the last bar clear of both. */}
+          <div className="h-[32vh]" />
         </div>
       </div>
     </Frame>
