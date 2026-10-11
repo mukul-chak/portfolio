@@ -1,8 +1,16 @@
 "use client";
 
-import { useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import SectionLabel from "@/components/ui/SectionLabel";
 import RuleJunction from "@/components/ui/RuleJunction";
+
+// 200ms, per the accordion recipe. Height is the one layout property
+// sanctioned for this — there's no transform equivalent for "take up less
+// room" — but it costs layout on every frame, so the duration buys as few
+// of those frames as possible. The first attempt at this ran 400ms on
+// grid-template-rows and stuttered; half the frames and a measured pixel
+// height instead of fr sizing is the difference.
+const DURATION_MS = 200;
 
 function Chevron() {
   return (
@@ -65,7 +73,61 @@ export default function RuleAccordion({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  // "auto" once settled open, so the section can reflow — the carousels and
+  // rules inside are measured at runtime and must not be pinned to a stale
+  // pixel height. Only ever a number mid-transition.
+  const [height, setHeight] = useState(defaultOpen ? "auto" : "0px");
+  const [animating, setAnimating] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const timer = useRef<number | undefined>(undefined);
   const contentId = useId();
+
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  function toggle() {
+    const el = contentRef.current;
+    if (!el) {
+      setOpen((v) => !v);
+      return;
+    }
+    window.clearTimeout(timer.current);
+    const opening = !open;
+    setAnimating(true);
+
+    if (opening) {
+      // Measured rather than animating to `auto`, which isn't interpolable.
+      // Readable while collapsed because the content is hidden with
+      // visibility, not display — it stays laid out, so scrollHeight is real.
+      setOpen(true);
+      setHeight(`${el.scrollHeight}px`);
+    } else {
+      // Pin the height, then commit it, before React re-renders with 0: a
+      // transition needs a resolved starting value and `auto` isn't one.
+      //
+      // Set on the node and flushed with a forced reflow rather than
+      // deferred to requestAnimationFrame. rAF is throttled whenever the
+      // page isn't actively painting — a background tab, an occluded
+      // window — and the callback can land a second late or not at all,
+      // leaving the section pinned open until it does. This path has to be
+      // synchronous with the click.
+      //
+      // The rendered height, not scrollHeight: the two differ by a pixel or
+      // ten here, and pinning to the larger one jumps before it moves.
+      el.style.height = `${el.getBoundingClientRect().height}px`;
+      void el.offsetHeight;
+      setOpen(false);
+      setHeight("0px");
+    }
+
+    // Settled by the clock rather than transitionend: height and opacity
+    // finish separately, and whichever fired first would otherwise clear
+    // the state — dropping overflow back, or swapping height to auto —
+    // while the other was still running.
+    timer.current = window.setTimeout(() => {
+      setAnimating(false);
+      if (opening) setHeight("auto");
+    }, DURATION_MS + 60);
+  }
 
   return (
     <>
@@ -76,7 +138,7 @@ export default function RuleAccordion({
       <button
         {...(sharesRuleAbove && anchorId ? { id: anchorId } : {})}
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={toggle}
         aria-expanded={open}
         aria-controls={contentId}
         className={`group block w-full cursor-pointer text-left ${
@@ -102,19 +164,25 @@ export default function RuleAccordion({
 
       <Rule />
 
-      {/* Toggled outright, with no height animation.
-          grid-template-rows 0fr→1fr was tried here and stuttered: it's some
-          2100px of content across four carousels, and the browser has to
-          re-lay out all of it every frame. Going straight to the end state
-          is the honest version — and it takes the grid with it, along with
-          the min-width:0 that a grid item needs to stop sizing itself to the
-          carousels' intrinsic width, and the overflow/visibility juggling
-          that only existed to keep the junction marks unclipped mid-slide.
-
-          The `hidden` attribute rather than a class: it removes the content
-          from layout, the accessibility tree and the tab order in one go,
-          and nothing here sets a `display` that would override it. */}
-      <div id={contentId} hidden={!open}>
+      {/* overflow is hidden while closed and while moving, but released
+          once open: the content carries junction marks that sit half
+          outside the frame's own width and would be shaved off.
+          visibility, not display, when fully closed — it keeps the content
+          out of the tab order while leaving it laid out, which is what
+          makes scrollHeight readable for the measurement above. */}
+      <div
+        ref={contentRef}
+        id={contentId}
+        className={`transition-[height,opacity] ease-[var(--ease-out)] motion-reduce:transition-[opacity] motion-reduce:duration-150 ${
+          !open || animating ? "overflow-hidden" : ""
+        }`}
+        style={{
+          height,
+          opacity: open ? 1 : 0,
+          transitionDuration: `${DURATION_MS}ms`,
+          visibility: !open && !animating ? "hidden" : undefined,
+        }}
+      >
         {children}
       </div>
     </>
