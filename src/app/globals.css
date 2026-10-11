@@ -912,6 +912,17 @@ body {
   }
 }
 
+/* In-page anchors (the Work nav item) glide rather than jump. Stated as
+   no-preference rather than being switched off under `reduce`, so the jump
+   is what an unknown preference gets — and the whole page scrolls past the
+   bio on the way, which drives the header's name handoff, so a jump would
+   skip an animation the glide plays through. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 /* Spotlight: while Bio's hover-preview portal has content, fade in a
    translucent scrim over the whole page. Pure CSS — reacts to the portal
    target actually having children, no JS state to keep in sync. The preview

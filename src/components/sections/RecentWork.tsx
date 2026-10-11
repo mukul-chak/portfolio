@@ -31,7 +31,13 @@ export default function RecentWork() {
             {/* Full 16px (Rail's own px-4) pulled back, not 4px short of it —
                 this line needs to actually touch both vertical rules, not
                 stop near them. */}
-            <div className="mx-[-16px] rule-t" />
+            {/* #work, the Work nav target. The id sits on the rule rather
+                than on the rail, whose 120px of top padding would otherwise
+                land the viewport on empty space well above anything legible.
+                scroll-mt clears the 45px sticky header and leaves 16px under
+                it, so the rule arrives just below the bar with the label
+                directly beneath it. */}
+            <div id="work" className="mx-[-16px] rule-t scroll-mt-[61px]" />
             <SectionLabel className="mt-1">Recent work</SectionLabel>
           </div>
           <div className="pt-[40px]">

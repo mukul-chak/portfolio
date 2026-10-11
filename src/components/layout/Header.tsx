@@ -11,12 +11,16 @@ import { measureNameMark, type NameMark } from "@/lib/measureNameMark";
 import { phase } from "@/lib/phase";
 import type { NameHandoff } from "@/components/sections/BodyName";
 
-// `panel` items open a drawer instead of navigating. Profile is the only one
-// for now; Writing can take a panel id the same way once it has content.
+// `panel` items open a drawer instead of navigating; everything else is a
+// plain link, so in-page targets are ordinary hrefs and keep anchor
+// behaviour — keyboard, middle-click, the lot — without a scroll handler.
+//
+// Contact keeps the mailto it has always had, pending a decision on what it
+// should actually do.
 const NAV: { label: string; href?: string; panel?: "profile" }[] = [
-  { label: "Profile", panel: "profile" },
-  { label: "Writing", href: "#" },
-  { label: "Email", href: `mailto:${EMAIL}` },
+  { label: "Work", href: "#work" },
+  { label: "About", panel: "profile" },
+  { label: "Contact", href: `mailto:${EMAIL}` },
 ];
 
 const FULL_NAME = "Mukul Chakravarthi";
