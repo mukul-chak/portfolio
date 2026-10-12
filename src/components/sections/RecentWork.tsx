@@ -3,6 +3,7 @@ import ProjectText from "@/components/sections/ProjectText";
 import Filmstrip from "@/components/sections/Filmstrip";
 import CarouselJunctionButton from "@/components/sections/CarouselJunctionButton";
 import RuleAccordion, { AccordionRule } from "@/components/ui/RuleAccordion";
+import Resume from "@/components/sections/Resume";
 import CopyEmailButton from "@/components/ui/CopyEmailButton";
 import * as Button from "@/components/ui/Button";
 import { projects } from "@/content/projects";
@@ -74,14 +75,16 @@ export default function RecentWork() {
         ))}
       </RuleAccordion>
 
-      {/* Empty for now — the bar, its chevron and the anchor exist so the
-          nav has somewhere to land; the content comes later.
-          sharesRuleAbove: whatever ends Recent work already draws this
+      {/* sharesRuleAbove: whatever ends Recent work already draws this
           section's upper boundary — its lower rule when it's shut, its last
           project divider when it's open — so drawing another here would put
           two 1px lines against each other. */}
       <RuleAccordion title="About" anchorId="about" defaultOpen={false} sharesRuleAbove>
-        {null}
+        <Resume />
+        {/* Closes the section and gives the rail's verticals something to
+            land on, as Contact's does. Inside the content, so it collapses
+            with it rather than stranding a line under a shut accordion. */}
+        <AccordionRule />
       </RuleAccordion>
 
       <RuleAccordion title="Contact" anchorId="contact" defaultOpen={false} sharesRuleAbove>
