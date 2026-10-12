@@ -1,7 +1,17 @@
+"use client";
+
 import { Fragment } from "react";
 import Rail from "@/components/layout/Rail";
+import InlineLink from "@/components/ui/InlineLink";
+import { useHoverPreview } from "@/components/ui/HoverPreview";
 import SectionLabel from "@/components/ui/SectionLabel";
 import { summary, roles, education } from "@/content/resume";
+
+const PREVIEW_ORDER = [...roles.map((r) => r.id), ...education.map((s) => s.id)];
+
+// Titles keep their strong-950 at rest; InlineLink supplies the underline,
+// the hover darkening and the focus ring, as it does in the bio.
+const TITLE_LINK = "text-text-strong-950";
 
 const ENTRY_TEXT = "text-[17px] sm:text-[18px] leading-[1.5] text-text-sub-600";
 
@@ -29,6 +39,8 @@ const ENTRY_TEXT = "text-[17px] sm:text-[18px] leading-[1.5] text-text-sub-600";
  * a junction, like every other one on the page.
  */
 export default function Resume() {
+  const preview = useHoverPreview(PREVIEW_ORDER);
+
   return (
     <>
       <Rail className="pt-8 pb-10" elevateRule>
@@ -47,7 +59,15 @@ export default function Resume() {
             <div className="mx-[-16px] rule-t" />
             <SectionLabel className="mt-4 tabular-nums lg:hidden">{role.dates}</SectionLabel>
             <h3 className="mt-2 text-[17px] sm:text-[18px] font-medium leading-none text-text-strong-950 lg:mt-4">
-              {role.org}
+              <InlineLink
+                href={role.href}
+                external
+                onMouseEnter={preview.show(role.id)}
+                onMouseLeave={preview.hide}
+                className={`${TITLE_LINK} ${preview.raised(role.id)}`}
+              >
+                {role.org}
+              </InlineLink>
             </h3>
             <p className={`mt-1 ${ENTRY_TEXT}`}>{role.title}</p>
             <ul className="mt-3 space-y-2">
@@ -109,13 +129,23 @@ export default function Resume() {
             >
               <SectionLabel className="tabular-nums lg:hidden">{school.dates}</SectionLabel>
               <h3 className="mt-2 text-[17px] sm:text-[18px] font-medium leading-none text-text-strong-950 lg:mt-0">
-                {school.org}
+                <InlineLink
+                  href={school.href}
+                  external
+                  onMouseEnter={preview.show(school.id)}
+                  onMouseLeave={preview.hide}
+                  className={`${TITLE_LINK} ${preview.raised(school.id)}`}
+                >
+                  {school.org}
+                </InlineLink>
               </h3>
               <p className={`mt-1 ${ENTRY_TEXT}`}>{school.degree}</p>
             </div>
           </Fragment>
         ))}
       </div>
+
+      {preview.panel}
     </>
   );
 }
