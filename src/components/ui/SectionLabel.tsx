@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import { cn } from "@/utils/cn";
 
 /** Small section label (e.g. Recent work). */
 export default function SectionLabel({
@@ -9,7 +10,7 @@ export default function SectionLabel({
   className?: string;
 }) {
   return (
-    <p className={`font-[family-name:var(--font-eyebrow)] text-[16px] text-text-sub-600 ${className}`}>
+    <p className={cn("font-[family-name:var(--font-eyebrow)] text-[16px] text-text-sub-600", className)}>
       {children}
     </p>
   );
