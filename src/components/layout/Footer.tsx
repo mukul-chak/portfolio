@@ -30,10 +30,10 @@ export default function Footer() {
       <div className="mx-auto max-w-frame px-5 sm:px-8 xl:px-0">
         {/* Four columns only from md. At 375px they'd be 84px each, which
             squeezed the colophon into a 68px measure 410px tall. Stacked
-            below sm, two up at sm, and the column padding only applies
-            where the separators do — stacked blocks sit flush to the
-            content edge instead. */}
-        <div className="relative grid grid-cols-1 gap-y-8 pt-12 pb-10 text-[14px] leading-[1.5] text-text-sub-600 sm:grid-cols-2 sm:gap-x-8 md:grid-cols-4 md:gap-x-0 md:gap-y-0">
+            below sm, two up at sm. The 16px column padding applies at every
+            width, matching the accordion bars' inset from the rules; with
+            no column gap, two padded columns at sm still sit 32px apart. */}
+        <div className="relative grid grid-cols-1 gap-y-8 pt-12 pb-10 text-[14px] leading-[1.5] text-text-sub-600 sm:grid-cols-2 md:grid-cols-4 md:gap-y-0">
           {[25, 50, 75].map((pct) => (
             <div
               key={pct}
@@ -47,13 +47,13 @@ export default function Footer() {
               the outer two — so the first column's text and the last
               column's measure sit the same distance inside the frame's
               own rules rather than on them. */}
-          <div className="md:px-4">
+          <div className="px-4">
             <p className="text-text-strong-950">Mukul Chakravarthi</p>
             <p>San Francisco, CA</p>
             <p>{EMAIL}</p>
           </div>
 
-          <div className="md:px-4">
+          <div className="px-4">
             {SOCIALS.map((s) => (
               <p key={s.label}>
                 <a
@@ -66,7 +66,7 @@ export default function Footer() {
             ))}
           </div>
 
-          <div className="md:px-4">
+          <div className="px-4">
             <p>
               Set in Reform Grotesk and Monument by Forgotten Shapes. Built with
               Next.js and Tailwind on AlignUI, deployed on Vercel.{" "}
@@ -80,7 +80,7 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="md:px-4">
+          <div className="px-4">
             <p>
               The internet is a vast space with eons of interesting content. I’m
               grateful you chose to spend some of yours here.
@@ -90,7 +90,11 @@ export default function Footer() {
 
         <div className="rule-t" />
       </div>
-      <div className="h-6" />
+      {/* Below md the theme toggle is a horizontal bar fixed 24px off the
+          bottom, 48px tall, so it lands on this band at full scroll. 96px
+          = 24 + 48 + 24 clears it with the same 24px gap above as below.
+          From md it stands vertically outside the frame. */}
+      <div className="h-24 md:h-6" />
     </footer>
   );
 }

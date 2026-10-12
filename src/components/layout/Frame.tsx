@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import ScrollFade from "@/components/layout/ScrollFade";
 import TopScrim from "@/components/layout/TopScrim";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 
@@ -38,10 +39,7 @@ export default function Frame({ children }: { children: ReactNode }) {
           under the bottom scroll fade" — but below the wide outer frame
           rule (bumped to z-[17] in page.tsx), which stays crisp/unaffected,
           out of scope for that request. */}
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-[16] h-32 bg-gradient-to-t from-background from-20% to-transparent"
-      />
+      <ScrollFade />
       {/* Horizontal on mobile, vertical from md.
           The 24px offsets stay in classes and the safe area is added as
           margin on top, rather than folded into a calc() for `bottom`.
