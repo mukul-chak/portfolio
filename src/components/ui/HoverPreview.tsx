@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { PREVIEW_CAPTIONS, type PreviewKey } from "@/content/previews";
 
@@ -26,9 +26,15 @@ type ActivePreview = {
   left: number;
   width: number;
   strokeWidth: number;
+  /** The footer's top edge, anchor-relative — the lowest the panel's
+   *  bottom stroke may reach. */
+  maxBottom: number;
 };
 
 const PREVIEW_EXIT_MS = 180;
+
+// The bottom stroke hangs below the panel: mt-3 (12px) plus its 1px border.
+const STROKE_BELOW = 12 + 1;
 
 /**
  * Hover preview for an org name: a panel in the right channel, top on the
@@ -47,6 +53,9 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
   const [rendered, setRendered] = useState<ActivePreview | null>(null);
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  // How far the panel is pulled up to stay clear of the footer (≤ 0).
+  const [lift, setLift] = useState(0);
 
   useEffect(() => setMounted(true), []);
 
@@ -120,9 +129,32 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
       // relative to the panel reduces to a constant -16px.
       const strokeWidth = marginSpace;
 
-      setActive({ key, top, left, width, strokeWidth });
+      // The panel stops at the end of the body: near the footer (a title at
+      // the bottom of the resume, a short viewport) it's pulled up until its
+      // bottom stroke lands on the footer's top edge, rather than running
+      // into the band. Only the limit is known here — the panel's height
+      // depends on its width and caption, so it's measured once rendered.
+      const footer = document.querySelector("footer");
+      const maxBottom = footer
+        ? footer.getBoundingClientRect().top - anchorRect.top
+        : Number.POSITIVE_INFINITY;
+
+      setActive({ key, top, left, width, strokeWidth, maxBottom });
     };
   }
+
+  // Measured before paint, so a lifted panel never shows at its unlifted
+  // position first. The computed height, not offsetHeight or the rect: it
+  // ignores the entrance scale (the rect doesn't) and keeps the fraction
+  // (offsetHeight rounds — 199 for a 198.84px panel, which left the stroke
+  // 0.16px into the footer).
+  useLayoutEffect(() => {
+    const panel = panelRef.current;
+    if (!rendered || !panel) return;
+    const height = parseFloat(getComputedStyle(panel).height) || 0;
+    const bottom = rendered.top + height + STROKE_BELOW;
+    setLift(Math.min(0, rendered.maxBottom - bottom));
+  }, [rendered]);
 
   function hide() {
     setActive(null);
@@ -139,18 +171,30 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
     anchor && rendered
       ? createPortal(
           <div
+            ref={panelRef}
             aria-hidden
             className={`motion-transform pointer-events-none absolute z-[45] hidden md:block transition-[opacity,transform] duration-[180ms] ${
               visible ? "opacity-100 scale-100" : "opacity-0 scale-[0.97]"
             }`}
             style={{
               left: rendered.left,
-              top: rendered.top,
+              top: rendered.top + lift,
               width: rendered.width,
               transitionTimingFunction: "var(--ease-out)",
               transformOrigin: "top left",
             }}
           >
+            {/* Fill: the band between the two strokes, page-coloured so
+                whatever the panel crosses (an accordion's hatch, a rule-t)
+                doesn't show through. It spans the channel like the strokes
+                but stops 1px short of each side, so the column rule and the
+                outer frame rule stay drawn — the panel sits above both
+                (z-45 over z-15/z-17). -z-10 puts it under the panel's own
+                content inside the panel's stacking context. */}
+            <div
+              className="absolute -z-10 -top-3 -bottom-3 bg-background"
+              style={{ left: -15, width: rendered.strokeWidth - 2 }}
+            />
             {/* Solid strokes hugging the panel, 12px above/below — same style
                 as the outer frame's solid stroke (border-rule) — and running
                 edge-to-edge, touching the rail's and frame's vertical rules
