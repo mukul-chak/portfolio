@@ -53,9 +53,20 @@ export default function Resume() {
       <div className="mt-10">
         <div className="mx-[-16px] rule-t" />
         <SectionLabel className="mt-4">Education</SectionLabel>
-        <h3 className="mt-2 text-[18px] font-medium leading-none text-text-strong-950">
-          {education.org}
-        </h3>
+        {education.map((school) => (
+          <div key={school.org} className="mt-4 first-of-type:mt-2">
+            <h3 className="text-[18px] font-medium leading-none text-text-strong-950">
+              {school.org}
+            </h3>
+            <p className="mt-1 text-[18px] leading-[1.5] text-text-sub-600">
+              {school.degree}
+              <span className="tabular-nums text-text-soft-400">
+                {" · "}
+                {school.dates}
+              </span>
+            </p>
+          </div>
+        ))}
       </div>
 
       <div className="mt-10">
