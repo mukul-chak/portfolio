@@ -94,10 +94,10 @@ export default function BodyName() {
       <div className="pt-[84px]">
         <Avatar />
       </div>
-      <h1 ref={ref} className="mt-6 text-[18px] font-medium text-text-strong-950">
+      <h1 ref={ref} className="mt-6 text-[17px] sm:text-[18px] font-medium text-text-strong-950">
         Mukul Chakravarthi
       </h1>
-      <p className="text-[18px] font-normal text-text-sub-600">Product Designer</p>
+      <p className="text-[17px] sm:text-[18px] font-normal text-text-sub-600">Product Designer</p>
     </div>
   );
 }

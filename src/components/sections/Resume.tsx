@@ -17,16 +17,16 @@ import { summary, roles, education, capabilities } from "@/content/resume";
 export default function Resume() {
   return (
     <Rail className="pt-8 pb-10" elevateRule>
-      <p className="text-[18px] leading-[1.5] text-text-sub-600">{summary}</p>
+      <p className="text-[17px] sm:text-[18px] leading-[1.5] text-text-sub-600">{summary}</p>
 
       {roles.map((role) => (
         <div key={`${role.org}-${role.title}`} className="mt-10">
           <div className="mx-[-16px] rule-t" />
           <SectionLabel className="mt-4 tabular-nums">{role.dates}</SectionLabel>
-          <h3 className="mt-2 text-[18px] font-medium leading-none text-text-strong-950">
+          <h3 className="mt-2 text-[17px] sm:text-[18px] font-medium leading-none text-text-strong-950">
             {role.org}
           </h3>
-          <p className="mt-1 text-[18px] leading-[1.5] text-text-sub-600">
+          <p className="mt-1 text-[17px] sm:text-[18px] leading-[1.5] text-text-sub-600">
             {role.title}
           </p>
           {role.context && (
@@ -55,10 +55,10 @@ export default function Resume() {
         <SectionLabel className="mt-4">Education</SectionLabel>
         {education.map((school) => (
           <div key={school.org} className="mt-4 first-of-type:mt-2">
-            <h3 className="text-[18px] font-medium leading-none text-text-strong-950">
+            <h3 className="text-[17px] sm:text-[18px] font-medium leading-none text-text-strong-950">
               {school.org}
             </h3>
-            <p className="mt-1 text-[18px] leading-[1.5] text-text-sub-600">
+            <p className="mt-1 text-[17px] sm:text-[18px] leading-[1.5] text-text-sub-600">
               {school.degree}
               <span className="tabular-nums text-text-soft-400">
                 {" · "}
