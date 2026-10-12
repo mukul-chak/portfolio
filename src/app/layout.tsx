@@ -7,6 +7,7 @@ import Providers from "@/components/Providers";
 const reformGrotesk = localFont({
   src: [
     { path: "../../public/fonts/Reform-GroteskRegular.otf", weight: "400", style: "normal" },
+    { path: "../../public/fonts/Reform-GroteskItalic.otf", weight: "400", style: "italic" },
     { path: "../../public/fonts/Reform-GroteskSemiExtendedMedium.otf", weight: "500", style: "normal" },
   ],
   variable: "--font-reform",

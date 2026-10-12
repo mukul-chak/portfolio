@@ -7,8 +7,6 @@ const SOCIALS: { label: string; href: string }[] = [
   { label: "Are.na", href: "#" },
 ];
 
-const REPO = "https://github.com/mukul-chak/portfolio";
-
 /**
  * Closing footer: four equal columns across the frame.
  *
@@ -69,23 +67,18 @@ export default function Footer() {
           <div className="px-4">
             <p>
               Set in Reform Grotesk and Monument by Forgotten Shapes. Built with
-              Next.js and Tailwind on AlignUI, deployed on Vercel.{" "}
-              <a
-                href={REPO}
-                className="underline decoration-rule decoration-1 underline-offset-[3px] transition-colors duration-100 ease-out hover:text-text-strong-950 hover:decoration-text-strong-950"
-              >
-                Source on GitHub
-              </a>
-              .
+              Next.js and Tailwind on AlignUI, deployed on Vercel.
             </p>
           </div>
 
-          <div className="px-4">
-            <p>
-              The internet is a vast space with eons of interesting content. I’m
-              grateful you chose to spend some of yours here.
-            </p>
-          </div>
+          <figure className="px-4">
+            <blockquote>
+              <p>Order itself is charismatic.</p>
+            </blockquote>
+            <figcaption className="text-text-soft-400">
+              — Saul Bellow, <cite>Ravelstein</cite>
+            </figcaption>
+          </figure>
         </div>
 
         <div className="rule-t" />
