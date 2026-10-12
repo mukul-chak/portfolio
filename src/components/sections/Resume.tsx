@@ -5,6 +5,7 @@ import Rail from "@/components/layout/Rail";
 import InlineLink from "@/components/ui/InlineLink";
 import { useHoverPreview } from "@/components/ui/HoverPreview";
 import SectionLabel from "@/components/ui/SectionLabel";
+import ResumeExport from "@/components/sections/ResumeExport";
 import { summary, roles, education } from "@/content/resume";
 
 const PREVIEW_ORDER = [...roles.map((r) => r.id), ...education.map((s) => s.id)];
@@ -42,8 +43,13 @@ export default function Resume() {
   const preview = useHoverPreview(PREVIEW_ORDER);
 
   return (
-    <>
+    <div className="relative">
       <Rail className="pt-8 pb-10" elevateRule>
+        {/* Below lg there's no channel, so the export sits above the
+            summary, as the dates sit above their titles. */}
+        <div className="mb-2 lg:hidden">
+          <ResumeExport />
+        </div>
         <p className={ENTRY_TEXT}>{summary}</p>
       </Rail>
 
@@ -145,7 +151,33 @@ export default function Resume() {
         ))}
       </div>
 
+      {/* From lg the export lives in the left channel, sticky for as long
+          as the resume is on screen. The track spans the whole resume, from
+          the frame edge to the column's left rule (50% − half the column),
+          and the button sticks within it: it holds 45px down — just under
+          the sticky header — and leaves with the resume's last entry, then
+          scrolls on with the section like everything else.
+
+          The sticky box repeats the summary's pt-8 and its 18px / 1.5 line
+          box, so the inline-block button sits on the same baseline as the
+          summary's first line without an offset. Left-aligned, 16px in from
+          the outer rule, on the dates' edge.
+
+          The dates share that edge, so the box is a page-coloured strip
+          they scroll under, as content does under the header; pb-2 keeps a
+          date from being cut right at the button's bottom. It sits below
+          the rules' layers (z-15 column, z-17 outer), so both stay drawn
+          over it. */}
+      <div
+        className="pointer-events-none absolute inset-y-0 left-0 hidden lg:block"
+        style={{ right: "calc(50% + var(--container-column) / 2)" }}
+      >
+        <div className={`pointer-events-auto sticky top-[45px] bg-background px-4 pt-8 pb-2 ${ENTRY_TEXT}`}>
+          <ResumeExport />
+        </div>
+      </div>
+
       {preview.panel}
-    </>
+    </div>
   );
 }

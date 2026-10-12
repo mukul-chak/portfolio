@@ -1,4 +1,4 @@
-import { EMAIL } from "@/content/site";
+import { EMAIL, LOCATION } from "@/content/site";
 
 /** Placeholder destinations, as in the Contact section. */
 const SOCIALS: { label: string; href: string }[] = [
@@ -47,7 +47,7 @@ export default function Footer() {
               own rules rather than on them. */}
           <div className="px-4">
             <p className="text-text-strong-950">Mukul Chakravarthi</p>
-            <p>San Francisco, CA</p>
+            <p>{LOCATION}</p>
             <p>{EMAIL}</p>
           </div>
 
