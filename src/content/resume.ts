@@ -26,9 +26,13 @@
 export type Role = {
   org: string;
   title: string;
-  /** Rendered as given, e.g. "2024 — Present". */
+  /** Rendered as given, e.g. "2024–Present" — an unspaced en dash. */
   dates: string;
-  /** One line on what the place is, for a reader who doesn't know it. */
+  /**
+   * One line on what the place is, for a reader who doesn't know it.
+   * Not rendered for now. TODO: show it in a popover on hover over the
+   * org name — deferred until the entry layout is settled.
+   */
   context?: string;
   /** Kept to four at most; each should land on its own. */
   points: string[];
@@ -48,7 +52,7 @@ export const roles: Role[] = [
   {
     org: "Ascend",
     title: "Head of Design",
-    dates: "2024 — Present",
+    dates: "2024–Present",
     context:
       "The financial operations platform for insurance — used by 4,000+ insurance businesses, including more than half of the 50 largest brokers, and reconciling 10,000+ statements a month.",
     points: [
@@ -76,7 +80,7 @@ export const roles: Role[] = [
   {
     org: "Fidelity Investments",
     title: "Product Design",
-    dates: "2021 — 2024",
+    dates: "2021–2024",
     context: "Consumer and institutional financial products at scale.",
     points: [
       "Designed inside one of the largest financial institutions in the US, where regulation and scale set the constraints.",
@@ -89,27 +93,11 @@ export const education = [
   {
     org: "Rhode Island School of Design",
     degree: "MFA, Graphic Design",
-    dates: "2017 — 2020",
+    dates: "2017–2020",
   },
   {
     org: "R.V. College of Engineering, Bangalore",
     degree: "B.Arch",
-    dates: "2011 — 2016",
+    dates: "2011–2016",
   },
-];
-
-/**
- * Capability tags. Chosen as the terms that actually appear in staff and
- * design-manager postings at AI-first companies, so a keyword scan catches
- * them — but kept to things the work above genuinely evidences.
- */
-export const capabilities = [
-  "Design leadership",
-  "0→1 product",
-  "Design systems",
-  "Applied AI / human-in-the-loop",
-  "Complex workflow design",
-  "Fintech & insurance",
-  "Prototyping",
-  "Art direction",
 ];
