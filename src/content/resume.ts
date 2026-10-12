@@ -18,22 +18,22 @@
  * deliberately absent until its title is known — a fabricated history in a
  * document written for recruiters is worse than a short one.
  *
- * Ascend's product surface and customer numbers are from useascend.com and
- * are the company's own published figures, framed as context rather than as
- * personal attribution.
+ * Ascend's product surface is from useascend.com. Its customer numbers
+ * (4,000+ businesses, more than half the 50 largest brokers, 10,000+
+ * statements a month) went out with the per-role context line, which the
+ * hover preview replaced; its captions are short enough to fit three lines.
  */
+
+import type { PreviewKey } from "@/content/previews";
 
 export type Role = {
   org: string;
   title: string;
   /** Rendered as given, e.g. "2024–Present" — an unspaced en dash. */
   dates: string;
-  /**
-   * One line on what the place is, for a reader who doesn't know it.
-   * Not rendered for now. TODO: show it in a popover on hover over the
-   * org name — deferred until the entry layout is settled.
-   */
-  context?: string;
+  /** Keys the org's hover preview caption (content/previews.ts). */
+  id: PreviewKey;
+  href: string;
   /** Kept to four at most; each should land on its own. */
   points: string[];
   /** True where the dates or title are inferred rather than known. */
@@ -51,10 +51,10 @@ export const summary =
 export const roles: Role[] = [
   {
     org: "Ascend",
+    id: "ascend",
+    href: "https://www.useascend.com",
     title: "Head of Design",
     dates: "2024–Present",
-    context:
-      "The financial operations platform for insurance — used by 4,000+ insurance businesses, including more than half of the 50 largest brokers, and reconciling 10,000+ statements a month.",
     points: [
       "First design hire. Built the practice, the system and the patterns the platform now runs on.",
       "Own design across the financial stack: billing and invoicing, premium financing, cash application, carrier payables and direct bill automation.",
@@ -64,13 +64,13 @@ export const roles: Role[] = [
   },
   {
     org: "SAAG",
+    id: "saag",
+    href: "https://www.saaganthology.com",
     title: "Design Director & Advisor",
     // Concurrent with Ascend, so it sits directly below it rather than in
     // date order — a reader scanning the left edge should see both current
     // roles together.
     dates: "Present · Advisory",
-    context:
-      "South Asian Avant-Garde — a digital magazine on South Asian politics and culture.",
     points: [
       "One of its earliest designers: joined as motion graphics designer for Volume 2, then became design director and advisor from Volume 3.",
     ],
@@ -79,9 +79,10 @@ export const roles: Role[] = [
   },
   {
     org: "Fidelity Investments",
+    id: "fidelity",
+    href: "https://www.fidelity.com",
     title: "Product Design",
     dates: "2021–2024",
-    context: "Consumer and institutional financial products at scale.",
     points: [
       "Designed inside one of the largest financial institutions in the US, where regulation and scale set the constraints.",
     ],
@@ -89,14 +90,24 @@ export const roles: Role[] = [
   },
 ];
 
-export const education = [
+export const education: {
+  org: string;
+  id: PreviewKey;
+  href: string;
+  degree: string;
+  dates: string;
+}[] = [
   {
     org: "Rhode Island School of Design",
+    id: "risd",
+    href: "https://www.risd.edu",
     degree: "MFA, Graphic Design",
     dates: "2017–2020",
   },
   {
     org: "R.V. College of Engineering, Bangalore",
+    id: "rvce",
+    href: "https://rvce.edu.in",
     degree: "B.Arch",
     dates: "2011–2016",
   },
