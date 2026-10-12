@@ -156,8 +156,8 @@ export default function Bio() {
         >
           Ascend
         </InlineLink>
-        , a financial operations platform built for insurance, where I’ve driven
-        and evolved the core platform experience over the last 8 years. I’m also
+        , a financial operations platform built for insurance, where I’ve led
+        product design since joining as its first designer in 2024. I’m also
         a design director and advisor at{" "}
         <InlineLink
           href="#"

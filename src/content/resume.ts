@@ -9,9 +9,14 @@
  * I left Fidelity", and sixteen experience entries whose titles and dates
  * were not visible.
  *
- * Everything marked `needsConfirming` is inference, not fact. Roles earlier
- * than Fidelity are deliberately absent rather than invented — a fabricated
- * history in a document written for recruiters is worse than a short one.
+ * Confirmed by Mukul (Oct 2026): Ascend title and bullets; Fidelity dates
+ * (Feb 2021 – May 2024); SAAG's history; both degrees and their years; the
+ * 10,000+ statements figure; six years in product design, starting at BD in
+ * June 2020.
+ *
+ * Everything still marked `needsConfirming` is inference, not fact. BD is
+ * deliberately absent until its title is known — a fabricated history in a
+ * document written for recruiters is worse than a short one.
  *
  * Ascend's product surface and customer numbers are from useascend.com and
  * are the company's own published figures, framed as context rather than as
@@ -45,7 +50,7 @@ export const roles: Role[] = [
     title: "Head of Design",
     dates: "2024 — Present",
     context:
-      "The financial operations platform for insurance — used by 4,000+ insurance businesses, including more than half of the 50 largest brokers.",
+      "The financial operations platform for insurance — used by 4,000+ insurance businesses, including more than half of the 50 largest brokers, and reconciling 10,000+ statements a month.",
     points: [
       "First design hire. Built the practice, the system and the patterns the platform now runs on.",
       "Own design across the financial stack: billing and invoicing, premium financing, cash application, carrier payables and direct bill automation.",
@@ -60,15 +65,18 @@ export const roles: Role[] = [
     // date order — a reader scanning the left edge should see both current
     // roles together.
     dates: "Present · Advisory",
+    context:
+      "South Asian Avant-Garde — a digital magazine on South Asian politics and culture.",
     points: [
-      "Advise on product strategy and shape next-generation product experiences.",
+      "One of its earliest designers: joined as motion graphics designer for Volume 2, then became design director and advisor from Volume 3.",
     ],
+    // Start years per volume still unknown, so dates stay undated.
     needsConfirming: true,
   },
   {
     org: "Fidelity Investments",
     title: "Product Design",
-    dates: "Until 2024",
+    dates: "2021 — 2024",
     context: "Consumer and institutional financial products at scale.",
     points: [
       "Designed inside one of the largest financial institutions in the US, where regulation and scale set the constraints.",
@@ -77,11 +85,18 @@ export const roles: Role[] = [
   },
 ];
 
-export const education = {
-  org: "Rhode Island School of Design",
-  detail: "Degree and years to confirm.",
-  needsConfirming: true,
-};
+export const education = [
+  {
+    org: "Rhode Island School of Design",
+    degree: "MFA, Graphic Design",
+    dates: "2017 — 2020",
+  },
+  {
+    org: "R.V. College of Engineering, Bangalore",
+    degree: "B.Arch",
+    dates: "2011 — 2016",
+  },
+];
 
 /**
  * Capability tags. Chosen as the terms that actually appear in staff and
