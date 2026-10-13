@@ -6,18 +6,20 @@ import { useHoverPreview } from "@/components/ui/HoverPreview";
 import { EMAIL } from "@/content/site";
 
 export default function Bio() {
-  const preview = useHoverPreview(["ascend", "saag"]);
+  const preview = useHoverPreview(["ascend"]);
 
   return (
     <section
       className="relative mt-4 space-y-6 text-[17px] sm:text-[18px] leading-[1.65] text-text-sub-600"
     >
       <p>
-        An art-director-turned-product designer with a knack for turning
-        paper-napkin ideas into scalable digital products.
+        I design products people trust with consequential things: their
+        money, their work, their decisions. Most of the craft is restraint —
+        knowing how much complexity to reveal and how much to quietly carry,
+        so a product does just enough to earn that trust.
       </p>
       <p>
-        I currently lead product design for{" "}
+        I lead product design at{" "}
         <InlineLink
           href="https://www.useascend.com"
           external
@@ -27,18 +29,11 @@ export default function Bio() {
         >
           Ascend
         </InlineLink>
-        , a financial operations platform built for insurance, where I’ve led
-        product design since joining as its first designer in 2024. I’m also
-        a design director and advisor at{" "}
-        <InlineLink
-          href="#"
-          onMouseEnter={preview.show("saag")}
-          onMouseLeave={preview.hide}
-          className={preview.raised("saag")}
-        >
-          SAAG
-        </InlineLink>{" "}
-        where I advise on product strategy and craft next-gen product experiences.
+        , where I joined as the first designer. I’ve built the products
+        thousands of insurance businesses use to move money, and the design
+        system, team, and AI tooling behind them. I’m still hands-on in all of
+        it, and I’ve learned which decisions need speed, which need a system,
+        and which aren’t design problems at all.
       </p>
       <p>
         Press <Kbd>c</Kbd> to copy my email or{" "}
