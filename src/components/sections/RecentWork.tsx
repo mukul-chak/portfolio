@@ -79,7 +79,7 @@ export default function RecentWork() {
           section's upper boundary — its lower rule when it's shut, its last
           project divider when it's open — so drawing another here would put
           two 1px lines against each other. */}
-      <RuleAccordion title="About" anchorId="about" defaultOpen={false} sharesRuleAbove>
+      <RuleAccordion title="Experience" anchorId="experience" defaultOpen={false} sharesRuleAbove>
         <Resume />
         {/* Closes the section and gives the rail's verticals something to
             land on, as Contact's does. Inside the content, so it collapses

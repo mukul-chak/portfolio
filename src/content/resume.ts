@@ -1,5 +1,5 @@
 /**
- * Resume content for the About section.
+ * Resume content for the Experience section.
  *
  * SOURCING — read before editing.
  *

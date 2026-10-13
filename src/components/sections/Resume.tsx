@@ -17,7 +17,7 @@ const TITLE_LINK = "text-text-strong-950";
 const ENTRY_TEXT = "text-[17px] sm:text-[18px] leading-[1.5] text-text-sub-600";
 
 /**
- * The About section's content: a resume, set in the page's own language.
+ * The Experience section's content: a resume, set in the page's own language.
  *
  * From lg each role's dates sit in the frame's left channel, set on the
  * title's baseline, so the column holds only the entry and the channel
