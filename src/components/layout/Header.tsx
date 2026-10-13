@@ -19,7 +19,7 @@ import type { NameHandoff } from "@/components/sections/BodyName";
 // inside it, and copies rather than opening a mail client.
 const NAV: { label: string; href: string }[] = [
   { label: "Work", href: "#work" },
-  { label: "About", href: "#about" },
+  { label: "Experience", href: "#experience" },
   { label: "Contact", href: "#contact" },
 ];
 
