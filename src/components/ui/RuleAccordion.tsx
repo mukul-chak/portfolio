@@ -224,9 +224,14 @@ export default function RuleAccordion({
 
       <AccordionRule />
 
-      {/* overflow is hidden while closed and while moving, but released
+      {/* overflow is clipped while closed and while moving, but released
           once open: the content carries junction marks that sit half
           outside the frame's own width and would be shaved off.
+          clip, not hidden: hidden makes this a scroll container, and a
+          sticky descendant (the resume's export) then sticks to it rather
+          than the viewport — sitting 45px down inside the section for the
+          length of the open animation, then jumping up when it ended.
+          clip cuts off the same way without becoming a scroll container.
           visibility, not display, when fully closed — it keeps the content
           out of the tab order while leaving it laid out, which is what
           makes scrollHeight readable for the measurement above. */}
@@ -234,7 +239,7 @@ export default function RuleAccordion({
         ref={contentRef}
         id={contentId}
         className={`transition-[height,opacity] ease-[var(--ease-out)] motion-reduce:transition-[opacity] motion-reduce:duration-150 ${
-          !open || animating ? "overflow-hidden" : ""
+          !open || animating ? "overflow-clip" : ""
         }`}
         style={{
           height,
