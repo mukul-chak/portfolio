@@ -13,13 +13,14 @@ export default function Bio() {
       className="relative mt-4 space-y-6 text-[17px] sm:text-[18px] leading-[1.65] text-text-sub-600"
     >
       <p>
-        I design products people trust with consequential things: their
-        money, their work, their decisions. Most of the craft is restraint —
-        knowing how much complexity to reveal and how much to quietly carry,
-        so a product does just enough to earn that trust.
+        I design products people trust with the things they can’t afford to
+        lose: their money, their time, and their effort. What I’ve learned is
+        that trust is largely a matter of restraint, of knowing how much of the
+        machinery to show and how much to absorb, so that a product does
+        exactly enough and nothing that would give anyone a reason to doubt it.
       </p>
       <p>
-        I lead product design at{" "}
+        Currently leading product design at{" "}
         <InlineLink
           href="https://www.useascend.com"
           external
@@ -29,11 +30,15 @@ export default function Bio() {
         >
           Ascend
         </InlineLink>
-        , where I joined as the first designer. I’ve built the products
-        thousands of insurance businesses use to move money, and the design
-        system, team, and AI tooling behind them. I’m still hands-on in all of
-        it, and I’ve learned which decisions need speed, which need a system,
-        and which aren’t design problems at all.
+        , I joined the company in 2024 to build its design function. Since
+        then, I’ve designed the core product that more than 4,000 insurance
+        businesses rely on to generate revenue, and over the same time, built
+        the team which now spans product and brand, along with the systems,
+        operations, and AI tooling it runs on.
+      </p>
+      <p>
+        I do my best work on opinionated teams, the kind that share a specific
+        conviction about how software should work, feel, look, and perform.
       </p>
       <p>
         Press <Kbd>c</Kbd> to copy my email or{" "}
