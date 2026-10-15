@@ -7,6 +7,7 @@ import Bio from "@/components/sections/Bio";
 import BodyName from "@/components/sections/BodyName";
 import RecentWork from "@/components/sections/RecentWork";
 import CopyEmail from "@/components/CopyEmail";
+import ContactDrawer from "@/components/ContactDrawer";
 import BottomScrim from "@/components/layout/BottomScrim";
 import Footer from "@/components/layout/Footer";
 
@@ -23,6 +24,7 @@ export default async function Home() {
       <Frame>
       <BottomScrim />
       <CopyEmail />
+      <ContactDrawer />
       <Header city={city} tz={tz} />
       {/* Outer vertical rule, pinned to the viewport (not page scroll): it used
           to be a single absolute box starting below Header's natural in-flow
