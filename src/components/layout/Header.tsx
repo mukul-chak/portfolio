@@ -37,25 +37,6 @@ function targetSection(href: string) {
 
 const FULL_NAME = "Mukul Chakravarthi";
 
-// 20px in a 36px button. strokeWidth 1.5 rather than the 1.2 used on the
-// 14px rule-junction marks — at this size 1.2 reads thin next to the nav's
-// own type.
-function PlusIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
-      <path d="M10 3.75v12.5M3.75 10h12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
-      <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 // The marks travel linearly across the whole run — no easing. Any ease-out
 // spends most of the journey in the first fraction of the scroll and then
 // crawls, which is exactly what made this read as a snap. Linear means the
@@ -92,32 +73,14 @@ export default function Header({
   city?: string;
   tz?: string;
 }) {
-  const [open, setOpen] = useState(false);
-  // Mirrors Bio's hover-preview pattern: `menuRendered` stays true for one
-  // exit-duration after `open` goes false, so the dropdown can fade/scale
-  // out instead of vanishing on unmount.
-  const [menuVisible, setMenuVisible] = useState(false);
-  const [menuRendered, setMenuRendered] = useState(false);
   const [handoff, setHandoff] = useState<NameHandoff>({
     progress: 0,
     clearedNav: 1,
     enteredNav: 1,
   });
   const reducedMotion = useReducedMotion();
-  const menuRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLSpanElement>(null);
   const [mark, setMark] = useState<NameMark | null>(null);
-
-  useEffect(() => {
-    if (open) {
-      setMenuRendered(true);
-      const id = requestAnimationFrame(() => setMenuVisible(true));
-      return () => cancelAnimationFrame(id);
-    }
-    setMenuVisible(false);
-    const id = setTimeout(() => setMenuRendered(false), 180);
-    return () => clearTimeout(id);
-  }, [open]);
 
   useEffect(() => {
     function onNameScroll(e: Event) {
@@ -139,15 +102,6 @@ export default function Header({
     document.fonts?.ready.then(measure);
   }, []);
 
-  useEffect(() => {
-    function onPointerDown(e: PointerEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    if (open) document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [open]);
 
   const { progress, clearedNav } = handoff;
   // The left mark never moves. The right one runs from the M's own second
@@ -179,11 +133,12 @@ export default function Header({
   return (
     <header className="sticky top-0 z-[25] bg-background/70 backdrop-blur-md">
       <div className="relative border-b border-rule">
-        {/* Reaches the header's own bottom edge (not inset-y-2 on both
-            sides) so it runs seamlessly into the plus buttons below, and
-            from there into the page's outer rule — no gap at either
-            junction. Top keeps its 8px clearance; only the bottom, where
-            the strokes now need to be continuous, touches the edge.
+        {/* Runs the header's full height, edge to edge: from the very top
+            of the viewport (no 8px clearance any more — the frame's
+            verticals start at the top of the screen) down to the header's
+            bottom edge, so it runs seamlessly into the plus buttons below
+            and from there into the page's outer rule — no gap at either
+            end.
             bottom-[-1px], not bottom-0: an absolutely-positioned child's
             inset resolves against its containing block's *padding* edge,
             which sits 1px above this ancestor's own border-b (its border
@@ -192,7 +147,7 @@ export default function Header({
             it instead of being the one remaining solid vertical. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-[-1px] top-2 rule-x"
+          className="pointer-events-none absolute inset-x-0 bottom-[-1px] top-0 rule-x"
         />
         {/* Every crossing of the header's own bottom border: the outer frame
             rule at both page edges, and the narrower column rules inside it.
@@ -223,8 +178,7 @@ export default function Header({
               title approaches (see progress, driven by BodyName's scroll
               position) — at every breakpoint. Mobile used to get a plain
               binary crossfade instead; there's nothing width-dependent in
-              the marks, and at 375px the name still ends well clear of the
-              menu button, so there was no reason to keep two behaviours. */}
+              the marks, so there was no reason to keep two behaviours. */}
           <div className="pointer-events-none absolute inset-0 flex items-center">
             <div className="mx-auto w-full max-w-column px-4">
               <span className="inline-block whitespace-nowrap text-[18px] font-medium">
@@ -287,8 +241,14 @@ export default function Header({
             </div>
           </div>
 
-          {/* Nav items: right-aligned, name is not in flex flow */}
-          <div className="mx-auto flex max-w-column items-center justify-end">
+          {/* Nav items: right-aligned, name is not in flex flow. Desktop
+              only — below md there's no nav, by choice: the page is short
+              enough to scroll, and the sections open where they sit.
+              h-7 holds the row at the nav buttons' 28px even when they're
+              hidden, so the header is 45px at every width — the height the
+              outer rule's top offset and the sticky offsets assume. On
+              mobile the 36px menu button used to set it (53px). */}
+          <div className="mx-auto flex h-7 max-w-column items-center justify-end">
             <div className="flex items-center gap-1.5">
               {/* Desktop nav */}
               <nav className="hidden gap-0.5 md:flex">
@@ -307,51 +267,6 @@ export default function Header({
                   </Button.Root>
                 ))}
               </nav>
-
-              {/* Mobile + menu */}
-              <div className="relative md:hidden" ref={menuRef}>
-                {/* square + size md: AlignUI's icon-only button, 36px
-                    against the 28px this used to be. The glyph is a real
-                    icon now rather than a "+"/"×" character, which rendered
-                    small for its type size and sat off-centre in the box.
-                    Colour comes from ghost mode's own text-sub-600, which
-                    measures 7.13:1 light and ~12:1 dark — comfortably AA in
-                    both, unlike a hardcoded value would have to be checked
-                    twice. */}
-                <Button.Root
-                  variant="neutral"
-                  mode="ghost"
-                  size="md"
-                  square
-                  onClick={() => setOpen((v) => !v)}
-                  aria-label={open ? "Close menu" : "Open menu"}
-                  aria-expanded={open}
-                >
-                  {open ? <CloseIcon /> : <PlusIcon />}
-                </Button.Root>
-                {menuRendered && (
-                  <div
-                    className={`motion-transform absolute right-0 top-full z-30 mt-1 min-w-[140px] rounded-lg border border-rule bg-background py-1 shadow-md transition-[opacity,transform] duration-[180ms] ${
-                      menuVisible ? "opacity-100 scale-100" : "opacity-0 scale-[0.97]"
-                    }`}
-                    style={{ transitionTimingFunction: "var(--ease-out)", transformOrigin: "top right" }}
-                  >
-                    {NAV.map((item) => (
-                      <a
-                        key={item.label}
-                        href={item.href}
-                        onClick={() => {
-                          setOpen(false);
-                          targetSection(item.href);
-                        }}
-                        className="block px-4 py-2.5 text-[15px] text-text-sub-600 hover:bg-card"
-                      >
-                        {item.label}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
             </div>
           </div>
 
