@@ -7,18 +7,27 @@ import { EMAIL } from "@/content/site";
 import { OPEN_CONTACT_EVENT } from "@/components/ContactDrawer";
 
 export default function Bio() {
-  const preview = useHoverPreview(["ascend"]);
+  const preview = useHoverPreview(["trust", "ascend"]);
 
   return (
     <section
       className="relative mt-4 space-y-6 text-[17px] sm:text-[18px] leading-[1.65] text-text-sub-600"
     >
       <p>
-        I design products people trust with the things they can’t afford to
-        lose: their money, their time, and their effort. What I’ve learned is
-        that trust is largely a matter of restraint, of knowing how much of the
-        machinery to show and how much to absorb, so that a product does
-        exactly enough and nothing that would give anyone a reason to doubt it.
+        I design products people{" "}
+        {/* Not a link — there's nowhere to go — so a dotted underline, the
+            convention for a term with a note attached, and only where the
+            note can actually open: md and up, with a fine pointer. On touch
+            or a phone it's plain text and the note doesn't exist. */}
+        <span
+          onMouseEnter={preview.show("trust")}
+          onMouseLeave={preview.hide}
+          className={`md:pointer-fine:cursor-default md:pointer-fine:underline md:pointer-fine:decoration-dotted md:pointer-fine:decoration-rule md:pointer-fine:decoration-1 md:pointer-fine:underline-offset-[3px] md:pointer-fine:transition-colors md:pointer-fine:hover:text-text-strong-950 md:pointer-fine:hover:decoration-text-strong-950 ${preview.raised("trust")}`}
+        >
+          trust
+        </span>{" "}
+        with the things they can’t afford to lose: their money, their time, and
+        their effort.
       </p>
       <p>
         Currently leading product design at{" "}
