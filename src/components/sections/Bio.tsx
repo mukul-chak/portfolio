@@ -4,6 +4,7 @@ import InlineLink from "@/components/ui/InlineLink";
 import Kbd from "@/components/ui/Kbd";
 import { useHoverPreview } from "@/components/ui/HoverPreview";
 import { EMAIL } from "@/content/site";
+import { OPEN_CONTACT_EVENT } from "@/components/ContactDrawer";
 
 export default function Bio() {
   const preview = useHoverPreview(["ascend"]);
@@ -41,8 +42,18 @@ export default function Bio() {
         conviction about how software should work, feel, look, and perform.
       </p>
       <p>
-        Press <Kbd>c</Kbd> to copy my email or{" "}
-        <InlineLink href={`mailto:${EMAIL}`}>write to me</InlineLink>.
+        Press <Kbd>c</Kbd> to copy my email or <Kbd>w</Kbd> to{" "}
+        <InlineLink
+          href={`mailto:${EMAIL}`}
+          onClick={(e) => {
+            // mailto stays as the href for anyone without JavaScript.
+            e.preventDefault();
+            window.dispatchEvent(new Event(OPEN_CONTACT_EVENT));
+          }}
+        >
+          write to me
+        </InlineLink>
+        .
       </p>
 
       {preview.panel}

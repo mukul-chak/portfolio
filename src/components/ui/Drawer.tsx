@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { createPortal } from "react-dom";
 
 // Emil Kowalski's drawer recipe: 500ms on --ease-drawer (the iOS/Ionic curve
@@ -26,18 +26,25 @@ function CloseIcon() {
  * and below it, and a scrollable body beneath. Portaled to <body>, so the
  * header's own stacking context doesn't trap it.
  *
- * Content-agnostic — Profile is the first use; pass any children.
+ * Content-agnostic — Profile is the first use; pass any children. An
+ * optional footer is pinned below the scrolling body with a stroke above it,
+ * mirroring the header; initialFocusRef sends focus somewhere other than the
+ * close button on open (a form's first field, say).
  */
 export default function Drawer({
   open,
   onClose,
   title,
   children,
+  footer,
+  initialFocusRef,
 }: {
   open: boolean;
   onClose: () => void;
   title: string;
   children: ReactNode;
+  footer?: ReactNode;
+  initialFocusRef?: RefObject<HTMLElement | null>;
 }) {
   const [mounted, setMounted] = useState(false);
   const [rendered, setRendered] = useState(false);
@@ -134,15 +141,26 @@ export default function Drawer({
   }, [open, onClose]);
 
   // Focus moves in on open and back to whatever opened it on close.
+  //
+  // Remember the opener when `open` flips, but move focus only once the
+  // panel is mounted: the panel renders one commit after `open` (see
+  // `rendered`), so focusing on the flip itself — even a frame later —
+  // reached for elements that didn't exist yet and focus never moved.
+  // preventScroll, because the panel is still translated off-screen as it
+  // starts its slide and focusing into it would otherwise scroll the page.
   useEffect(() => {
     if (open) {
       returnFocusRef.current = document.activeElement as HTMLElement | null;
-      const id = requestAnimationFrame(() => closeRef.current?.focus());
-      return () => cancelAnimationFrame(id);
+      return;
     }
     returnFocusRef.current?.focus();
     returnFocusRef.current = null;
   }, [open]);
+
+  useEffect(() => {
+    if (!open || !rendered) return;
+    (initialFocusRef?.current ?? closeRef.current)?.focus({ preventScroll: true });
+  }, [open, rendered, initialFocusRef]);
 
   if (!mounted || !rendered) return null;
 
@@ -190,13 +208,22 @@ export default function Drawer({
             >
               <CloseIcon />
             </button>
-            <h2 className="text-[16px] text-text-strong-950">{title}</h2>
+            {/* One step softer than strong-950, not full black — the same
+                surface-800 the contact drawer's Send and focus line use. */}
+            <h2 className="text-[16px] text-bg-surface-800">{title}</h2>
           </div>
           <div className="border-b border-rule" />
         </div>
 
         {/* Only this scrolls; the header above stays put. */}
         <div className="flex-1 overflow-y-auto px-4">{children}</div>
+
+        {footer && (
+          <div className="shrink-0 px-4 pb-4">
+            <div className="border-t border-rule" />
+            {footer}
+          </div>
+        )}
       </div>
     </div>,
     document.body,
