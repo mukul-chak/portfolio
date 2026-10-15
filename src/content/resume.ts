@@ -41,12 +41,13 @@ export type Role = {
 };
 
 /**
- * Positioning line. Written for staff and design-manager screens at
- * AI-first companies: leads with judgment under stakes, names the AI
- * posture, and signals both direction-setting and craft.
+ * What Mukul is best at and what the work has taught him, in the bio's
+ * voice. The bio already carries the philosophy, the Ascend role and the
+ * kind of team he wants, so this stays on strength and lesson only. Kept to
+ * four lines in the column at 1512.
  */
 export const summary =
-  "Design leader working where financial software meets applied AI. I take ambiguous, high-stakes operational problems — the kind with money and an audit trail attached — and turn them into products people trust at scale. A first-principles thinker, equally at home setting direction and in the pixels.";
+  "I do my best work on complex operational software that handles money and carries an audit trail, turning dense, rule-bound workflows into something people can move through quickly and trust. Building a design function from the ground up has taught me that design earns its influence through what it ships.";
 
 export const roles: Role[] = [
   {
