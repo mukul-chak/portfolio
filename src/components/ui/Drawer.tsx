@@ -1,12 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode, type RefObject } from "react";
 import { createPortal } from "react-dom";
 
 // Emil Kowalski's drawer recipe: 500ms on --ease-drawer (the iOS/Ionic curve
 // Vaul uses). Shared by the slide, the scrim fade, and the unmount delay, so
 // the panel finishes leaving before it's removed from the DOM.
 const TRANSITION_MS = 500;
+
+// Click-through guard: after a drawer is closed by a click, a second click
+// at the same spot within this window is swallowed. The close button sits
+// right over the header nav (at 1512 the × is on "Experience"), and the
+// drawer unmounts once its 500ms exit ends — so a double click, a slow
+// second click or a doubled trackpad tap landed on the nav and scrolled
+// the page away. 500ms exit + a typical double-click interval; 24px is a
+// generous "same spot".
+const CLICK_THROUGH_MS = TRANSITION_MS + 350;
+const CLICK_THROUGH_PX = 24;
 
 function CloseIcon() {
   return (
@@ -52,6 +62,25 @@ export default function Drawer({
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
+
+  function closeFromClick(e: MouseEvent) {
+    const x = e.clientX;
+    const y = e.clientY;
+    const until = performance.now() + CLICK_THROUGH_MS;
+    function swallow(ev: globalThis.MouseEvent) {
+      if (performance.now() > until) return done();
+      if (Math.hypot(ev.clientX - x, ev.clientY - y) > CLICK_THROUGH_PX) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+    }
+    function done() {
+      document.removeEventListener("click", swallow, true);
+    }
+    // Capture on document runs before React's own listeners on the root.
+    document.addEventListener("click", swallow, true);
+    setTimeout(done, CLICK_THROUGH_MS);
+    onClose();
+  }
 
   useEffect(() => setMounted(true), []);
 
@@ -170,7 +199,7 @@ export default function Drawer({
     <div className="fixed inset-0 z-50">
       <div
         aria-hidden
-        onClick={onClose}
+        onClick={closeFromClick}
         // Same duration and curve as the panel, so the two read as one
         // surface arriving rather than two things moving independently.
         className={`absolute inset-0 bg-background transition-opacity duration-[500ms] ease-[var(--ease-drawer)] ${
@@ -202,7 +231,7 @@ export default function Drawer({
             <button
               ref={closeRef}
               type="button"
-              onClick={onClose}
+              onClick={closeFromClick}
               aria-label={`Close ${title}`}
               className="flex h-8 w-8 items-center justify-center rounded-[4px] text-text-soft-400 transition-colors duration-100 ease-out hover:bg-bg-weak-50 hover:text-text-strong-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text-strong-950"
             >
