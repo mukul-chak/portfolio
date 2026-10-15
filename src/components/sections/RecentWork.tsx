@@ -52,7 +52,7 @@ export default function RecentWork() {
           <Filmstrip count={first.imageCount} captions={first.captions} />
         </CarouselJunctionButton>
 
-        {rest.map((project, i) => (
+        {rest.map((project) => (
           // Not a bare Fragment — CarouselJunctionButton needs a real DOM
           // wrapper to (a) anchor its own rail/divider connectors and (b)
           // reach the PREVIOUS project's own wrapper via previousElementSibling
@@ -66,19 +66,25 @@ export default function RecentWork() {
             <Rail className="mt-1 pt-[68px] pb-[20px]" elevateRule>
               <ProjectText project={project} />
             </Rail>
-            <Filmstrip
-              count={project.imageCount}
-              captions={project.captions}
-              last={i === rest.length - 1}
-            />
+            <Filmstrip count={project.imageCount} captions={project.captions} />
           </CarouselJunctionButton>
         ))}
+
+        {/* The way into Experience, built like the way into Recent work: the
+            last carousel closes on its divider like every other (the column
+            rules now reach it, so it carries their junctions), then a ruled
+            80px gap and a rule for Experience's bar to share. Inside the content, so with
+            Recent work shut the two bars still stack on one line. */}
+        <Rail elevateRule>
+          <div className="h-[80px]" />
+        </Rail>
+        <AccordionRule />
       </RuleAccordion>
 
       {/* sharesRuleAbove: whatever ends Recent work already draws this
-          section's upper boundary — its lower rule when it's shut, its last
-          project divider when it's open — so drawing another here would put
-          two 1px lines against each other. */}
+          section's upper boundary — its lower rule when it's shut, the rule
+          closing its end gap when it's open — so drawing another here would
+          put two 1px lines against each other. */}
       <RuleAccordion title="Experience" anchorId="experience" defaultOpen={false} sharesRuleAbove>
         <Resume />
         {/* Closes the section and gives the rail's verticals something to
