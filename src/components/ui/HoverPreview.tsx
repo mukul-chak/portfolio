@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { PREVIEW_CAPTIONS, type PreviewKey } from "@/content/previews";
+import { PREVIEW_CAPTIONS, PREVIEW_NOTES, type PreviewKey } from "@/content/previews";
 
 // The hovered link's baseline, as an offset from its box top. An inline
 // element's box is its font's content area — line-height doesn't enter into
@@ -18,6 +18,77 @@ function measureAscent(cs: CSSStyleDeclaration) {
   if (!ctx) return fontSizePx * 0.8;
   ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${fontSizePx}px ${cs.fontFamily}`;
   return ctx.measureText("Ag").fontBoundingBoxAscent ?? fontSizePx * 0.8;
+}
+
+/**
+ * The right channel's two edges, in viewport x: the column's right rule and
+ * the frame's outer rule. Derived from the frame rather than read off an
+ * enclosing Rail: every column is the 620px track centred in the frame's
+ * content box, and the resume's Education column is a grid area with no
+ * element of its own to measure.
+ */
+function channelEdges() {
+  const frame = document.querySelector<HTMLElement>(".max-w-frame");
+  if (!frame) return null;
+  const frameRect = frame.getBoundingClientRect();
+  const frameCs = getComputedStyle(frame);
+  const contentLeft = frameRect.left + parseFloat(frameCs.paddingLeft);
+  const contentWidth =
+    frameRect.width - parseFloat(frameCs.paddingLeft) - parseFloat(frameCs.paddingRight);
+  const columnWidth = Math.min(parseFloat(frameCs.getPropertyValue("--container-column")) || 620, contentWidth);
+  return {
+    frameRect,
+    columnRight: contentLeft + (contentWidth + columnWidth) / 2,
+    frameRight: contentLeft + contentWidth,
+  };
+}
+
+/**
+ * Lights the right channel while a note is open: its two dotted lines stay
+ * at full strength above the page scrim, so the whole channel reads as
+ * active, not just the panel.
+ *
+ * These are the real lines, so the dash rhythm is exact. A wide rule-x
+ * element (a Rail's overlay, Education's, the fixed outer frame rule) paints
+ * both edges of its box, so it can't simply be lifted — its left edge would
+ * light too. It gets a temporary copy instead: same element, same place,
+ * same pattern, lifted and clipped to its right-edge pixel, while the
+ * original stays dimmed underneath. A 1px connector on that x is lifted as
+ * is. The header's own strokes are skipped: the sticky header is its own
+ * stacking context below the scrim, so nothing inside it can rise above.
+ * Returns the undo.
+ */
+function lightChannel() {
+  const edges = channelEdges();
+  if (!edges) return () => {};
+  const near = (a: number, b: number) => Math.abs(a - b) < 1.5;
+  const added: HTMLElement[] = [];
+  const lifted: HTMLElement[] = [];
+  for (const el of document.querySelectorAll<HTMLElement>(".rule-x")) {
+    if (el.closest("header") || el.dataset.channelLit) continue;
+    const r = el.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) continue;
+    if (!near(r.right, edges.columnRight) && !near(r.right, edges.frameRight)) continue;
+    if (r.width <= 2) {
+      el.dataset.channelLit = "line";
+      lifted.push(el);
+      continue;
+    }
+    // The outer rule sits inside a fixed wrapper that carries its z-index,
+    // so the copy is of that wrapper.
+    const host = el.closest<HTMLElement>(".fixed") ?? el;
+    const copy = host.cloneNode(true) as HTMLElement;
+    copy.dataset.channelLit = "copy";
+    copy.setAttribute("aria-hidden", "true");
+    const rule = copy.matches(".rule-x") ? copy : copy.querySelector<HTMLElement>(".rule-x");
+    if (rule) rule.dataset.channelLitEdge = "";
+    host.after(copy);
+    added.push(copy);
+  }
+  return () => {
+    added.forEach((n) => n.remove());
+    lifted.forEach((n) => delete n.dataset.channelLit);
+  };
 }
 
 type ActivePreview = {
@@ -91,7 +162,7 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
   }, [active]);
 
   function show(key: PreviewKey) {
-    return (e: MouseEvent<HTMLAnchorElement>) => {
+    return (e: MouseEvent<HTMLElement>) => {
       // Guard against touch: a tap fires a synthetic mouseenter too, which
       // would otherwise populate the anchor and trigger the page-wide
       // spotlight scrim (globals.css) with no preview panel visible to
@@ -99,23 +170,12 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
       if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
       const anchor = document.getElementById("bio-preview-anchor");
-      const frame = document.querySelector<HTMLElement>(".max-w-frame");
-      if (!anchor || !frame) return;
+      const edges = channelEdges();
+      if (!anchor || !edges) return;
+      const { frameRect, columnRight } = edges;
 
       const linkRect = e.currentTarget.getBoundingClientRect();
       const anchorRect = anchor.getBoundingClientRect();
-      const frameRect = frame.getBoundingClientRect();
-
-      // The column's right edge, derived from the frame rather than read off
-      // an enclosing Rail: every column is the 620px track centred in the
-      // frame's content box, and the resume's Education column is a grid
-      // area with no element of its own to measure.
-      const frameCs = getComputedStyle(frame);
-      const contentLeft = frameRect.left + parseFloat(frameCs.paddingLeft);
-      const contentWidth =
-        frameRect.width - parseFloat(frameCs.paddingLeft) - parseFloat(frameCs.paddingRight);
-      const columnWidth = Math.min(parseFloat(frameCs.getPropertyValue("--container-column")) || 620, contentWidth);
-      const columnRight = contentLeft + (contentWidth + columnWidth) / 2;
 
       const top = linkRect.top - anchorRect.top + measureAscent(getComputedStyle(e.currentTarget));
       const marginSpace = frameRect.right - columnRight;
@@ -154,6 +214,14 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
     const height = parseFloat(getComputedStyle(panel).height) || 0;
     const bottom = rendered.top + height + STROKE_BELOW;
     setLift(Math.min(0, rendered.maxBottom - bottom));
+  }, [rendered]);
+
+  // Light the channel for as long as the panel is mounted — including its
+  // exit fade — so the lines dim back in step with the scrim, which is keyed
+  // on the same thing (the anchor having content).
+  useEffect(() => {
+    if (!rendered) return;
+    return lightChannel();
   }, [rendered]);
 
   function hide() {
@@ -206,8 +274,16 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
             <span className="mb-2 block font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] tabular-nums text-text-sub-600">
               {String(order.indexOf(rendered.key) + 1).padStart(2, "0")}
             </span>
-            <div className="aspect-[1.6] w-full rounded-[4px] bg-card" />
-            <p className="mt-2 line-clamp-3 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600">
+            {/* A note is the caption alone — no image, no clamp — read as a
+                margin note rather than a preview of somewhere. */}
+            {!PREVIEW_NOTES.has(rendered.key) && (
+              <div className="aspect-[1.6] w-full rounded-[4px] bg-card" />
+            )}
+            <p
+              className={`font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600 ${
+                PREVIEW_NOTES.has(rendered.key) ? "" : "mt-2 line-clamp-3"
+              }`}
+            >
               {PREVIEW_CAPTIONS[rendered.key]}
             </p>
             <div

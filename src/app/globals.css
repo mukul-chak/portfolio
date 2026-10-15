@@ -938,6 +938,16 @@ body:has(#bio-preview-anchor:not(:empty)) .preview-scrim {
   opacity: 0.5;
 }
 
+/* The right channel's lines, lifted above the scrim (z-40) and under the
+   panel (z-45) while a preview is open — see lightChannel in
+   HoverPreview.tsx. A copy of a two-edged rule keeps only its right pixel. */
+[data-channel-lit] {
+  z-index: 41 !important;
+}
+[data-channel-lit-edge] {
+  clip-path: inset(0 0 0 calc(100% - 1px));
+}
+
 /* Portfolio base: Reform Grotesk body, Monument eyebrow. */
 html {
   color-scheme: light;
