@@ -1,4 +1,5 @@
 import { EMAIL, LOCATION } from "@/content/site";
+import LocationTime from "@/components/ui/LocationTime";
 
 /** Placeholder destinations, as in the Contact section. */
 const SOCIALS: { label: string; href: string }[] = [
@@ -22,7 +23,7 @@ const SOCIALS: { label: string; href: string }[] = [
  * equal columns put two separators on those rules and the third on their
  * midpoint, by construction rather than by coincidence.
  */
-export default function Footer() {
+export default function Footer({ tz }: { tz?: string }) {
   return (
     <footer className="bg-bg-weak-25">
       <div className="mx-auto max-w-frame px-5 sm:px-8 xl:px-0">
@@ -79,6 +80,19 @@ export default function Footer() {
               — Saul Bellow, <cite>Ravelstein</cite>
             </figcaption>
           </figure>
+
+          {/* Mobile only: below md the header has no room for its clock, so
+              the footer carries the date and time, with seconds ticking, in
+              the visitor's zone. Set as footer text rather than the header's
+              Monument capitals: Reform at the footer's 14/1.5, sentence
+              case, left-aligned to the column. */}
+          <div className="px-4 md:hidden">
+            <LocationTime
+              tz={tz}
+              seconds
+              className="text-left font-sans text-[14px] leading-[1.5] normal-case tracking-normal"
+            />
+          </div>
         </div>
 
         <div className="rule-t" />

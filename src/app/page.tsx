@@ -79,7 +79,7 @@ export default async function Home() {
         </div>
       </div>
       </Frame>
-      <Footer />
+      <Footer tz={tz} />
     </>
   );
 }
