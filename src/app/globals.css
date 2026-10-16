@@ -1025,7 +1025,7 @@ body {
   background-repeat: repeat-x;
 }
 
-/* The header's resting stroke blinks like a text caret: 530ms on, 530ms
+/* The header's caret blinks while idle: 530ms on, 530ms
    off (the macOS caret's rate), a hard step rather than a fade. Only under
    no-preference, so reduced motion gets a steady stroke. */
 @keyframes caret-blink {
