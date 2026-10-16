@@ -6,9 +6,13 @@ import InlineLink from "@/components/ui/InlineLink";
 import { useHoverPreview } from "@/components/ui/HoverPreview";
 import SectionLabel from "@/components/ui/SectionLabel";
 import ResumeExport from "@/components/sections/ResumeExport";
-import { summary, roles, education } from "@/content/resume";
+import { summary, roles, education, teaching, type ListEntry } from "@/content/resume";
 
-const PREVIEW_ORDER = [...roles.map((r) => r.id), ...education.map((s) => s.id)];
+// Each org numbers once, at its first appearance: RISD keeps its Education
+// number when it reappears under Teaching.
+const PREVIEW_ORDER = [
+  ...new Set([...roles, ...education, ...teaching].map((entry) => entry.id)),
+];
 
 // Titles keep their strong-950 at rest; InlineLink supplies the underline,
 // the hover darkening and the focus ring, as it does in the bio.
@@ -100,56 +104,8 @@ export default function Resume() {
         </div>
       ))}
 
-      {/* Education takes the roles' layout: dates in the channel on each
-          school's baseline from lg, above the name below it. Unlike the
-          roles there's no rule-t between schools, so one Rail per school
-          would put a join — and a restart of the dotted pattern — in open
-          space. So the block is one grid, every school and date a direct
-          item (a subgrid'd Rail kept the rows but Chrome doesn't share
-          baselines out of a subgrid — the dates sat 5.5 and 13.5px high),
-          and the verticals are one Rail-style overlay: absolute, so from lg
-          its containing block is the column's grid area across every row.
-          Below lg this element is itself the Rail: column-width, px-4. */}
-      <div
-        className="relative mx-auto max-w-column px-4 lg:grid lg:max-w-none lg:grid-cols-[1fr_var(--container-column)_1fr] lg:items-baseline lg:px-0"
-        style={{ gridTemplateRows: `repeat(${education.length + 1}, auto)` }}
-      >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 z-[15] hidden rule-x md:block lg:col-[2/3] lg:row-[1/-1]"
-        />
-        <div className="lg:col-start-2 lg:row-start-1 lg:px-4">
-          <div className="mx-[-16px] rule-t" />
-          <SectionLabel className="mt-4">Education</SectionLabel>
-        </div>
-        {education.map((school, i) => (
-          <Fragment key={school.org}>
-            <div className="hidden lg:col-start-1 lg:block" style={{ gridRow: i + 2 }}>
-              <SectionLabel className="px-4 tabular-nums">{school.dates}</SectionLabel>
-            </div>
-            <div
-              className={`lg:col-start-2 lg:px-4 ${i === 0 ? "mt-2" : "mt-4"} ${
-                i === education.length - 1 ? "pb-10" : ""
-              }`}
-              style={{ gridRow: i + 2 }}
-            >
-              <SectionLabel className="tabular-nums lg:hidden">{school.dates}</SectionLabel>
-              <h3 className="mt-2 text-[17px] sm:text-[18px] font-medium leading-none text-text-strong-950 lg:mt-0">
-                <InlineLink
-                  href={school.href}
-                  external
-                  onMouseEnter={preview.show(school.id)}
-                  onMouseLeave={preview.hide}
-                  className={`${TITLE_LINK} ${preview.raised(school.id)}`}
-                >
-                  {school.org}
-                </InlineLink>
-              </h3>
-              <p className={`mt-1 ${ENTRY_TEXT}`}>{school.degree}</p>
-            </div>
-          </Fragment>
-        ))}
-      </div>
+      <DatedList label="Education" items={education} preview={preview} />
+      <DatedList label="Teaching" items={teaching} preview={preview} />
 
       {/* From lg the export lives in the left channel, sticky for as long
           as the resume is on screen. The track spans the whole resume, from
@@ -178,6 +134,74 @@ export default function Resume() {
       </div>
 
       {preview.panel}
+    </div>
+  );
+}
+
+/**
+ * A labelled list of dated entries — Education, Teaching — in the roles'
+ * layout: dates in the channel on each entry's baseline from lg, above the
+ * name below it.
+ *
+ * Unlike the roles there's no rule-t between entries, so one Rail per entry
+ * would put a join — and a restart of the dotted pattern — in open space.
+ * So the block is one grid, every entry and date a direct item (a subgrid'd
+ * Rail kept the rows but Chrome doesn't share baselines out of a subgrid —
+ * the dates sat 5.5 and 13.5px high), and the verticals are one Rail-style
+ * overlay: absolute, so from lg its containing block is the column's grid
+ * area across every row. Below lg this element is itself the Rail:
+ * column-width, px-4. Each list opens on its own rule-t, so consecutive
+ * lists join on a rule.
+ */
+function DatedList({
+  label,
+  items,
+  preview,
+}: {
+  label: string;
+  items: ListEntry[];
+  preview: ReturnType<typeof useHoverPreview>;
+}) {
+  return (
+    <div
+      className="relative mx-auto max-w-column px-4 lg:grid lg:max-w-none lg:grid-cols-[1fr_var(--container-column)_1fr] lg:items-baseline lg:px-0"
+      style={{ gridTemplateRows: `repeat(${items.length + 1}, auto)` }}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-[15] hidden rule-x md:block lg:col-[2/3] lg:row-[1/-1]"
+      />
+      <div className="lg:col-start-2 lg:row-start-1 lg:px-4">
+        <div className="mx-[-16px] rule-t" />
+        <SectionLabel className="mt-4">{label}</SectionLabel>
+      </div>
+      {items.map((entry, i) => (
+        <Fragment key={entry.org}>
+          <div className="hidden lg:col-start-1 lg:block" style={{ gridRow: i + 2 }}>
+            <SectionLabel className="px-4 tabular-nums">{entry.dates}</SectionLabel>
+          </div>
+          <div
+            className={`lg:col-start-2 lg:px-4 ${i === 0 ? "mt-2" : "mt-4"} ${
+              i === items.length - 1 ? "pb-10" : ""
+            }`}
+            style={{ gridRow: i + 2 }}
+          >
+            <SectionLabel className="tabular-nums lg:hidden">{entry.dates}</SectionLabel>
+            <h3 className="mt-2 text-[17px] sm:text-[18px] font-medium leading-none text-text-strong-950 lg:mt-0">
+              <InlineLink
+                href={entry.href}
+                external
+                onMouseEnter={preview.show(entry.id)}
+                onMouseLeave={preview.hide}
+                className={`${TITLE_LINK} ${preview.raised(entry.id)}`}
+              >
+                {entry.org}
+              </InlineLink>
+            </h3>
+            <p className={`mt-1 ${ENTRY_TEXT}`}>{entry.detail}</p>
+          </div>
+        </Fragment>
+      ))}
     </div>
   );
 }

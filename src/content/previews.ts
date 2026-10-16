@@ -12,7 +12,10 @@ export const PREVIEW_CAPTIONS = {
   ascend:
     "Ascend is a Financial Operations and Accounting Platform transforming how money moves in insurance.",
   saag: "South Asian Avant-Garde: a digital magazine on South Asian politics and culture.",
-  fidelity: "One of the largest financial services firms in the US.",
+  fidelity: "Fidelity’s internal startup studio, building new ventures from zero to one.",
+  bd: "One of the largest medical technology companies in the world.",
+  massart: "Massachusetts College of Art and Design, a public art school in Boston.",
+  bu: "Boston University, a private research university in Boston.",
   risd: "One of the oldest art and design schools in the US, in Providence.",
   rvce: "An engineering and architecture college in Bangalore, India.",
   // On "trust" in the bio's first sentence. Desktop only: it isn't in the

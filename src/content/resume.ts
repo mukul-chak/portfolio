@@ -14,9 +14,15 @@
  * 10,000+ statements figure; six years in product design, starting at BD in
  * June 2020.
  *
- * Everything still marked `needsConfirming` is inference, not fact. BD is
- * deliberately absent until its title is known — a fabricated history in a
- * document written for recruiters is worse than a short one.
+ * From Mukul's May 2025 resume, confirmed and reframed with him (Oct
+ * 2026): Fidelity Labs — Senior, then Principal from 2023; Calico (the Plaid
+ * for crypto; he designed its API docs, connection flow and integrations
+ * hub), the AI copilot; BD as Interaction Designer, Jun 2020 – Feb
+ * 2021, HealthSight Diversion Management; and the teaching roles.
+ *
+ * Everything still marked `needsConfirming` is inference, not fact — a
+ * fabricated history in a document written for recruiters is worse than a
+ * short one.
  *
  * Ascend's product surface is from useascend.com. Its customer numbers
  * (4,000+ businesses, more than half the 50 largest brokers, 10,000+
@@ -79,37 +85,77 @@ export const roles: Role[] = [
     needsConfirming: true,
   },
   {
-    org: "Fidelity Investments",
+    org: "Fidelity Labs",
     id: "fidelity",
     href: "https://www.fidelity.com",
-    title: "Product Design",
+    // Promoted from Senior to Principal in 2023.
+    title: "Senior, then Principal Product Designer",
     dates: "2021–2024",
     points: [
-      "Designed inside one of the largest financial institutions in the US, where regulation and scale set the constraints.",
+      "Led product design for Calico from zero to launch: a Fidelity Labs startup building account-aggregation infrastructure for crypto, one API connecting exchanges, wallets and banks for teams building consumer and institutional products.",
+      "Designed Calico’s core surfaces: the API docs, the end-user account connection flow, and an integrations hub where people manage the web3 apps linked to their accounts.",
+      "Led design of an AI copilot for planning and advice inside Fidelity’s retail trading platform, which serves 30 million+ customers.",
     ],
-    needsConfirming: true,
+  },
+  {
+    org: "Becton Dickinson (BD)",
+    id: "bd",
+    href: "https://www.bd.com",
+    title: "Interaction Designer",
+    dates: "2020–2021",
+    points: [
+      "Led UX for HealthSight Diversion Management, BD’s cloud analytics product that flags likely opioid diversion across hospital systems, designing the workflows clinicians use to triage alerts and see an investigation through.",
+    ],
   },
 ];
 
-export const education: {
+export type ListEntry = {
   org: string;
   id: PreviewKey;
   href: string;
-  degree: string;
+  /** The line under the org: a degree, or a role and department. */
+  detail: string;
   dates: string;
-}[] = [
+};
+
+export const education: ListEntry[] = [
   {
     org: "Rhode Island School of Design",
     id: "risd",
     href: "https://www.risd.edu",
-    degree: "MFA, Graphic Design",
+    detail: "MFA, Graphic Design",
     dates: "2017–2020",
   },
   {
     org: "R.V. College of Engineering, Bangalore",
     id: "rvce",
     href: "https://rvce.edu.in",
-    degree: "B.Arch",
+    detail: "B.Arch",
     dates: "2011–2016",
+  },
+];
+
+// Newest and ongoing first. Dates per the May 2025 resume.
+export const teaching: ListEntry[] = [
+  {
+    org: "MassArt",
+    id: "massart",
+    href: "https://massart.edu",
+    detail: "Guest Lecturer · Communication Design",
+    dates: "2021–Present",
+  },
+  {
+    org: "Boston University",
+    id: "bu",
+    href: "https://www.bu.edu",
+    detail: "Guest Critic · Graphic Design",
+    dates: "2021–2024",
+  },
+  {
+    org: "Rhode Island School of Design",
+    id: "risd",
+    href: "https://www.risd.edu",
+    detail: "Adjunct Professor · Graphic Design",
+    dates: "2021",
   },
 ];
