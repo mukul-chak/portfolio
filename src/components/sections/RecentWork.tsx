@@ -6,7 +6,8 @@ import RuleAccordion, { AccordionRule } from "@/components/ui/RuleAccordion";
 import Resume from "@/components/sections/Resume";
 import CopyEmailButton from "@/components/ui/CopyEmailButton";
 import * as Button from "@/components/ui/Button";
-import { projects } from "@/content/projects";
+import { projects, type Project } from "@/content/projects";
+import SectionLabel from "@/components/ui/SectionLabel";
 import { EMAIL } from "@/content/site";
 
 // Placeholder destinations — the real URLs land later. The email isn't
@@ -46,9 +47,7 @@ export default function RecentWork() {
             title→carousel gap, with the elevated rule covering the 20px and
             stopping 4px before the carousel. */}
         <CarouselJunctionButton>
-          <Rail className="pt-[40px] pb-[20px]" elevateRule>
-            <ProjectText project={first} />
-          </Rail>
+          <ProjectRail project={first} className="pt-[40px] pb-[20px]" />
           <Filmstrip count={first.imageCount} captions={first.captions} />
         </CarouselJunctionButton>
 
@@ -63,9 +62,7 @@ export default function RecentWork() {
                 pt-[68px] is the rest of the 72px carousel→title gap, covered by the
                 elevated rule. pb-[20px] does the same for THIS rail's own trailing
                 gap down to its own carousel below (20px covered + Filmstrip's 4px = 24px). */}
-            <Rail className="mt-1 pt-[68px] pb-[20px]" elevateRule>
-              <ProjectText project={project} />
-            </Rail>
+            <ProjectRail project={project} className="mt-1 pt-[68px] pb-[20px]" />
             <Filmstrip count={project.imageCount} captions={project.captions} />
           </CarouselJunctionButton>
         ))}
@@ -137,5 +134,30 @@ export default function RecentWork() {
         <AccordionRule />
       </RuleAccordion>
     </>
+  );
+}
+
+/**
+ * A project's text rail, with its year and type laid out as Experience lays
+ * out its dates: from lg in the frame's left channel on the title's
+ * baseline (a frame-width grid, baseline-aligned, the column track the
+ * Rail's own 620px), below lg in the eyebrow slot above the title.
+ */
+function ProjectRail({ project, className }: { project: Project; className: string }) {
+  const meta = `${project.year} · ${project.type}`;
+  return (
+    <div className="lg:grid lg:grid-cols-[1fr_var(--container-column)_1fr] lg:items-baseline">
+      {/* nowrap: "2025 · Product Design" is 139px against the channel's
+          138 at exactly 1024, and wrapping there would leave "Design" on a
+          second line below the title's baseline. Unwrapped it runs 1px into
+          the 16px padding, still clear of the column rule. */}
+      <SectionLabel className="hidden whitespace-nowrap px-4 tabular-nums lg:col-start-1 lg:row-start-1 lg:block">
+        {meta}
+      </SectionLabel>
+      <Rail className={`${className} lg:col-start-2 lg:row-start-1 lg:w-full`} elevateRule>
+        <SectionLabel className="mb-2 tabular-nums lg:hidden">{meta}</SectionLabel>
+        <ProjectText project={project} />
+      </Rail>
+    </div>
   );
 }
