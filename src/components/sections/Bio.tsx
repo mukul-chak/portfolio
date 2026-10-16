@@ -22,7 +22,7 @@ export default function Bio() {
         <span
           onMouseEnter={preview.show("trust")}
           onMouseLeave={preview.hide}
-          className={`md:pointer-fine:cursor-default md:pointer-fine:underline md:pointer-fine:decoration-dotted md:pointer-fine:decoration-rule md:pointer-fine:decoration-1 md:pointer-fine:underline-offset-[3px] md:pointer-fine:transition-colors md:pointer-fine:hover:text-text-strong-950 md:pointer-fine:hover:decoration-text-strong-950 ${preview.raised("trust")}`}
+          className={`md:pointer-fine:cursor-default md:pointer-fine:underline md:pointer-fine:decoration-dotted md:pointer-fine:decoration-stroke-sub-300 md:pointer-fine:decoration-1 md:pointer-fine:underline-offset-[3px] md:pointer-fine:transition-colors md:pointer-fine:hover:text-text-strong-950 md:pointer-fine:hover:decoration-text-strong-950 ${preview.raised("trust")}`}
         >
           trust
         </span>{" "}
@@ -36,7 +36,9 @@ export default function Bio() {
           external
           onMouseEnter={preview.show("ascend")}
           onMouseLeave={preview.hide}
-          className={preview.raised("ascend")}
+          // One step up from the rule colour, so the two words with notes
+          // attached read as such against the body copy.
+          className={`decoration-stroke-sub-300 ${preview.raised("ascend")}`}
         >
           Ascend
         </InlineLink>
