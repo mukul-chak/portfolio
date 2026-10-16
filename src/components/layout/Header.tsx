@@ -131,8 +131,11 @@ export default function Header({
   // Not once the name is done: the blink animates opacity, and would
   // override the fade-out.
   const idle = !typing && !done;
-  // slate-300 while it waits at the top of the page, a quiet placeholder;
-  // the text colour from the first scroll, as it starts to type.
+  // A quiet placeholder colour while it waits at the top of the page, the
+  // text colour from the first scroll, as it starts to type. Both are theme
+  // tokens, so dark mode gets the same step: text-disabled-300 is
+  // slate-300 in light and slate-600 in dark, against strong-950's
+  // near-black and white.
   const scrolled = progress > 0;
   const crossfade = Math.pow(phase(progress, clearedNav, 1), 2);
   const nameOpacity = reducedMotion ? crossfade : 1;
@@ -226,7 +229,7 @@ export default function Header({
                     // The fade after typing is a short transition rather
                     // than scroll-driven: the run ends on the last letter,
                     // so there's no scroll left to drive it with.
-                    className={`absolute bottom-[-0.25em] h-[1.1em] w-[2px] ${scrolled ? "bg-text-strong-950" : "bg-slate-300"} transition-opacity duration-300 ease-[var(--ease-out)] ${idle ? "caret-blink" : ""}`}
+                    className={`absolute bottom-[-0.25em] h-[1.1em] w-[2px] ${scrolled ? "bg-text-strong-950" : "bg-text-disabled-300"} transition-opacity duration-300 ease-[var(--ease-out)] ${idle ? "caret-blink" : ""}`}
                     style={{ left: caretX - 1, opacity: caretOpacity }}
                   />
                 </span>
