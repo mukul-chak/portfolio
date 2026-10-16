@@ -20,7 +20,8 @@ const buttonVariants = tv({
       neutral: "",
     },
     mode: {
-      filled:  "bg-text-strong-950 text-bg-white-0 hover:opacity-90",
+      // Primary CTAs keep the regular weight; the fill does the emphasis.
+      filled:  "font-normal bg-text-strong-950 text-bg-white-0 hover:opacity-90",
       stroke:  "font-[family-name:var(--font-eyebrow)] font-normal border border-stroke-soft-200 bg-bg-white-0 text-text-strong-950 shadow-xs hover:bg-bg-weak-50",
       lighter: "bg-bg-weak-50 text-text-strong-950 hover:bg-bg-soft-200",
       ghost:   "bg-transparent text-text-sub-600 hover:bg-bg-weak-50 hover:text-text-strong-950",
