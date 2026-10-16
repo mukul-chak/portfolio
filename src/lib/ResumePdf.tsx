@@ -1,6 +1,6 @@
 import path from "node:path";
 import { Document, Font, Link, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
-import { roles, education, summary } from "@/content/resume";
+import { roles, education, teaching, summary } from "@/content/resume";
 import { PREVIEW_CAPTIONS } from "@/content/previews";
 import { EMAIL, LOCATION } from "@/content/site";
 import { RESUME_NAME, RESUME_ROLE } from "@/lib/resumeExport";
@@ -34,13 +34,16 @@ const C = {
 // one size as on the site; dates in Monument at the eyebrow's 16/18 ratio,
 // captions at the preview caption's 14/18.
 const BODY = 10;
-const LEADING = 15;
+const LEADING = 13.5;
 const DATE = 9;
 const CAPTION = 8;
 
-// Letter, 0.75in margins. The date column is a quarter of the measure,
+// Letter, 0.75in side margins. The date column is a quarter of the measure,
 // echoing the site's channel (310 of the frame's 1240).
 const MARGIN = 54;
+// Top and bottom tighter than the sides (0.44in vs 0.75in), so the full
+// history — four roles, Education and Teaching — holds one sheet.
+const MARGIN_Y = 32;
 
 // Line heights in absolute points. A unitless lineHeight in react-pdf
 // multiplies the font's own line height (ascent + descent + gap), not its
@@ -48,23 +51,27 @@ const MARGIN = 54;
 const pt = (n: number) => `${n}pt`;
 const MEASURE = 612 - MARGIN * 2;
 const DATE_COL = MEASURE / 4;
+const COLUMN_GAP = 24;
 
 const s = StyleSheet.create({
-  page: { paddingVertical: MARGIN, paddingHorizontal: MARGIN, fontFamily: "Reform", fontSize: BODY, color: C.sub },
+  page: { paddingVertical: MARGIN_Y, paddingHorizontal: MARGIN, fontFamily: "Reform", fontSize: BODY, color: C.sub },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
   name: { fontWeight: 500, color: C.strong, lineHeight: pt(LEADING) },
   contact: { fontFamily: "Monument", fontSize: DATE, lineHeight: pt(LEADING), textAlign: "right" },
   row: { flexDirection: "row" },
   dateCol: { width: DATE_COL },
   mainCol: { width: MEASURE - DATE_COL },
-  rule: { borderTopWidth: 0.5, borderTopColor: C.rule, marginTop: 16, marginBottom: 10 },
+  rule: { borderTopWidth: 0.5, borderTopColor: C.rule, marginTop: 9, marginBottom: 6 },
   text: { lineHeight: pt(LEADING) },
   date: { fontFamily: "Monument", fontSize: DATE, lineHeight: pt(LEADING) },
   org: { fontWeight: 500, color: C.strong, textDecoration: "none", lineHeight: pt(LEADING) },
   caption: { fontFamily: "Monument", fontSize: CAPTION, color: C.soft, lineHeight: pt(12), marginTop: 2 },
-  label: { fontFamily: "Monument", fontSize: DATE, lineHeight: pt(LEADING), marginBottom: 6 },
-  points: { marginTop: 6 },
-  point: { flexDirection: "row", marginTop: 3 },
+  label: { fontFamily: "Monument", fontSize: DATE, lineHeight: pt(LEADING), marginBottom: 4 },
+  points: { marginTop: 5 },
+  columns: { flexDirection: "row", gap: COLUMN_GAP },
+  column: { width: (MEASURE - COLUMN_GAP) / 2 },
+  columnHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
+  point: { flexDirection: "row", marginTop: 2 },
   // Inset, not hung: the bullet sits on the column's edge and the text
   // indents past it, as on the page.
   bullet: { width: 9 },
@@ -94,10 +101,14 @@ function Entry({
         <Text style={[s.date, { marginTop: DATE_BASELINE_SHIFT }]}>{dates}</Text>
       </View>
       <View style={s.mainCol}>
-        <Link src={href} style={s.org}>
-          {org}
-        </Link>
-        <Text style={s.text}>{subtitle}</Text>
+        {/* Org and title share a line, to hold the page to one sheet. */}
+        <Text style={s.text}>
+          <Link src={href} style={s.org}>
+            {org}
+          </Link>
+          {"  ·  "}
+          {subtitle}
+        </Text>
         <Text style={s.caption}>{caption}</Text>
         {children}
       </View>
@@ -165,24 +176,35 @@ export default function ResumePdf() {
           </View>
         ))}
 
+        {/* Education and Teaching side by side across the full measure, so
+            the page holds one sheet: each entry is its date, the linked org
+            and one detail line, without the caption the roles carry. Two
+            lines each: org with its dates, then the detail. */}
         <View style={s.rule} />
-        <View style={s.row}>
-          <View style={s.dateCol} />
-          <View style={s.mainCol}>
-            <Text style={s.label}>Education</Text>
-          </View>
+        <View style={s.columns}>
+          {(
+            [
+              ["Education", education],
+              ["Teaching", teaching],
+            ] as const
+          ).map(([label, items]) => (
+            <View key={label} style={s.column}>
+              <Text style={s.label}>{label}</Text>
+              {items.map((entry, i) => (
+                <View key={`${label}-${entry.id}`} style={{ marginTop: i === 0 ? 0 : 5 }}>
+                  {/* Org left, dates right on its baseline; detail below. */}
+                  <View style={s.columnHead}>
+                    <Link src={entry.href} style={s.org}>
+                      {entry.org}
+                    </Link>
+                    <Text style={[s.date, { marginTop: DATE_BASELINE_SHIFT }]}>{entry.dates}</Text>
+                  </View>
+                  <Text style={s.text}>{entry.detail}</Text>
+                </View>
+              ))}
+            </View>
+          ))}
         </View>
-        {education.map((school, i) => (
-          <View key={school.id} style={{ marginTop: i === 0 ? 0 : 10 }}>
-            <Entry
-              dates={school.dates}
-              org={school.org}
-              href={school.href}
-              subtitle={school.degree}
-              caption={PREVIEW_CAPTIONS[school.id]}
-            />
-          </View>
-        ))}
       </Page>
     </Document>
   );
