@@ -6,7 +6,6 @@ import LocationTime from "@/components/ui/LocationTime";
 import RuleJunction from "@/components/ui/RuleJunction";
 import { SECTION_TARGET_EVENT } from "@/components/ui/RuleAccordion";
 import { useReducedMotion } from "@/lib/useReducedMotion";
-import { measureNameMark, type NameMark } from "@/lib/measureNameMark";
 import { phase } from "@/lib/phase";
 import type { NameHandoff } from "@/components/sections/BodyName";
 
@@ -37,34 +36,20 @@ function targetSection(href: string) {
 
 const FULL_NAME = "Mukul Chakravarthi";
 
-// The marks travel linearly across the whole run — no easing. Any ease-out
-// spends most of the journey in the first fraction of the scroll and then
-// crawls, which is exactly what made this read as a snap. Linear means the
-// pair opens at a constant rate the entire way down, from the resting state
-// at the top of the page to the merge at the bottom of the run.
+// A caret types the name in. It rests blinking at the name's insertion
+// point, then, as the page scrolls, jumps one character at a time, each
+// letter appearing whole as the caret steps past it; once the name is
+// complete the caret fades out.
 //
-// Timed against real layout rather than chosen fractions (see NameHandoff):
+// Characters are typed linearly across the whole run, 0 to 1 — the same
+// pace the strokes it replaces opened at. Any ease-out spends most of the
+// journey in the first fraction of the scroll and then crawls, which read
+// as a snap.
 //
-//   marks open   0 ─────────────────────────────────── 1
-//   crossfade                          clearedNav ──── 1
-//
-// clearedNav is the moment the body name's bottom passes below the nav bar.
-// Nothing of the header's own name exists before then: it used to start at a
-// flat 0.5, which put it on screen while the body name was still ~90px short
-// of the bar, with two copies of the name visible at once and neither of
-// them arriving at anything.
-//
-// The crossfade is back-loaded, not linear. Run straight, the name was
-// already half-opaque with the mark still a tenth of its journey short —
-// legible enough to read as arrived while the thing opening the space for
-// it was visibly still moving. Squaring holds it back through most of the
-// mark's final approach and resolves it in the last of it, so the name
-// lands with the mark rather than ahead of it.
-//
-// The crossfade runs on one window for both, so the marks dissolve at the
-// same rate the letters resolve — and since each mark is sitting on the
-// upright it stands in for (the M's, then the i's), the handover happens in
-// place rather than as two separate events.
+// Under reduced motion nothing travels: the caret stays at the insertion
+// point, steady, and the name crossfades in over the old window, from the
+// moment the body name clears the nav bar (clearedNav) to the end of the
+// run, squared so it resolves late rather than reading as arrived early.
 
 export default function Header({
   city,
@@ -80,7 +65,10 @@ export default function Header({
   });
   const reducedMotion = useReducedMotion();
   const nameRef = useRef<HTMLSpanElement>(null);
-  const [mark, setMark] = useState<NameMark | null>(null);
+  // Where the caret can stand: before each character and after the last,
+  // in px from the name's origin. Empty until measured.
+  const [stops, setStops] = useState<number[]>([]);
+  const [dpr, setDpr] = useState(1);
 
   useEffect(() => {
     function onNameScroll(e: Event) {
@@ -90,13 +78,26 @@ export default function Header({
     return () => window.removeEventListener("name-scroll-progress", onNameScroll);
   }, []);
 
-  // The two marks are derived from the M itself (see measureNameMark), so
-  // they have to be measured against the real webfont, not the fallback that
-  // renders first. No resize listener: every value here is font-intrinsic and
-  // the name's size is fixed, so nothing about them is viewport-dependent.
+  // Each character's position comes from the laid-out text itself (a
+  // Range per character), so it has to be measured against the real
+  // webfont, not the fallback that renders first. No resize listener: it's
+  // font-intrinsic and the name's size is fixed.
   useEffect(() => {
     function measure() {
-      if (nameRef.current) setMark(measureNameMark(nameRef.current, FULL_NAME));
+      const el = nameRef.current;
+      const text = el?.firstChild;
+      if (!el || !text) return;
+      const origin = el.getBoundingClientRect().left;
+      const range = document.createRange();
+      const next: number[] = [];
+      for (let i = 0; i < FULL_NAME.length; i++) {
+        range.setStart(text, i);
+        range.setEnd(text, i + 1);
+        next.push(range.getBoundingClientRect().left - origin);
+      }
+      next.push(el.getBoundingClientRect().width);
+      setStops(next);
+      setDpr(window.devicePixelRatio || 1);
     }
     measure();
     document.fonts?.ready.then(measure);
@@ -104,28 +105,38 @@ export default function Header({
 
 
   const { progress, clearedNav } = handoff;
-  // The left mark never moves. The right one runs from behind it out to the
-  // name's last upright, opening the space the name fills.
-  // Snapped to the same device-pixel grid the rest state was measured on, so
-  // the mark stays exactly as crisp in motion as it is parked — otherwise it
-  // thins and thickens as it drifts across sub-pixel phases.
-  //
-  // Reduced motion holds the pair at rest instead: the marks stay as the
-  // nav's resting identity — dropping them would leave it empty until the
-  // name arrives — and the handover becomes a plain crossfade from the
-  // single stroke to the name, with nothing travelling.
-  //
-  // At rest the right mark sits exactly behind the left one, so the nav
-  // shows a single stroke on the M's left upright.
-  const travelled = reducedMotion ? 0 : progress;
-  const rightX = mark
-    ? Math.round(
-        (mark.leftX + (mark.rightOpenX - mark.leftX) * travelled) * mark.dpr,
-      ) / mark.dpr
-    : 0;
+  // Snapped to whole device pixels, so the caret stays exactly as crisp in
+  // motion as at rest instead of thinning across sub-pixel phases.
+  const typed = reducedMotion ? 0 : progress;
+  // Characters typed so far. floor, with 1 itself mapping to the full name,
+  // so each character gets an equal share of the run and the last lands
+  // exactly at the end of it.
+  const count = Math.min(FULL_NAME.length, Math.floor(typed * FULL_NAME.length));
+  const caretX = stops.length ? Math.round(stops[count] * dpr) / dpr : 0;
+  const nameWidth = stops.length ? stops[FULL_NAME.length] : 0;
+  const done = count === FULL_NAME.length;
+  // Holds steady while typing and blinks whenever it's waiting — at the
+  // insertion point, or paused mid-name when the scroll stops — as a real
+  // caret does. "Typing" is a character landing in the last 530ms, one blink
+  // phase, so a steady scroll never flickers between letters.
+  const [typing, setTyping] = useState(false);
+  const lastCount = useRef(count);
+  useEffect(() => {
+    if (count === lastCount.current) return;
+    lastCount.current = count;
+    setTyping(true);
+    const id = setTimeout(() => setTyping(false), 530);
+    return () => clearTimeout(id);
+  }, [count]);
+  // Not once the name is done: the blink animates opacity, and would
+  // override the fade-out.
+  const idle = !typing && !done;
+  // slate-300 while it waits at the top of the page, a quiet placeholder;
+  // the text colour from the first scroll, as it starts to type.
+  const scrolled = progress > 0;
   const crossfade = Math.pow(phase(progress, clearedNav, 1), 2);
-  const nameOpacity = crossfade;
-  const markOpacity = 1 - crossfade;
+  const nameOpacity = reducedMotion ? crossfade : 1;
+  const caretOpacity = reducedMotion ? 1 - crossfade : done ? 0 : 1;
 
   // z-[25]: above every z-20 element in the scrolling page (RecentWork's
   // plus buttons, ThemeToggle) that could otherwise visually collide with
@@ -184,11 +195,11 @@ export default function Header({
               the marks, so there was no reason to keep two behaviours. */}
           <div className="pointer-events-none absolute inset-0 flex items-center">
             <div className="mx-auto w-full max-w-column px-4">
-              {/* The marks and the name are one link back to the top. The
+              {/* The caret and the name are one link back to the top. The
                   overlay is pointer-events-none so the nav stays clickable;
                   the link opts back in. The name is laid out at full width
-                  even while invisible, so the target covers the marks at
-                  every point in the handoff. Plain scrollTo, so the glide
+                  even while hidden, so the target covers the caret at every
+                  point in the handoff. Plain scrollTo, so the glide
                   follows the page's own scroll-behavior (none under reduced
                   motion), and the hash is cleared so a reload starts at the
                   top too. */}
@@ -202,68 +213,38 @@ export default function Header({
                 }}
                 className="pointer-events-auto inline-block whitespace-nowrap rounded-sm text-[18px] font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text-strong-950"
               >
-                {/* Each mark hangs off a zero-width inline-block sitting at
-                    the name's own text origin. Two things fall out of that,
-                    both of which would otherwise need measuring:
-
-                    - Vertical. An empty inline-block takes its baseline from
-                      its bottom margin edge, so a box of exactly cap height
-                      lands on the cap band — no ascent/descent arithmetic,
-                      and no risk of the font's reported metrics disagreeing
-                      with the line box the browser actually built.
-                    - Horizontal. Zero width means it contributes nothing to
-                      the flow, so the name starts where it always did and
-                      the inner offsets are straight from the text origin —
-                      the same origin measureNameMark returned them against. */}
-                {mark && (
-                  <>
-                    <span
-                      aria-hidden
-                      className="relative inline-block w-0 align-baseline"
-                      style={{ height: mark.capHeight }}
-                    >
-                      {/* Blinks like a caret while the stroke is alone at
-                          rest; steady from the first device pixel of travel,
-                          so the opening never flickers. Keyed off the snapped
-                          position, not progress: progress is already a hair
-                          above 0 at the top of the page. */}
-                      <span
-                        className={`absolute top-0 h-full bg-slate-300 ${rightX === mark.leftX ? "caret-blink" : ""}`}
-                        style={{
-                          left: mark.leftX,
-                          width: mark.strokeWidth,
-                          opacity: markOpacity,
-                        }}
-                      />
-                    </span>
-                    <span
-                      aria-hidden
-                      className="relative inline-block w-0 align-baseline"
-                      style={{ height: mark.capHeight }}
-                    >
-                      <span
-                        className="absolute top-0 h-full bg-slate-300"
-                        style={{
-                          left: rightX,
-                          width: mark.strokeWidth,
-                          // Hidden while it's still behind the left mark:
-                          // it would hold the stroke on through the left
-                          // one's blink, and two stacked strokes fading
-                          // together (reduced motion's crossfade) would read
-                          // denser than one.
-                          opacity: rightX === mark.leftX ? 0 : markOpacity,
-                        }}
-                      />
-                    </span>
-                  </>
-                )}
-                {/* Always rendered at full width, opacity-only: the right
-                    mark's open position is this text's own ink edge, so the
-                    name has to be laid out even while it's invisible. */}
+                {/* The caret hangs off a zero-width, zero-height
+                    inline-block at the name's text origin, on its baseline:
+                    it adds nothing to the flow or the line box, so the name
+                    sits exactly where it always did, and the caret's offsets
+                    are straight from the origin. 2px wide, centred on the
+                    insertion point; 1.1em tall, from 0.85em above the
+                    baseline to 0.25em below — the line's ascender to
+                    descender, as a text caret spans it. */}
+                <span aria-hidden className="relative inline-block h-0 w-0 align-baseline">
+                  <span
+                    // The fade after typing is a short transition rather
+                    // than scroll-driven: the run ends on the last letter,
+                    // so there's no scroll left to drive it with.
+                    className={`absolute bottom-[-0.25em] h-[1.1em] w-[2px] ${scrolled ? "bg-text-strong-950" : "bg-slate-300"} transition-opacity duration-300 ease-[var(--ease-out)] ${idle ? "caret-blink" : ""}`}
+                    style={{ left: caretX - 1, opacity: caretOpacity }}
+                  />
+                </span>
+                {/* Always laid out at full width — its width is the
+                    caret's journey, and the link's hit area — and clipped
+                    to the left of the caret, so only what's been typed
+                    shows. */}
                 <span
                   ref={nameRef}
                   className="text-text-strong-950"
-                  style={{ opacity: nameOpacity }}
+                  style={{
+                    opacity: nameOpacity,
+                    // Fully clipped until measured, so the server render
+                    // and first paint don't flash the whole name.
+                    clipPath: reducedMotion
+                      ? undefined
+                      : `inset(0 ${nameWidth ? `${nameWidth - caretX}px` : "100%"} 0 0)`,
+                  }}
                 >
                   {FULL_NAME}
                 </span>
