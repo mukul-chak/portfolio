@@ -181,7 +181,24 @@ export default function Header({
               the marks, so there was no reason to keep two behaviours. */}
           <div className="pointer-events-none absolute inset-0 flex items-center">
             <div className="mx-auto w-full max-w-column px-4">
-              <span className="inline-block whitespace-nowrap text-[18px] font-medium">
+              {/* The marks and the name are one link back to the top. The
+                  overlay is pointer-events-none so the nav stays clickable;
+                  the link opts back in. The name is laid out at full width
+                  even while invisible, so the target covers the marks at
+                  every point in the handoff. Plain scrollTo, so the glide
+                  follows the page's own scroll-behavior (none under reduced
+                  motion), and the hash is cleared so a reload starts at the
+                  top too. */}
+              <a
+                href="#"
+                aria-label={`${FULL_NAME}, back to top`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0 });
+                  history.replaceState(null, "", location.pathname + location.search);
+                }}
+                className="pointer-events-auto inline-block whitespace-nowrap rounded-sm text-[18px] font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text-strong-950"
+              >
                 {/* Each mark hangs off a zero-width inline-block sitting at
                     the name's own text origin. Two things fall out of that,
                     both of which would otherwise need measuring:
@@ -237,7 +254,7 @@ export default function Header({
                 >
                   {FULL_NAME}
                 </span>
-              </span>
+              </a>
             </div>
           </div>
 
