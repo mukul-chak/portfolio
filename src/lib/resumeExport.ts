@@ -1,4 +1,4 @@
-import { roles, education, summary } from "@/content/resume";
+import { roles, education, teaching, summary } from "@/content/resume";
 import { PREVIEW_CAPTIONS } from "@/content/previews";
 import { EMAIL, LOCATION } from "@/content/site";
 
@@ -32,15 +32,20 @@ export function resumeMarkdown() {
       ...role.points.map((p) => (role.points.length > 1 ? `- ${p}` : p)),
     );
   }
-  lines.push("", "## Education");
-  for (const school of education) {
-    lines.push(
-      "",
-      `### [${school.org}](${school.href}) — ${school.degree}`,
-      "",
-      `${school.dates}  `,
-      `*${PREVIEW_CAPTIONS[school.id]}*`,
-    );
+  for (const [label, items] of [
+    ["Education", education],
+    ["Teaching", teaching],
+  ] as const) {
+    lines.push("", `## ${label}`);
+    for (const entry of items) {
+      lines.push(
+        "",
+        `### [${entry.org}](${entry.href}) — ${entry.detail}`,
+        "",
+        `${entry.dates}  `,
+        `*${PREVIEW_CAPTIONS[entry.id]}*`,
+      );
+    }
   }
   return lines.join("\n") + "\n";
 }
