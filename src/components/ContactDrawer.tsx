@@ -167,6 +167,23 @@ export default function ContactDrawer() {
   }
 
   const isMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
+  // On touch, focusing the From field on open raises the on-screen keyboard
+  // before anyone has asked to type, covering half the drawer. There the
+  // drawer's own focus default (its close button) takes it instead, which
+  // keeps keyboard and screen-reader users inside the dialog without a
+  // keyboard popping up.
+  const finePointer = typeof window !== "undefined" && window.matchMedia("(pointer: fine)").matches;
+  // The full placeholder is 281px of Reform at 16px; below md the field is
+  // 258px at 375 and narrower on smaller phones, so it was cut mid-word.
+  // The short one keeps the joke at 171px.
+  const [narrow, setNarrow] = useState(false);
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 767px)");
+    setNarrow(mql.matches);
+    const onChange = (e: MediaQueryListEvent) => setNarrow(e.matches);
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
 
   const invalid = (key: keyof Values) =>
     errors[key] ? { "aria-invalid": true, "aria-describedby": `${ids[key]}-error` } : {};
@@ -176,7 +193,7 @@ export default function ContactDrawer() {
       open={open}
       onClose={() => setOpen(false)}
       title="Write to me"
-      initialFocusRef={firstFieldRef}
+      initialFocusRef={finePointer ? firstFieldRef : undefined}
       footer={
         <div className="flex items-center justify-between gap-4 pt-3">
           <p className="hidden font-[family-name:var(--font-eyebrow)] text-[14px] text-text-soft-400 md:block">
@@ -242,7 +259,7 @@ export default function ContactDrawer() {
         <Row id={ids.subject} label="Subject" error={errors.subject}>
           <input
             id={ids.subject}
-            placeholder="A strongly worded note about your kerning"
+            placeholder={narrow ? "A note about your kerning" : "A strongly worded note about your kerning"}
             value={values.subject}
             onChange={(e) => update("subject", e.target.value)}
             className={`${FIELD} self-stretch`}
