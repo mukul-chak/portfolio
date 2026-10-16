@@ -1044,3 +1044,16 @@ body {
     animation: caret-blink 1060ms step-end infinite;
   }
 }
+
+/* Below md the theme toggle is a horizontal bar fixed 24px off the bottom,
+   48px tall, right where Sonner puts its toasts — so a toast covered it.
+   Lifted to clear it with a 12px gap: 24 + 48 + 12 = 84px, plus the same
+   safe-area inset the toggle takes. !important because Sonner writes its
+   offsets as inline custom properties on the toaster. From md the toggle
+   stands vertically off to the side and the toast keeps its own place. */
+@media (max-width: 767px) {
+  [data-sonner-toaster][data-y-position="bottom"] {
+    --offset-bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+    --mobile-offset-bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
