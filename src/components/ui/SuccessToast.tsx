@@ -20,7 +20,17 @@ export function showSuccessToast(title: string, detail: string) {
       //
       // An inset ring rather than a border: a 1px border would add 2px back
       // to each axis of a box that now has no slack to absorb it.
-      <div className="inset-ring-1 inset-ring-stroke-soft-200 flex items-start gap-2 rounded-[2px] bg-background px-2.5 py-2 shadow-regular-md">
+      //
+      // Right padding 13px against the left's 10, for optical balance: the
+      // check is a solid disc that only touches its 10px at one point, so it
+      // reads as sitting ~2px further in, while the text ends on a stem
+      // (".com"'s m) whose ink came to ~9.4px from the edge. 13px puts that
+      // ink at 12.4 (Reform Grotesk, measured), level with the disc's
+      // optical edge.
+      //
+      // font-sans: Sonner's toaster sets its own system font stack, which
+      // the page's Reform Grotesk on body can't reach through.
+      <div className="inset-ring-1 inset-ring-stroke-soft-200 flex items-start gap-2 rounded-[2px] bg-background py-2 pl-2.5 pr-[13px] font-sans shadow-regular-md">
         <svg className="mt-0.5 shrink-0" width="16" height="16" viewBox="0 0 16 16" fill="none">
           {/* No exact AlignUI 700 tier (same gap flagged for the
               header MC animation earlier) — strong-950/white-0 is the
