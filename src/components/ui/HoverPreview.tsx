@@ -2,7 +2,8 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { PREVIEW_CAPTIONS, PREVIEW_NOTES, type PreviewKey } from "@/content/previews";
+import { PREVIEW_CAPTIONS, PREVIEW_NOTES, PREVIEW_SITES, PREVIEW_VIDEOS, type PreviewKey } from "@/content/previews";
+import { useReducedMotion } from "@/lib/useReducedMotion";
 
 // The hovered link's baseline, as an offset from its box top. An inline
 // element's box is its font's content area — line-height doesn't enter into
@@ -127,6 +128,7 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
   const panelRef = useRef<HTMLDivElement>(null);
   // How far the panel is pulled up to stay clear of the footer (≤ 0).
   const [lift, setLift] = useState(0);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => setMounted(true), []);
 
@@ -276,9 +278,26 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
             </span>
             {/* A note is the caption alone — no image, no clamp — read as a
                 margin note rather than a preview of somewhere. */}
-            {!PREVIEW_NOTES.has(rendered.key) && (
-              <div className="aspect-[1.6] w-full rounded-[4px] bg-card" />
-            )}
+            {/* A video, where the key has one, fills the same slot: muted,
+                looping and inline, so it reads as a moving image rather than
+                a player. It mounts with the panel, so each hover starts it
+                from the top. Under reduced motion it doesn't play; #t=0.001
+                makes Safari paint the first frame instead of a blank box. */}
+            {!PREVIEW_NOTES.has(rendered.key) &&
+              (PREVIEW_VIDEOS[rendered.key] ? (
+                <video
+                  key={rendered.key}
+                  src={reducedMotion ? `${PREVIEW_VIDEOS[rendered.key]}#t=0.001` : PREVIEW_VIDEOS[rendered.key]}
+                  autoPlay={!reducedMotion}
+                  muted
+                  loop
+                  playsInline
+                  preload={reducedMotion ? "metadata" : "auto"}
+                  className="aspect-[1.6] w-full rounded-[4px] bg-card object-cover"
+                />
+              ) : (
+                <div className="aspect-[1.6] w-full rounded-[4px] bg-card" />
+              ))}
             <p
               className={`font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600 ${
                 PREVIEW_NOTES.has(rendered.key) ? "" : "mt-2 line-clamp-3"
@@ -286,6 +305,15 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
             >
               {PREVIEW_CAPTIONS[rendered.key]}
             </p>
+            {/* Text, not a link: the panel is pointer-events-none and closes
+                as the cursor leaves the word, so it can't be clicked — the
+                hovered word itself is the link. One step softer than the
+                caption, so it reads as the source rather than more prose. */}
+            {PREVIEW_SITES[rendered.key] && (
+              <p className="mt-1 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-soft-400">
+                {PREVIEW_SITES[rendered.key]}
+              </p>
+            )}
             <div
               className="absolute top-full mt-3 border-b border-rule"
               style={{ left: -16, width: rendered.strokeWidth }}
