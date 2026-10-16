@@ -104,20 +104,23 @@ export default function Header({
 
 
   const { progress, clearedNav } = handoff;
-  // The left mark never moves. The right one runs from the M's own second
-  // upright out to the name's last one, opening the space the name fills.
+  // The left mark never moves. The right one runs from behind it out to the
+  // name's last upright, opening the space the name fills.
   // Snapped to the same device-pixel grid the rest state was measured on, so
   // the mark stays exactly as crisp in motion as it is parked — otherwise it
   // thins and thickens as it drifts across sub-pixel phases.
   //
   // Reduced motion holds the pair at rest instead: the marks stay as the
   // nav's resting identity — dropping them would leave it empty until the
-  // name arrives — and the handover becomes a plain crossfade from the two
-  // uprights to the name, with nothing travelling.
+  // name arrives — and the handover becomes a plain crossfade from the
+  // single stroke to the name, with nothing travelling.
+  //
+  // At rest the right mark sits exactly behind the left one, so the nav
+  // shows a single stroke on the M's left upright.
   const travelled = reducedMotion ? 0 : progress;
   const rightX = mark
     ? Math.round(
-        (mark.rightRestX + (mark.rightOpenX - mark.rightRestX) * travelled) * mark.dpr,
+        (mark.leftX + (mark.rightOpenX - mark.leftX) * travelled) * mark.dpr,
       ) / mark.dpr
     : 0;
   const crossfade = Math.pow(phase(progress, clearedNav, 1), 2);
@@ -219,8 +222,13 @@ export default function Header({
                       className="relative inline-block w-0 align-baseline"
                       style={{ height: mark.capHeight }}
                     >
+                      {/* Blinks like a caret while the stroke is alone at
+                          rest; steady from the first device pixel of travel,
+                          so the opening never flickers. Keyed off the snapped
+                          position, not progress: progress is already a hair
+                          above 0 at the top of the page. */}
                       <span
-                        className="absolute top-0 h-full bg-text-strong-950"
+                        className={`absolute top-0 h-full bg-slate-300 ${rightX === mark.leftX ? "caret-blink" : ""}`}
                         style={{
                           left: mark.leftX,
                           width: mark.strokeWidth,
@@ -234,11 +242,16 @@ export default function Header({
                       style={{ height: mark.capHeight }}
                     >
                       <span
-                        className="absolute top-0 h-full bg-text-strong-950"
+                        className="absolute top-0 h-full bg-slate-300"
                         style={{
                           left: rightX,
                           width: mark.strokeWidth,
-                          opacity: markOpacity,
+                          // Hidden while it's still behind the left mark:
+                          // it would hold the stroke on through the left
+                          // one's blink, and two stacked strokes fading
+                          // together (reduced motion's crossfade) would read
+                          // denser than one.
+                          opacity: rightX === mark.leftX ? 0 : markOpacity,
                         }}
                       />
                     </span>

@@ -1024,3 +1024,23 @@ body {
   background-size: 6px 1px;
   background-repeat: repeat-x;
 }
+
+/* The header's resting stroke blinks like a text caret: 530ms on, 530ms
+   off (the macOS caret's rate), a hard step rather than a fade. Only under
+   no-preference, so reduced motion gets a steady stroke. */
+@keyframes caret-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .caret-blink {
+    animation: caret-blink 1060ms step-end infinite;
+  }
+}
