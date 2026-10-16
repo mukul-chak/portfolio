@@ -78,8 +78,14 @@ export default function CarouselJunctionButton({
     }
     measure();
     document.fonts?.ready.then(measure);
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    // Any change to this wrapper's size moves the rule endpoints — a
+    // spacing change, a font swap, an accordion settling, a viewport
+    // resize — and a stale measurement leaves the connectors short of the
+    // dividers. Observing the wrapper catches all of them; the connectors
+    // are absolute, so drawing them can't resize it and loop.
+    const observer = new ResizeObserver(measure);
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
   }, []);
 
   return (
