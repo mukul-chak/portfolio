@@ -39,9 +39,8 @@ next-env.d.ts
 .env
 .gstack/
 
-# Uncompressed avatar sources (~15–23MB each). The site loads the 128px
-# transcodes, public/avatar-dawn.mp4 and avatar-dusk.mp4; these stay out of
-# git.
+# Uncompressed sources of the old gradient avatar (~15–23MB each), kept
+# locally only. The site's avatar is now public/avatar-steel.*.
 /public/mc_profile_loop.mp4
 /public/Mukul_Dawn.mp4
 /public/Mukul_Dusk.mp4
