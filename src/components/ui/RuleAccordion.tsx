@@ -203,14 +203,14 @@ export default function RuleAccordion({
           className="hatch-mirror pointer-events-none absolute inset-0 transition-opacity ease-[var(--ease-out)]"
           style={{ opacity: open ? 1 : 0, transitionDuration: `${DURATION_MS}ms` }}
         />
-        {/* py-1 against the label's 24px line box gives the 32px band. The
+        {/* py-2 against the label's 24px line box gives the 40px band. The
             title is 18px, so the 24px is pinned with leading-6 rather than
-            inherited — left to scale it would grow to 27px and the band to 35.
+            inherited — left to scale it would grow to 27px and the band to 43.
             The row is column-width so the title and chevron line up with the
             column rules, while the button itself spans the full band — the
             whole strip between the two rules is the target, not just the
             text. */}
-        <div className="relative mx-auto flex max-w-column items-center justify-between px-4 py-1">
+        <div className="relative mx-auto flex max-w-column items-center justify-between px-4 py-2">
           <SectionLabel className="text-[18px] leading-6">{title}</SectionLabel>
           <span
             className={`motion-transform text-text-sub-600 transition-[transform,color] duration-200 ease-[var(--ease-out)] group-hover:text-text-strong-950 ${
