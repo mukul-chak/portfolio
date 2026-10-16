@@ -5,6 +5,13 @@ import Kbd from "@/components/ui/Kbd";
 import { useHoverPreview } from "@/components/ui/HoverPreview";
 import { EMAIL } from "@/content/site";
 import { OPEN_CONTACT_EVENT } from "@/components/ContactDrawer";
+import { copyEmailWithToast } from "@/components/CopyEmail";
+
+// mailto stays as the href for anyone without JavaScript.
+function openContact(e: React.MouseEvent) {
+  e.preventDefault();
+  window.dispatchEvent(new Event(OPEN_CONTACT_EVENT));
+}
 
 export default function Bio() {
   const preview = useHoverPreview(["trust", "ascend"]);
@@ -52,19 +59,37 @@ export default function Bio() {
         I do my best work on opinionated teams, the kind that share a specific
         conviction about how software should work, feel, look, and perform.
       </p>
+      {/* Two versions of one line, switched on input rather than width —
+          the rule the "trust" note uses: the hotkeys only where there's a
+          keyboard and a fine pointer (md and up), the tap version
+          everywhere else, tablets included. One <p>, so the section's
+          spacing is the same either way. */}
       <p>
-        Press <Kbd>c</Kbd> to copy my email or <Kbd>w</Kbd> to{" "}
-        <InlineLink
-          href={`mailto:${EMAIL}`}
-          onClick={(e) => {
-            // mailto stays as the href for anyone without JavaScript.
-            e.preventDefault();
-            window.dispatchEvent(new Event(OPEN_CONTACT_EVENT));
-          }}
-        >
-          write to me
-        </InlineLink>
-        .
+        <span className="hidden md:pointer-fine:inline">
+          Press <Kbd>c</Kbd> to copy my email or <Kbd>w</Kbd> to{" "}
+          <InlineLink href={`mailto:${EMAIL}`} onClick={openContact}>
+            write to me
+          </InlineLink>
+          .
+        </span>
+        <span className="md:pointer-fine:hidden">
+          <InlineLink
+            href={`mailto:${EMAIL}`}
+            onClick={(e) => {
+              // Copies inside the tap itself, which iOS requires for
+              // clipboard access, with the same toast as the "c" hotkey.
+              e.preventDefault();
+              void copyEmailWithToast();
+            }}
+          >
+            Copy my email
+          </InlineLink>{" "}
+          or{" "}
+          <InlineLink href={`mailto:${EMAIL}`} onClick={openContact}>
+            write to me
+          </InlineLink>
+          .
+        </span>
       </p>
 
       {preview.panel}
