@@ -59,10 +59,12 @@ export default function RecentWork() {
           // continuous line across the project boundary, not two disjoint ones.
           <CarouselJunctionButton key={project.slug}>
             {/* mt-1 (4px, no rule) keeps the carousel's 4px stroke-gap above this rail;
-                pt-[68px] is the rest of the 72px carousel→title gap, covered by the
-                elevated rule. pb-[20px] does the same for THIS rail's own trailing
-                gap down to its own carousel below (20px covered + Filmstrip's 4px = 24px). */}
-            <ProjectRail project={project} className="mt-1 pt-[68px] pb-[20px]" />
+                pt-[37px] is the rest of the 41px divider→title gap, covered by the
+                elevated rule — the lower half of the space Filmstrip's closing
+                divider splits evenly (see there). pb-[20px] does the same for THIS
+                rail's own trailing gap down to its own carousel below (20px
+                covered + Filmstrip's 4px = 24px). */}
+            <ProjectRail project={project} className="mt-1 pt-[37px] pb-[20px]" />
             <Filmstrip count={project.imageCount} captions={project.captions} />
           </CarouselJunctionButton>
         ))}

@@ -66,11 +66,15 @@ export default function Filmstrip({
           ))}
         </div>
       </div>
-      {/* Solid divider between projects, 8px below the captions (not the
-          dotted rule). data-rule-divider-close lets the NEXT project's
+      {/* Solid divider between projects (not the dotted rule), splitting
+          the space between the captions and the next title optically: 39px
+          here and 41px to the next title's box (RecentWork) put the line
+          43.5px below the captions' baseline and 43.9px above the title's
+          cap height — the caption's baseline sits 4.5px inside its box, the
+          title's caps 2.9px. data-rule-divider-close lets the NEXT project's
           connector reach backward and bridge its own rule-x up to this line,
           closing the gap from below. */}
-      <Divider data-rule-divider-close className="mt-2" />
+      <Divider data-rule-divider-close className="mt-[39px]" />
     </div>
   );
 }
