@@ -62,12 +62,12 @@ export default function Resume() {
           key={`${role.org}-${role.title}`}
           className="lg:grid lg:grid-cols-[1fr_var(--container-column)_1fr] lg:items-baseline"
         >
-          <SectionLabel className="hidden px-4 tabular-nums lg:col-start-1 lg:row-start-1 lg:block">
+          <SectionLabel className="text-faded-base hidden px-4 tabular-nums lg:col-start-1 lg:row-start-1 lg:block">
             {role.dates}
           </SectionLabel>
           <Rail className="pb-10 lg:col-start-2 lg:row-start-1 lg:w-full" elevateRule>
             <div className="mx-[-16px] rule-t" />
-            <SectionLabel className="mt-4 tabular-nums lg:hidden">{role.dates}</SectionLabel>
+            <SectionLabel className="text-faded-base mt-4 tabular-nums lg:hidden">{role.dates}</SectionLabel>
             <h3 className="mt-2 text-[17px] sm:text-[18px] font-medium leading-none text-text-strong-950 lg:mt-4">
               <InlineLink
                 href={role.href}
@@ -178,7 +178,7 @@ function DatedList({
       {items.map((entry, i) => (
         <Fragment key={entry.org}>
           <div className="hidden lg:col-start-1 lg:block" style={{ gridRow: i + 2 }}>
-            <SectionLabel className="px-4 tabular-nums">{entry.dates}</SectionLabel>
+            <SectionLabel className="text-faded-base px-4 tabular-nums">{entry.dates}</SectionLabel>
           </div>
           <div
             className={`lg:col-start-2 lg:px-4 ${i === 0 ? "mt-2" : "mt-4"} ${
@@ -186,7 +186,7 @@ function DatedList({
             }`}
             style={{ gridRow: i + 2 }}
           >
-            <SectionLabel className="tabular-nums lg:hidden">{entry.dates}</SectionLabel>
+            <SectionLabel className="text-faded-base tabular-nums lg:hidden">{entry.dates}</SectionLabel>
             <h3 className="mt-2 text-[17px] sm:text-[18px] font-medium leading-none text-text-strong-950 lg:mt-0">
               <InlineLink
                 href={entry.href}
