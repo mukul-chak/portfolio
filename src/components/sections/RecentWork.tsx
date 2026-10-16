@@ -153,11 +153,11 @@ function ProjectRail({ project, className }: { project: Project; className: stri
           138 at exactly 1024, and wrapping there would leave "Design" on a
           second line below the title's baseline. Unwrapped it runs 1px into
           the 16px padding, still clear of the column rule. */}
-      <SectionLabel className="text-faded-base hidden whitespace-nowrap px-4 tabular-nums lg:col-start-1 lg:row-start-1 lg:block">
+      <SectionLabel className="text-meta hidden whitespace-nowrap px-4 tabular-nums lg:col-start-1 lg:row-start-1 lg:block">
         {meta}
       </SectionLabel>
       <Rail className={`${className} lg:col-start-2 lg:row-start-1 lg:w-full`} elevateRule>
-        <SectionLabel className="text-faded-base mb-2 tabular-nums lg:hidden">{meta}</SectionLabel>
+        <SectionLabel className="text-meta mb-2 tabular-nums lg:hidden">{meta}</SectionLabel>
         <ProjectText project={project} />
       </Rail>
     </div>
