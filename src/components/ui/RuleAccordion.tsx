@@ -187,6 +187,17 @@ export default function RuleAccordion({
           sharesRuleAbove && anchorId ? "scroll-mt-[61px]" : ""
         }`}
       >
+        {/* Hover fill: bg-weak-25, the faintest surface tier — slate-50 on
+            the white page, slate-900 one step up from the near-black one —
+            under the hatch, so the texture stays on top. Opacity only, so it
+            animates on the compositor: 150ms in and out on the shared
+            ease-out, quick enough to track the pointer without a lag.
+            group-hover only applies where hover exists (Tailwind v4 gates it
+            behind hover: hover), so touch never gets a stuck fill. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-bg-weak-25 opacity-0 transition-opacity duration-150 ease-[var(--ease-out)] group-hover:opacity-100"
+        />
         {/* Hatch, mirrored while open to signal the state. Two stacked
             layers cross-fading rather than one element whose direction
             flips: background-image isn't an animatable property, so a
