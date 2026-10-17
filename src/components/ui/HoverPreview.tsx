@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { PREVIEW_CAPTIONS, PREVIEW_NOTES, PREVIEW_SITES, PREVIEW_VIDEOS, type PreviewKey } from "@/content/previews";
+import { PREVIEW_CAPTIONS, PREVIEW_IMAGES, PREVIEW_NOTES, PREVIEW_SITES, PREVIEW_VIDEOS, type PreviewKey } from "@/content/previews";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 // The hovered link's baseline, as an offset from its box top. An inline
@@ -108,15 +108,22 @@ const PREVIEW_EXIT_MS = 180;
 // The bottom stroke hangs below the panel: mt-3 (12px) plus its 1px border.
 const STROKE_BELOW = 12 + 1;
 
+// The top stroke's gap above a panel that leads with its image. Below, the
+// 12px is measured from the last line's box, and the text's own leading
+// puts its baseline 16.5px from the stroke — that's the space the eye
+// reads. An image's top is a hard edge with no leading, so at the same 12px
+// it read tighter; 16.5px matches the optical gap below. A note leads with
+// text, whose cap top already sits ~4.5px into its line box, so it keeps
+// 12px and reads the same.
+const MEDIA_GAP_ABOVE = 16.5;
+
 /**
  * Hover preview for an org name: a panel in the right channel, top on the
  * hovered line's baseline, with the rest of the page dimmed behind it.
- * Shared by the bio's inline links and the resume's titles.
- *
- * `order` is the order the keys appear in the caller's copy — it drives
- * the numbered prefix on the caption, matching Filmstrip's "01  Caption".
+ * Shared by the bio's inline links and the resume's titles. Just the
+ * image and its caption — no numbered prefix.
  */
-export function useHoverPreview(order: readonly PreviewKey[]) {
+export function useHoverPreview() {
   const [active, setActive] = useState<ActivePreview | null>(null);
   // `rendered` lags `active` on the way out only, so the panel can play an
   // exit fade instead of unmounting the instant the pointer leaves. `visible`
@@ -181,7 +188,10 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
 
       const top = linkRect.top - anchorRect.top + measureAscent(getComputedStyle(e.currentTarget));
       const marginSpace = frameRect.right - columnRight;
-      const width = (marginSpace * 2) / 3;
+      // The whole channel, less the same 16px inset on each side: two-thirds
+      // of it left captions wrapping at ~207px, with a word or two stranded
+      // per line.
+      const width = marginSpace - 32;
       const left = columnRight - anchorRect.left + 16;
 
       // The hugging strokes run the FULL margin space, touching the rail's
@@ -237,6 +247,14 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
 
   const anchor = mounted ? document.getElementById("bio-preview-anchor") : null;
 
+  // What fills the image slot: a video, a still, the placeholder (an org
+  // without media yet), or nothing (a note without an image).
+  const video = rendered ? PREVIEW_VIDEOS[rendered.key] : undefined;
+  const image = rendered ? PREVIEW_IMAGES[rendered.key] : undefined;
+  const note = rendered ? PREVIEW_NOTES.has(rendered.key) : false;
+  const hasMedia = Boolean(video || image || !note);
+  const gapAbove = hasMedia ? MEDIA_GAP_ABOVE : 12;
+
   const panel: ReactNode =
     anchor && rendered
       ? createPortal(
@@ -262,32 +280,29 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
                 (z-45 over z-15/z-17). -z-10 puts it under the panel's own
                 content inside the panel's stacking context. */}
             <div
-              className="absolute -z-10 -top-3 -bottom-3 bg-background"
-              style={{ left: -15, width: rendered.strokeWidth - 2 }}
+              className="absolute -z-10 -bottom-3 bg-background"
+              style={{ left: -15, width: rendered.strokeWidth - 2, top: -gapAbove }}
             />
-            {/* Solid strokes hugging the panel, 12px above/below — same style
+            {/* Solid strokes hugging the panel, 12px below and gapAbove above — same style
                 as the outer frame's solid stroke (border-rule) — and running
                 edge-to-edge, touching the rail's and frame's vertical rules
                 on either side (see strokeWidth above). */}
             <div
-              className="absolute bottom-full mb-3 border-b border-rule"
-              style={{ left: -16, width: rendered.strokeWidth }}
+              className="absolute bottom-full border-b border-rule"
+              style={{ left: -16, width: rendered.strokeWidth, marginBottom: gapAbove }}
             />
-            <span className="mb-2 block font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] tabular-nums text-text-sub-600">
-              {String(order.indexOf(rendered.key) + 1).padStart(2, "0")}
-            </span>
-            {/* A note is the caption alone — no image, no clamp — read as a
-                margin note rather than a preview of somewhere. */}
+            {/* A note reads as a margin note rather than a preview of
+                somewhere: its text is never clamped, and it shows an image
+                only when it has one of its own — no placeholder. */}
             {/* A video, where the key has one, fills the same slot: muted,
                 looping and inline, so it reads as a moving image rather than
                 a player. It mounts with the panel, so each hover starts it
                 from the top. Under reduced motion it doesn't play; #t=0.001
                 makes Safari paint the first frame instead of a blank box. */}
-            {!PREVIEW_NOTES.has(rendered.key) &&
-              (PREVIEW_VIDEOS[rendered.key] ? (
+            {video ? (
                 <video
                   key={rendered.key}
-                  src={reducedMotion ? `${PREVIEW_VIDEOS[rendered.key]}#t=0.001` : PREVIEW_VIDEOS[rendered.key]}
+                  src={reducedMotion ? `${video}#t=0.001` : video}
                   autoPlay={!reducedMotion}
                   muted
                   loop
@@ -295,13 +310,33 @@ export function useHoverPreview(order: readonly PreviewKey[]) {
                   preload={reducedMotion ? "metadata" : "auto"}
                   className="aspect-[1.6] w-full rounded-[4px] bg-card object-cover"
                 />
-              ) : (
+              ) : image ? (
+                // eslint-disable-next-line @next/next/no-img-element -- a fixed 640×400 export into a fixed slot; next/image would add nothing but a wrapper
+                <figure>
+                  <img
+                    src={image.src}
+                    alt=""
+                    width={640}
+                    height={400}
+                    className="aspect-[1.6] w-full rounded-[4px] bg-card object-cover"
+                  />
+                  {/* The image's own caption and credit, a step softer than
+                      the note so they read as the figure's, not the note's. */}
+                  {(image.caption || image.credit) && (
+                    <figcaption className="mt-2 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-soft-400">
+                      {[image.caption, image.credit].filter(Boolean).join(" ")}
+                    </figcaption>
+                  )}
+                </figure>
+              ) : hasMedia ? (
                 <div className="aspect-[1.6] w-full rounded-[4px] bg-card" />
-              ))}
+              ) : null}
             <p
               className={`font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600 ${
-                PREVIEW_NOTES.has(rendered.key) ? "" : "mt-2 line-clamp-3"
-              }`}
+                // A figure caption sits between image and note: a wider
+                // gap separates the note from it.
+                image?.caption || image?.credit ? "mt-3" : hasMedia ? "mt-2" : ""
+              } ${note ? "" : "line-clamp-3"}`}
             >
               {PREVIEW_CAPTIONS[rendered.key]}
             </p>

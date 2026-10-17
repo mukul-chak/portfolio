@@ -3,10 +3,10 @@
  * the bio's inline links and the resume's titles, so an org reads the same
  * wherever it's hovered.
  *
- * The panel clamps captions to three lines (~200px wide at 1512, 14px
+ * The panel clamps captions to three lines (~278px wide at 1512, 14px
  * Monument), so each is one short sentence about what the place is —
- * except notes (PREVIEW_NOTES), which are text-only margin notes: no image,
- * no clamp.
+ * except notes (PREVIEW_NOTES), margin notes whose text is never clamped
+ * and which show an image only when given one.
  */
 export const PREVIEW_CAPTIONS = {
   ascend: "Ascend automates accounting, payments and premium financing for insurance businesses.",
@@ -30,12 +30,32 @@ export const PREVIEW_NOTES: ReadonlySet<PreviewKey> = new Set<PreviewKey>(["trus
 
 /**
  * A video for the panel's image slot, by key; anything without one keeps
- * the placeholder. Exported at 640×400 (the slot's 1.6:1, 3× its ~207px
+ * the placeholder. Exported at 640×400 (the slot's 1.6:1, 2.3× its ~278px
  * width), H.264 with no audio, looping. Shared keys show it everywhere the
  * org is hovered — Ascend's plays in the bio and on the resume.
  */
 export const PREVIEW_VIDEOS: Partial<Record<PreviewKey, string>> = {
   ascend: "/previews/Ascend-Y-Rotation.mp4",
+};
+
+/**
+ * A still image for the panel's image slot, by key — same 1.6:1 slot and
+ * 640×400 export as the videos. A note with one leads with it; it keeps
+ * its full, unclamped text below. `caption` and `credit` set under the
+ * image, as a figure's are.
+ */
+export const PREVIEW_IMAGES: Partial<
+  Record<PreviewKey, { src: string; caption?: string; credit?: string }>
+> = {
+  trust: {
+    src: "/previews/centre-pompidou-external-services.jpg",
+    // One line at 1512 (264 of 278px): the building, its architects and
+    // the credit, set like a gallery label. "Piano & Rogers" is
+    // non-breaking, so on narrower panels it wraps as a unit. RSHP is
+    // Rogers Stirk Harbour + Partners, who supplied the photo.
+    caption: "Centre Pompidou, Piano\u00a0&\u00a0Rogers.",
+    credit: "Photo: RSHP.",
+  },
 };
 
 /** A source line under the caption, set like a citation's URL. */

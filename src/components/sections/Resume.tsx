@@ -8,12 +8,6 @@ import SectionLabel from "@/components/ui/SectionLabel";
 import ResumeExport from "@/components/sections/ResumeExport";
 import { summary, roles, education, teaching, type ListEntry } from "@/content/resume";
 
-// Each org numbers once, at its first appearance: RISD keeps its Education
-// number when it reappears under Teaching.
-const PREVIEW_ORDER = [
-  ...new Set([...roles, ...education, ...teaching].map((entry) => entry.id)),
-];
-
 // Titles keep their strong-950 at rest; InlineLink supplies the underline,
 // the hover darkening and the focus ring, as it does in the bio.
 const TITLE_LINK = "text-text-strong-950";
@@ -44,7 +38,7 @@ const ENTRY_TEXT = "text-[17px] sm:text-[18px] leading-[1.5] text-text-sub-600";
  * a junction, like every other one on the page.
  */
 export default function Resume() {
-  const preview = useHoverPreview(PREVIEW_ORDER);
+  const preview = useHoverPreview();
 
   return (
     <div className="relative">
