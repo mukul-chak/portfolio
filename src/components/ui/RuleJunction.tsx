@@ -39,7 +39,7 @@ export default function RuleJunction({ className = "" }: { className?: string })
         size="xs"
         square
         aria-label="Add"
-        className="h-[20px] w-[20px] rounded-none text-text-disabled-300 hover:bg-bg-weak-50 hover:text-text-soft-400"
+        className="h-[20px] w-[20px] rounded-none text-stroke-soft-200 hover:bg-bg-weak-50 hover:text-text-soft-400"
       >
         <PlusIcon />
       </Button.Root>

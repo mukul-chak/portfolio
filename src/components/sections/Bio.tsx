@@ -14,7 +14,7 @@ function openContact(e: React.MouseEvent) {
 }
 
 export default function Bio() {
-  const preview = useHoverPreview(["trust", "ascend"]);
+  const preview = useHoverPreview();
 
   return (
     <section
