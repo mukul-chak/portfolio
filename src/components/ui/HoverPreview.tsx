@@ -38,7 +38,6 @@ function channelEdges() {
     frameRect.width - parseFloat(frameCs.paddingLeft) - parseFloat(frameCs.paddingRight);
   const columnWidth = Math.min(parseFloat(frameCs.getPropertyValue("--container-column")) || 620, contentWidth);
   return {
-    frameRect,
     columnRight: contentLeft + (contentWidth + columnWidth) / 2,
     frameRight: contentLeft + contentWidth,
   };
@@ -181,13 +180,17 @@ export function useHoverPreview() {
       const anchor = document.getElementById("bio-preview-anchor");
       const edges = channelEdges();
       if (!anchor || !edges) return;
-      const { frameRect, columnRight } = edges;
+      const { frameRight, columnRight } = edges;
 
       const linkRect = e.currentTarget.getBoundingClientRect();
       const anchorRect = anchor.getBoundingClientRect();
 
       const top = linkRect.top - anchorRect.top + measureAscent(getComputedStyle(e.currentTarget));
-      const marginSpace = frameRect.right - columnRight;
+      // To the outer rule — the frame's content edge — not the frame's
+      // border box: below xl the frame carries side padding, and measuring
+      // to its border box ran the panel and its strokes past the rule into
+      // that padding. At xl the padding is 0 and the two agree.
+      const marginSpace = frameRight - columnRight;
       // The whole channel, less the same 16px inset on each side: two-thirds
       // of it left captions wrapping at ~207px, with a word or two stranded
       // per line.

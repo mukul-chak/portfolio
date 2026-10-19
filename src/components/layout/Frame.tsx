@@ -47,9 +47,23 @@ export default function Frame({ children }: { children: ReactNode }) {
           the whole declaration drops and the control loses its offsets
           altogether instead of just its inset clearance — a fixed element
           with no bottom/right falls back to its static position, which
-          here is off up the page. */}
+          here is off up the page.
+
+          From md it stands in the right gutter, 24px off the window's
+          edge — but the gutter is only wide enough for that from 1392px
+          (24 + the 36px pill + 16px clear of the frame's outer rule, each
+          side of the 1240px frame). Narrower, it sat on the rule. There it
+          moves inside the frame instead, 16px in from the rule, into the
+          right channel: below xl the rule is the frame's 32px padding in
+          (48px), from xl to 1392 it's half of what the frame leaves
+          ((100% − 1240px) / 2 + 16px; % of the viewport, which a fixed
+          box's containing block is, so a classic scrollbar can't skew it).
+          Each override is a closed range, so the plain right-6 is what
+          applies from 1392 up — open-ended variants left the order of the
+          xl and arbitrary breakpoints to Tailwind's sort, and xl won.
+          Mobile keeps its 24px horizontal bar. */}
       <div
-        className="fixed bottom-6 right-6 z-20"
+        className="fixed bottom-6 right-6 z-20 md:max-xl:right-12 xl:max-[1391px]:right-[calc((100%-1240px)/2+16px)]"
         style={{
           marginBottom: "env(safe-area-inset-bottom, 0px)",
           marginRight: "env(safe-area-inset-right, 0px)",
