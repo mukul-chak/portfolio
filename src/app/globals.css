@@ -881,6 +881,12 @@ body {
      below, where faded-base stays slate-500 and measured ~4.2:1 on the
      dark background. */
   --color-meta: var(--color-faded-base);
+  /* The header caret while it waits at the top of the page: one grade
+     subtler — closer to the page — than the muted tier it used to rest on
+     in each theme: slate-200 on the white page (from 300), slate-700 on
+     the dark one (from 600, remapped below). It turns the text colour
+     once typing starts. */
+  --color-caret-rest: var(--color-slate-200);
   /* Accordion hatch. The rule colour at reduced strength — the rules are
      already the lightest stroke in the system, and a solid field of them
      at full weight reads as a block of tone rather than as texture.
@@ -963,6 +969,7 @@ html.dark {
   /* slate-400: 7.13:1 on the dark background, still one step below
      sub-600 (slate-300 in dark), so dates stay quieter than the copy. */
   --color-meta: var(--color-neutral-400);
+  --color-caret-rest: var(--color-slate-700);
 }
 
 html,
@@ -1064,4 +1071,12 @@ body {
     --offset-bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
     --mobile-offset-bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
   }
+}
+
+/* One digit's slot for <Tabular> (see components/ui/Tabular.tsx): 1ch is
+   the face's "0", its widest figure, plus any tracking the text carries. */
+.tnum-digit {
+  display: inline-block;
+  width: calc(1ch + var(--tnum-ls, 0em));
+  text-align: center;
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/utils/cn";
+import Tabular from "@/components/ui/Tabular";
 
 function formatTime(tz?: string, seconds = false) {
   const now = new Date();
@@ -76,13 +77,12 @@ export default function LocationTime({
   return (
     <div
       className={cn(
-        "whitespace-nowrap text-right font-[family-name:var(--font-eyebrow)] text-[13px] uppercase tracking-[0.12em] text-text-sub-600",
-        // Tabular so a ticking seconds field doesn't shift the line.
-        seconds && "tabular-nums",
+        "whitespace-nowrap text-right font-[family-name:var(--font-eyebrow)] text-[13px] uppercase tracking-[0.12em] text-text-sub-600 [--tnum-ls:0.12em]",
         className,
       )}
     >
-      {resolvedCity && !seconds ? `${resolvedCity}, ${time}` : time}
+      {/* Tabular figures, so the ticking clock doesn't shift the line. */}
+      <Tabular>{resolvedCity && !seconds ? `${resolvedCity}, ${time}` : time}</Tabular>
     </div>
   );
 }

@@ -20,8 +20,7 @@ type Measurements = {
  * it touches one, touches the other, and stops. It never continues past a
  * divider into the carousel's own gap, because there is no rule on the far
  * side to reach (the carousel intentionally has none — "filmstrip breaks
- * the rail"). Those junctions carry no plus marks: they're inside the
- * Recent work accordion, where crossings aren't marked.
+ * the rail"). Rule crossings carry no marks anywhere on the page.
  *
  * All positions are measured at runtime (getBoundingClientRect), not
  * hardcoded — a hardcoded px offset here previously drifted out of sync

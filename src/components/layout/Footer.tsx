@@ -25,7 +25,7 @@ const SOCIALS: { label: string; href: string }[] = [
  */
 export default function Footer({ tz }: { tz?: string }) {
   return (
-    <footer className="bg-bg-weak-25">
+    <footer className="grow bg-bg-weak-25">
       <div className="mx-auto max-w-frame px-5 sm:px-8 xl:px-0">
         {/* Four columns only from md. At 375px they'd be 84px each, which
             squeezed the colophon into a 68px measure 410px tall. Stacked
@@ -72,26 +72,30 @@ export default function Footer({ tz }: { tz?: string }) {
             </p>
           </div>
 
-          <figure className="px-4">
-            <blockquote>
-              <p>Order itself is charismatic.</p>
-            </blockquote>
-            <figcaption className="text-text-soft-400">
-              — Saul Bellow, <cite>Ravelstein</cite>
-            </figcaption>
-          </figure>
-
-          {/* Mobile only: below md the header has no room for its clock, so
-              the footer carries the date and time, with seconds ticking, in
-              the visitor's zone. Set as footer text rather than the header's
-              Monument capitals: Reform at the footer's 14/1.5, sentence
-              case, left-aligned to the column. */}
-          <div className="px-4 md:hidden">
-            <LocationTime
-              tz={tz}
-              seconds
-              className="text-left font-sans text-[14px] leading-[1.5] normal-case tracking-normal"
-            />
+          {/* The quote's column also carries the clock wherever the header
+              can't: below xl the header's location and time ran into the
+              nav (the right channel is (100vw − 620px) / 2 wide, too narrow
+              for a long city name until ~1280), so there it's dropped from
+              the header and shown here, under the quote, in this column at
+              every layout: stacked, two up and four up. Date and 24-hour
+              time with ticking seconds, in the visitor's zone, set as
+              footer text — Reform at 14/1.5, sentence case. */}
+          <div className="px-4">
+            <figure>
+              <blockquote>
+                <p>Order itself is charismatic.</p>
+              </blockquote>
+              <figcaption className="text-text-soft-400">
+                — Saul Bellow, <cite>Ravelstein</cite>
+              </figcaption>
+            </figure>
+            <div className="mt-8 xl:hidden">
+              <LocationTime
+                tz={tz}
+                seconds
+                className="text-left font-sans text-[14px] leading-[1.5] normal-case tracking-normal [--tnum-ls:0em]"
+              />
+            </div>
           </div>
         </div>
 

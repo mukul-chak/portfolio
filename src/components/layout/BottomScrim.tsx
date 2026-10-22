@@ -19,7 +19,7 @@ export default function BottomScrim() {
       aria-hidden
       // 16vh from 27.5, and the solid band dropped from 40% to 0. The old
       // shape held a fully opaque fifth of the viewport at the bottom, which
-      // is fine behind a carousel but swallowed the collapsed Recent work
+      // is fine behind a carousel but swallowed the collapsed Work
       // bar whole — the one case where real, readable content sits at the
       // very bottom of a short page. The fade still reads; nothing under it
       // is now fully hidden.

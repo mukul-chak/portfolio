@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import SectionLabel from "@/components/ui/SectionLabel";
-import RuleJunction from "@/components/ui/RuleJunction";
 
 // 200ms, per the accordion recipe. Height is the one layout property
 // sanctioned for this — there's no transform equivalent for "take up less
@@ -28,20 +27,12 @@ function Chevron() {
   );
 }
 
-/**
- * A frame-width rule carrying a plus where it meets the outer frame rules.
- *
- * Only the outer pair. The column rules cross these too, but a mark at each
- * would put four pluses on every accordion edge and crowd the band; the
- * section's own boundaries read better marked at the frame. z-[18] matches
- * the outer rule these sit on, which is exempt from the bottom scroll fade.
- */
+/** A frame-width rule: an accordion's boundary. No plus marks — the site
+ *  marks no rule crossings. */
 export function AccordionRule({ id, className = "" }: { id?: string; className?: string }) {
   return (
     <div id={id} className={`relative ${className}`}>
       <div className="rule-t" />
-      <RuleJunction className="left-[0.5px] top-[0.5px] z-[18] -translate-x-1/2 -translate-y-1/2" />
-      <RuleJunction className="right-[0.5px] top-[0.5px] z-[18] translate-x-1/2 -translate-y-1/2" />
     </div>
   );
 }
@@ -178,6 +169,7 @@ export default function RuleAccordion({
       )}
 
       <button
+        data-accordion-bar
         {...(sharesRuleAbove && anchorId ? { id: anchorId } : {})}
         type="button"
         onClick={() => setSection(!openRef.current)}
@@ -236,8 +228,8 @@ export default function RuleAccordion({
       <AccordionRule />
 
       {/* overflow is clipped while closed and while moving, but released
-          once open: the content carries junction marks that sit half
-          outside the frame's own width and would be shaved off.
+          once open, so nothing the content draws at or past the frame's
+          edge is shaved off while it's showing.
           clip, not hidden: hidden makes this a scroll container, and a
           sticky descendant (the resume's export) then sticks to it rather
           than the viewport — sitting 45px down inside the section for the

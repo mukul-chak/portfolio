@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import * as Button from "@/components/ui/Button";
 import LocationTime from "@/components/ui/LocationTime";
-import RuleJunction from "@/components/ui/RuleJunction";
 import { SECTION_TARGET_EVENT } from "@/components/ui/RuleAccordion";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { phase } from "@/lib/phase";
@@ -131,20 +130,19 @@ export default function Header({
   // Not once the name is done: the blink animates opacity, and would
   // override the fade-out.
   const idle = !typing && !done;
-  // A quiet placeholder colour while it waits at the top of the page, the
-  // text colour from the first scroll, as it starts to type. Both are theme
-  // tokens, so dark mode gets the same step: text-disabled-300 is
-  // slate-300 in light and slate-600 in dark, against strong-950's
-  // near-black and white.
+  // A quiet resting colour while it waits at the top of the page, the text
+  // colour from the first scroll, as it starts to type. Both follow the
+  // theme: caret-rest is slate-200 in light and slate-700 in dark (see
+  // globals.css), against strong-950's near-black and white.
   const scrolled = progress > 0;
   const crossfade = Math.pow(phase(progress, clearedNav, 1), 2);
   const nameOpacity = reducedMotion ? crossfade : 1;
   const caretOpacity = reducedMotion ? 1 - crossfade : done ? 0 : 1;
 
-  // z-[25]: above every z-20 element in the scrolling page (RecentWork's
-  // plus buttons, ThemeToggle) that could otherwise visually collide with
-  // the sticky header — equal z-index falls back to DOM order, and those
-  // render after Header, so they were painting on top of it. Still below
+  // z-[25]: above every z-20 element in the scrolling page (ThemeToggle)
+  // that could otherwise visually collide with the sticky header — equal
+  // z-index falls back to DOM order, and those render after Header, so
+  // they were painting on top of it. Still below
   // the z-40 spotlight scrim, so the header keeps dimming with everything
   // else during a hover preview.
   return (
@@ -153,9 +151,8 @@ export default function Header({
         {/* Runs the header's full height, edge to edge: from the very top
             of the viewport (no 8px clearance any more — the frame's
             verticals start at the top of the screen) down to the header's
-            bottom edge, so it runs seamlessly into the plus buttons below
-            and from there into the page's outer rule — no gap at either
-            end.
+            bottom edge, so it runs seamlessly into the page's outer rule
+            below — no gap at either end.
             bottom-[-1px], not bottom-0: an absolutely-positioned child's
             inset resolves against its containing block's *padding* edge,
             which sits 1px above this ancestor's own border-b (its border
@@ -166,29 +163,6 @@ export default function Header({
           aria-hidden
           className="pointer-events-none absolute inset-x-0 bottom-[-1px] top-0 rule-x"
         />
-        {/* Every crossing of the header's own bottom border: the outer frame
-            rule at both page edges, and the narrower column rules inside it.
-
-            bottom-[-0.5px] with translate-y-1/2: this ancestor's padding box
-            ends where its 1px border-b begins, so the line's visual centre is
-            half a pixel past that edge — bottom-0 centres the mark on the
-            padding edge, a real half-pixel high, and bottom-[-1px] the same
-            distance low.
-
-            left-[0.5px], not left-0: the rule's 1px line sits inside its own
-            box edge, so centre = edge + 0.5px. Same convention everywhere. */}
-        <RuleJunction className="bottom-[-0.5px] left-[0.5px] z-20 -translate-x-1/2 translate-y-1/2" />
-        <RuleJunction className="bottom-[-0.5px] right-[0.5px] z-20 translate-x-1/2 translate-y-1/2" />
-        {/* The column rules cross the same border 310px further in on each
-            side. Addressed as the edges of a box given the identical
-            mx-auto max-w-column centring that places those rules, so the two
-            agree by construction rather than by a measured offset. */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 hidden md:block">
-          <div className="relative mx-auto h-full max-w-column">
-            <RuleJunction className="pointer-events-auto bottom-[-0.5px] left-[0.5px] z-20 -translate-x-1/2 translate-y-1/2" />
-            <RuleJunction className="pointer-events-auto bottom-[-0.5px] right-[0.5px] z-20 translate-x-1/2 translate-y-1/2" />
-          </div>
-        </div>
         <div className="relative px-4 py-2 leading-none">
           {/* Name: absolute overlay, positioned over the header at all times.
               The two marks rest here and open into the full name as the bio
@@ -229,7 +203,7 @@ export default function Header({
                     // The fade after typing is a short transition rather
                     // than scroll-driven: the run ends on the last letter,
                     // so there's no scroll left to drive it with.
-                    className={`absolute bottom-[-0.25em] h-[1.1em] w-[2px] ${scrolled ? "bg-text-strong-950" : "bg-text-disabled-300"} transition-opacity duration-300 ease-[var(--ease-out)] ${idle ? "caret-blink" : ""}`}
+                    className={`absolute bottom-[-0.25em] h-[1.1em] w-[2px] ${scrolled ? "bg-text-strong-950" : "bg-caret-rest"} transition-opacity duration-300 ease-[var(--ease-out)] ${idle ? "caret-blink" : ""}`}
                     style={{ left: caretX - 1, opacity: caretOpacity }}
                   />
                 </span>
@@ -284,8 +258,11 @@ export default function Header({
             </div>
           </div>
 
-          {/* Location/time — outer stroke position on desktop only */}
-          <div className="absolute right-4 top-1/2 hidden -translate-y-[calc(50%-2px)] md:block">
+          {/* Location/time, at the outer stroke — from xl only. Below it
+              the right channel is too narrow for a long city name beside
+              the nav and the two overlapped; the footer carries the clock
+              there instead. */}
+          <div className="absolute right-4 top-1/2 hidden -translate-y-[calc(50%-2px)] xl:block">
             <LocationTime city={city} tz={tz} />
           </div>
         </div>

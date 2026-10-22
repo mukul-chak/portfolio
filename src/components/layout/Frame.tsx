@@ -16,7 +16,12 @@ export default function Frame({ children }: { children: ReactNode }) {
     // ruled gap and the footer, so the column verticals stopped short of
     // the band with blank space under them. The footer is the page's
     // bottom now, so the height comes from the content.
-    <div className="relative mx-auto max-w-frame px-5 sm:px-8 xl:px-0">
+    // w-full: the page wraps this in a flex column (so the footer can fill a
+    // short page), and a flex item with auto side margins doesn't stretch —
+    // it sizes to its content, which the filmstrips make 1240px wide, so on
+    // a phone the whole frame laid out past the viewport. w-full restores
+    // the stretch; max-w-frame still caps it.
+    <div className="relative mx-auto w-full max-w-frame px-5 sm:px-8 xl:px-0">
       {/* Anchor for Bio's hover-preview portal. */}
       <div id="bio-preview-anchor" className="relative" />
       {/* Spotlight scrim: a translucent layer over the whole page, shown only
