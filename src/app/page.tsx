@@ -20,7 +20,11 @@ export default async function Home() {
   const tz = h.get("x-vercel-ip-timezone") ?? undefined;
 
   return (
-    <>
+    // At least the viewport tall, with the footer taking whatever's left:
+    // with the sections shut the page can be shorter than the window, and
+    // the leftover used to sit under the footer as bare page — read as a
+    // broken bottom. Now the footer's band runs to the window's edge.
+    <div className="flex min-h-dvh flex-col">
       <Frame>
       <BottomScrim />
       <CopyEmail />
@@ -31,8 +35,8 @@ export default async function Home() {
           position, which only held at scrollY 0 — Header is sticky, so past
           that it just sat on top of the rule's middle. Fixed + a static top
           offset (header's own 45px height, no added gap) keeps it flush with
-          the header at every scroll position, running seamlessly through
-          Header's own bottom-corner plus buttons with no break.
+          the header at every scroll position, running seamlessly on from
+          the header's own verticals with no break.
           z-[17]: stays above the bottom fade overlays (z-[16]) — only the
           narrower rule-x column verticals (z-[15]) fall under that fade,
           by request; this wide outer rule is intentionally unaffected. */}
@@ -80,6 +84,6 @@ export default async function Home() {
       </div>
       </Frame>
       <Footer tz={tz} />
-    </>
+    </div>
   );
 }

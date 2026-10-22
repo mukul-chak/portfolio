@@ -34,8 +34,13 @@ import type { PreviewKey } from "@/content/previews";
 
 export type Role = {
   org: string;
+  /** The page's fuller name, where it differs; the PDF keeps `org`. */
+  siteOrg?: string;
   title: string;
-  /** Rendered as given, e.g. "2024–Present" — an unspaced en dash. */
+  /** The page's shorter title, where it differs; the PDF keeps `title`. */
+  siteTitle?: string;
+  /** Rendered as given, e.g. "2024–Present" — an unspaced en dash. The
+   *  page shows "Present" as "Now"; the PDF keeps it as written. */
   dates: string;
   /** Keys the org's hover preview caption (content/previews.ts). */
   id: PreviewKey;
@@ -55,6 +60,11 @@ export type Role = {
 export const summary =
   "I do my best work on complex operational software that handles money and carries an audit trail, turning dense, rule-bound workflows into something people can move through quickly and trust. Building a design function from the ground up has taught me that design earns its influence through what it ships.";
 
+/** The Teaching section's opening line, as `summary` opens Experience.
+ *  Site only; the PDF doesn't carry it. A draft — to be confirmed. */
+export const teachingSummary =
+  "Alongside the work, I teach: guest lectures and critiques in communication and graphic design at MassArt and Boston University, and as an adjunct professor at RISD.";
+
 export const roles: Role[] = [
   {
     org: "Ascend",
@@ -71,13 +81,13 @@ export const roles: Role[] = [
   },
   {
     org: "SAAG",
+    siteOrg: "South Asian Avant-Garde (SAAG)",
     id: "saag",
     href: "https://www.saaganthology.com",
     title: "Design Director & Advisor",
-    // Concurrent with Ascend, so it sits directly below it rather than in
-    // date order — a reader scanning the left edge should see both current
-    // roles together.
-    dates: "Present · Advisory",
+    // Concurrent with Ascend, so it sits directly below it: both current
+    // roles read together.
+    dates: "2022–Present",
     points: [
       "One of its earliest designers: joined as motion graphics designer for Volume 2, then became design director and advisor from Volume 3.",
     ],
@@ -90,6 +100,7 @@ export const roles: Role[] = [
     href: "https://www.fidelity.com",
     // Promoted from Senior to Principal in 2023.
     title: "Senior, then Principal Product Designer",
+    siteTitle: "Principal Product Designer",
     dates: "2021–2024",
     points: [
       "Led product design for Calico from zero to launch: a Fidelity Labs startup building account-aggregation infrastructure for crypto, one API connecting exchanges, wallets and banks for teams building consumer and institutional products.",
@@ -111,6 +122,8 @@ export const roles: Role[] = [
 
 export type ListEntry = {
   org: string;
+  /** The page's fuller name, where it differs; the PDF keeps `org`. */
+  siteOrg?: string;
   id: PreviewKey;
   href: string;
   /** The line under the org: a degree, or a role and department. */
@@ -139,10 +152,11 @@ export const education: ListEntry[] = [
 export const teaching: ListEntry[] = [
   {
     org: "MassArt",
+    siteOrg: "Massachusetts College of Art and Design",
     id: "massart",
     href: "https://massart.edu",
     detail: "Guest Lecturer · Communication Design",
-    dates: "2021–Present",
+    dates: "2021–2024",
   },
   {
     org: "Boston University",
@@ -156,6 +170,6 @@ export const teaching: ListEntry[] = [
     id: "risd",
     href: "https://www.risd.edu",
     detail: "Adjunct Professor · Graphic Design",
-    dates: "2021",
+    dates: "2021–2022",
   },
 ];

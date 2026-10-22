@@ -1,10 +1,11 @@
 "use client";
 
 import { useDragScroll } from "@/lib/useDragScroll";
+import Tabular from "@/components/ui/Tabular";
 
 /**
- * A divider across the frame. No plus marks: junctions inside an accordion's
- * content aren't marked, only the header's and the accordion bars'.
+ * A divider across the frame. Rule crossings carry no marks anywhere on
+ * the page.
  *
  * -mx-4 cancels Filmstrip's own padding so the line reaches the outer frame
  * rule instead of stopping 16px short of it on each side — the cards are what
@@ -59,22 +60,24 @@ export default function Filmstrip({
             <div key={n} className="w-[300px] shrink-0 sm:w-[504px]">
               <div className="aspect-[1.6] rounded-[4px] bg-card" />
               <div className="mt-2 flex items-baseline gap-6 overflow-hidden whitespace-nowrap font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-left text-text-soft-400">
-                <span className="shrink-0 tabular-nums">{String(n).padStart(2, "0")}</span>
-                <span className="truncate">{captions?.[n - 1]}</span>
+                <span className="shrink-0">
+                  <Tabular>{String(n).padStart(2, "0")}</Tabular>
+                </span>
+                <span className="truncate">
+                  <Tabular>{captions?.[n - 1] ?? ""}</Tabular>
+                </span>
               </div>
             </div>
           ))}
         </div>
       </div>
-      {/* Solid divider between projects (not the dotted rule), splitting
-          the space between the captions and the next title optically: 39px
-          here and 41px to the next title's box (RecentWork) put the line
-          43.5px below the captions' baseline and 43.9px above the title's
-          cap height — the caption's baseline sits 4.5px inside its box, the
-          title's caps 2.9px. data-rule-divider-close lets the NEXT project's
-          connector reach backward and bridge its own rule-x up to this line,
-          closing the gap from below. */}
-      <Divider data-rule-divider-close className="mt-[39px]" />
+      {/* Solid divider between projects (not the dotted rule), optically
+          24px below the captions: their baseline sits 4.5px inside the 18px
+          line box, so 19.5px of margin puts the line 24px under it. The
+          next title sits 32px below it (RecentWork). data-rule-divider-close
+          lets the NEXT project's connector reach backward and bridge its own
+          rule-x up to this line, closing the gap from below. */}
+      <Divider data-rule-divider-close className="mt-[19.5px]" />
     </div>
   );
 }

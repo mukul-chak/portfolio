@@ -25,8 +25,7 @@ function measureAscent(cs: CSSStyleDeclaration) {
  * The right channel's two edges, in viewport x: the column's right rule and
  * the frame's outer rule. Derived from the frame rather than read off an
  * enclosing Rail: every column is the 620px track centred in the frame's
- * content box, and the resume's Education column is a grid area with no
- * element of its own to measure.
+ * content box, so the edges are known without finding a column to measure.
  */
 function channelEdges() {
   const frame = document.querySelector<HTMLElement>(".max-w-frame");
@@ -49,7 +48,7 @@ function channelEdges() {
  * active, not just the panel.
  *
  * These are the real lines, so the dash rhythm is exact. A wide rule-x
- * element (a Rail's overlay, Education's, the fixed outer frame rule) paints
+ * element (a Rail's overlay, the fixed outer frame rule) paints
  * both edges of its box, so it can't simply be lifted — its left edge would
  * light too. It gets a temporary copy instead: same element, same place,
  * same pattern, lifted and clipped to its right-edge pixel, while the
@@ -84,6 +83,29 @@ function lightChannel() {
     if (rule) rule.dataset.channelLitEdge = "";
     host.after(copy);
     added.push(copy);
+  }
+  // The column rule deliberately stops at each accordion bar (the bands
+  // run clear between their two rules), so a note crossing a bar had no
+  // line down its left side there. While lit, a 1px segment of the same
+  // dotted rule bridges each bar at the column's edge, from the bar's top
+  // rule to its bottom one (the button sits between the two 1px rules), as
+  // every rule segment on the page starts on its rule. Bars tucked under the
+  // sticky header are skipped: the segment would paint over the header.
+  const headerBottom = document.querySelector("header")?.getBoundingClientRect().bottom ?? 0;
+  for (const bar of document.querySelectorAll<HTMLElement>("[data-accordion-bar]")) {
+    const r = bar.getBoundingClientRect();
+    if (r.height === 0 || r.bottom <= headerBottom) continue;
+    const seg = document.createElement("div");
+    seg.dataset.channelLit = "bar";
+    seg.setAttribute("aria-hidden", "true");
+    seg.className = "pointer-events-none absolute w-px rule-x";
+    Object.assign(seg.style, {
+      left: `${Math.round(edges.columnRight) - 1 + window.scrollX}px`,
+      top: `${r.top - 1 + window.scrollY}px`,
+      height: `${r.height + 2}px`,
+    });
+    document.body.append(seg);
+    added.push(seg);
   }
   return () => {
     added.forEach((n) => n.remove());
@@ -165,8 +187,14 @@ export function useHoverPreview() {
     function onScroll() {
       setActive(null);
     }
+    // A resize closes it too: the panel and the channel's bar segments are
+    // placed once, in page coordinates, and would be left behind.
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, [active]);
 
   function show(key: PreviewKey) {
@@ -314,8 +342,8 @@ export function useHoverPreview() {
                   className="aspect-[1.6] w-full rounded-[4px] bg-card object-cover"
                 />
               ) : image ? (
-                // eslint-disable-next-line @next/next/no-img-element -- a fixed 640×400 export into a fixed slot; next/image would add nothing but a wrapper
                 <figure>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- a fixed 640×400 export into a fixed slot; next/image would add nothing but a wrapper */}
                   <img
                     src={image.src}
                     alt=""

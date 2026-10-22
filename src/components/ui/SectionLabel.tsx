@@ -1,7 +1,7 @@
 import { type ReactNode } from "react";
 import { cn } from "@/utils/cn";
 
-/** Small section label (e.g. Recent work). */
+/** Small section label (e.g. Work). */
 export default function SectionLabel({
   children,
   className = "",

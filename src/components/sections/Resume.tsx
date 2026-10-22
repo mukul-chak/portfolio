@@ -1,12 +1,12 @@
 "use client";
 
-import { Fragment } from "react";
 import Rail from "@/components/layout/Rail";
 import InlineLink from "@/components/ui/InlineLink";
 import { useHoverPreview } from "@/components/ui/HoverPreview";
 import SectionLabel from "@/components/ui/SectionLabel";
+import Tabular from "@/components/ui/Tabular";
 import ResumeExport from "@/components/sections/ResumeExport";
-import { summary, roles, education, teaching, type ListEntry } from "@/content/resume";
+import { summary, teachingSummary, roles, teaching, type ListEntry } from "@/content/resume";
 
 // Titles keep their strong-950 at rest; InlineLink supplies the underline,
 // the hover darkening and the focus ring, as it does in the bio.
@@ -14,28 +14,23 @@ const TITLE_LINK = "text-text-strong-950";
 
 const ENTRY_TEXT = "text-[17px] sm:text-[18px] leading-[1.5] text-text-sub-600";
 
+// The page says "Now" where the PDF says "Present".
+const siteDates = (dates: string) => dates.replace("Present", "Now");
+
 /**
- * The Experience section's content: a resume, set in the page's own language.
+ * The Experience section's content: a resume, set in the page's own
+ * language, and deliberately pithy — company, title, years, nothing else.
+ * The full history (points, captions) lives in the downloadable PDF.
  *
- * From lg each role's dates sit in the frame's left channel, set on the
- * title's baseline, so the column holds only the entry and the channel
- * reads as a timeline down the left edge. A Rail is column-width and can't
- * reach the channel, so each role is its own frame-width grid —
- * channel / column / channel, the column track the same 620px the Rail
- * would centre itself in, so the column rules land where they always did.
- * Grid baseline alignment does the baseline work: the Rail's first
- * baseline is the title (the rule-t above it has no line box), so the
- * dates align to it without a hand-tuned offset.
+ * Every entry is one row, as on Frank Chimero's: the company on the left
+ * with its years flush right on the same baseline (items-baseline), the
+ * title beneath, a rule between rows. The years keep their 16px Monument
+ * in the meta colour. A long name wraps under itself; the years stay on its
+ * first line.
  *
- * Below lg the channel is too narrow for "2024–Present", so the dates go
- * back to the eyebrow slot above the title.
- *
- * Rails are stacked flush, spacing as padding rather than margin, so the
- * column verticals run unbroken through the section. The spacing sits at
- * the bottom of each Rail so the next one starts on its rule-t: each
- * Rail's dotted pattern restarts at its top, and a join left in open
- * space showed as a broken 4/2 rhythm. On the horizontal rule it reads as
- * a junction, like every other one on the page.
+ * Rows are Rails stacked flush, each opening on its own rule-t, so the
+ * column verticals run unbroken and every join lands on a rule. 16px above
+ * and below the content keeps the whole history readable at a glance.
  */
 export default function Resume() {
   const preview = useHoverPreview();
@@ -44,7 +39,7 @@ export default function Resume() {
     <div className="relative">
       <Rail className="pt-8 pb-10" elevateRule>
         {/* Below lg there's no channel, so the export sits above the
-            summary, as the dates sit above their titles. */}
+            summary. */}
         <div className="mb-2 lg:hidden">
           <ResumeExport />
         </div>
@@ -52,54 +47,16 @@ export default function Resume() {
       </Rail>
 
       {roles.map((role) => (
-        <div
+        <EntryRow
           key={`${role.org}-${role.title}`}
-          className="lg:grid lg:grid-cols-[1fr_var(--container-column)_1fr] lg:items-baseline"
-        >
-          <SectionLabel className="text-meta hidden px-4 tabular-nums lg:col-start-1 lg:row-start-1 lg:block">
-            {role.dates}
-          </SectionLabel>
-          <Rail className="pb-10 lg:col-start-2 lg:row-start-1 lg:w-full" elevateRule>
-            <div className="mx-[-16px] rule-t" />
-            <SectionLabel className="text-meta mt-4 tabular-nums lg:hidden">{role.dates}</SectionLabel>
-            <h3 className="mt-2 text-[17px] sm:text-[18px] font-medium leading-none text-text-strong-950 lg:mt-4">
-              <InlineLink
-                href={role.href}
-                external
-                onMouseEnter={preview.show(role.id)}
-                onMouseLeave={preview.hide}
-                className={`${TITLE_LINK} ${preview.raised(role.id)}`}
-              >
-                {role.org}
-              </InlineLink>
-            </h3>
-            <p className={`mt-1 ${ENTRY_TEXT}`}>{role.title}</p>
-            <ul className="mt-3 space-y-2">
-              {role.points.map((point) => (
-                <li
-                  key={point}
-                  className={`${ENTRY_TEXT} ${role.points.length > 1 ? "relative pl-4" : ""}`}
-                >
-                  {/* Bulleted only when there's more than one point. The
-                      bullet sits on the column's 16px inset, inside the
-                      padding rather than hung into it, and the text indents
-                      past it. A drawn span rather than list-disc, so its
-                      position is set here rather than by the browser. */}
-                  {role.points.length > 1 && (
-                    <span aria-hidden className="absolute left-0 top-0">
-                      •
-                    </span>
-                  )}
-                  {point}
-                </li>
-              ))}
-            </ul>
-          </Rail>
-        </div>
+          org={role.siteOrg ?? role.org}
+          href={role.href}
+          id={role.id}
+          dates={siteDates(role.dates)}
+          detail={role.siteTitle ?? role.title}
+          preview={preview}
+        />
       ))}
-
-      <DatedList label="Education" items={education} preview={preview} />
-      <DatedList label="Teaching" items={teaching} preview={preview} />
 
       {/* From lg the export lives in the left channel, sticky for as long
           as the resume is on screen. The track spans the whole resume, from
@@ -111,18 +68,13 @@ export default function Resume() {
           The sticky box repeats the summary's pt-8 and its 18px / 1.5 line
           box, so the inline-block button sits on the same baseline as the
           summary's first line without an offset. Left-aligned, 16px in from
-          the outer rule, on the dates' edge.
-
-          The dates share that edge, so the box is a page-coloured strip
-          they scroll under, as content does under the header; pb-2 keeps a
-          date from being cut right at the button's bottom. It sits below
-          the rules' layers (z-15 column, z-17 outer), so both stay drawn
-          over it. */}
+          the outer rule. It sits below the rules' layers (z-15 column, z-17
+          outer), so both stay drawn over it. */}
       <div
         className="pointer-events-none absolute inset-y-0 left-0 hidden lg:block"
         style={{ right: "calc(50% + var(--container-column) / 2)" }}
       >
-        <div className={`pointer-events-auto sticky top-[45px] bg-background px-4 pt-8 pb-2 ${ENTRY_TEXT}`}>
+        <div className={`pointer-events-auto sticky top-[45px] px-4 pt-8 ${ENTRY_TEXT}`}>
           <ResumeExport />
         </div>
       </div>
@@ -133,69 +85,79 @@ export default function Resume() {
 }
 
 /**
- * A labelled list of dated entries — Education, Teaching — in the roles'
- * layout: dates in the channel on each entry's baseline from lg, above the
- * name below it.
- *
- * Unlike the roles there's no rule-t between entries, so one Rail per entry
- * would put a join — and a restart of the dotted pattern — in open space.
- * So the block is one grid, every entry and date a direct item (a subgrid'd
- * Rail kept the rows but Chrome doesn't share baselines out of a subgrid —
- * the dates sat 5.5 and 13.5px high), and the verticals are one Rail-style
- * overlay: absolute, so from lg its containing block is the column's grid
- * area across every row. Below lg this element is itself the Rail:
- * column-width, px-4. Each list opens on its own rule-t, so consecutive
- * lists join on a rule.
+ * The Teaching accordion's content, built like Experience: a short opening
+ * paragraph, then the same rows.
  */
-function DatedList({
-  label,
-  items,
+export function Teaching() {
+  const preview = useHoverPreview();
+  return (
+    <div className="relative">
+      <Rail className="pt-8 pb-10" elevateRule>
+        <p className={ENTRY_TEXT}>{teachingSummary}</p>
+      </Rail>
+      {teaching.map((entry) => (
+        <EntryRow
+          key={entry.org}
+          org={entry.siteOrg ?? entry.org}
+          href={entry.href}
+          id={entry.id}
+          dates={siteDates(entry.dates)}
+          detail={entry.detail}
+          preview={preview}
+        />
+      ))}
+      {preview.panel}
+    </div>
+  );
+}
+
+/**
+ * One resume row: company (linked, with its hover note) and years on one
+ * baseline, the title or degree beneath, opening on a rule.
+ */
+function EntryRow({
+  org,
+  href,
+  id,
+  dates,
+  detail,
   preview,
 }: {
-  label: string;
-  items: ListEntry[];
+  org: string;
+  href: string;
+  id: ListEntry["id"];
+  dates: string;
+  detail: string;
   preview: ReturnType<typeof useHoverPreview>;
 }) {
   return (
-    <div
-      className="relative mx-auto max-w-column px-4 lg:grid lg:max-w-none lg:grid-cols-[1fr_var(--container-column)_1fr] lg:items-baseline lg:px-0"
-      style={{ gridTemplateRows: `repeat(${items.length + 1}, auto)` }}
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 z-[15] hidden rule-x md:block lg:col-[2/3] lg:row-[1/-1]"
-      />
-      <div className="lg:col-start-2 lg:row-start-1 lg:px-4">
-        <div className="mx-[-16px] rule-t" />
-        <SectionLabel className="mt-4">{label}</SectionLabel>
-      </div>
-      {items.map((entry, i) => (
-        <Fragment key={entry.org}>
-          <div className="hidden lg:col-start-1 lg:block" style={{ gridRow: i + 2 }}>
-            <SectionLabel className="text-meta px-4 tabular-nums">{entry.dates}</SectionLabel>
-          </div>
-          <div
-            className={`lg:col-start-2 lg:px-4 ${i === 0 ? "mt-2" : "mt-4"} ${
-              i === items.length - 1 ? "pb-10" : ""
-            }`}
-            style={{ gridRow: i + 2 }}
+    // Optically 16px above and below: rule to the company's cap height,
+    // and the title's baseline to the next rule. The row's line box is the
+    // years' 24px (the name, leading-none, sits on its baseline 3px down)
+    // and the caps start 5.4px into it, so 10.5px of margin lands them at
+    // 15.9; the title's baseline sits 7px above its line box's bottom, so
+    // 9px of padding puts 16 under it. Descenders hang into that space.
+    <Rail className="pb-[9px]" elevateRule>
+      <div className="mx-[-16px] rule-t" />
+      <div className="mt-[10.5px] flex items-baseline justify-between gap-4">
+        <h3 className="min-w-0 text-[17px] sm:text-[18px] font-medium leading-none text-text-strong-950">
+          <InlineLink
+            href={href}
+            external
+            onMouseEnter={preview.show(id)}
+            onMouseLeave={preview.hide}
+            className={`${TITLE_LINK} ${preview.raised(id)}`}
           >
-            <SectionLabel className="text-meta tabular-nums lg:hidden">{entry.dates}</SectionLabel>
-            <h3 className="mt-2 text-[17px] sm:text-[18px] font-medium leading-none text-text-strong-950 lg:mt-0">
-              <InlineLink
-                href={entry.href}
-                external
-                onMouseEnter={preview.show(entry.id)}
-                onMouseLeave={preview.hide}
-                className={`${TITLE_LINK} ${preview.raised(entry.id)}`}
-              >
-                {entry.org}
-              </InlineLink>
-            </h3>
-            <p className={`mt-1 ${ENTRY_TEXT}`}>{entry.detail}</p>
-          </div>
-        </Fragment>
-      ))}
-    </div>
+            {org}
+          </InlineLink>
+        </h3>
+        <SectionLabel className="text-meta shrink-0">
+          <Tabular>{dates}</Tabular>
+        </SectionLabel>
+      </div>
+      {/* The title or degree in the years' meta colour, so the row reads
+          as the company plus two quieter facts about it. */}
+      <p className="mt-1 text-[17px] sm:text-[18px] leading-[1.5] text-meta">{detail}</p>
+    </Rail>
   );
 }

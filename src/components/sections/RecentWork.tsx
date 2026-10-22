@@ -3,11 +3,10 @@ import ProjectText from "@/components/sections/ProjectText";
 import Filmstrip from "@/components/sections/Filmstrip";
 import CarouselJunctionButton from "@/components/sections/CarouselJunctionButton";
 import RuleAccordion, { AccordionRule } from "@/components/ui/RuleAccordion";
-import Resume from "@/components/sections/Resume";
+import Resume, { Teaching } from "@/components/sections/Resume";
 import CopyEmailButton from "@/components/ui/CopyEmailButton";
 import * as Button from "@/components/ui/Button";
 import { projects, type Project } from "@/content/projects";
-import SectionLabel from "@/components/ui/SectionLabel";
 import { EMAIL } from "@/content/site";
 
 // Placeholder destinations — the real URLs land later. The email isn't
@@ -19,7 +18,7 @@ const SOCIALS: { label: string; href: string }[] = [
 ];
 
 /**
- * Recent work: the projects, wrapped in an accordion titled by the section.
+ * Work: the projects, wrapped in an accordion titled by the section.
  *
  * The projects themselves are unchanged — each still owns its rail, its
  * filmstrip and the junction strokes between them. They're handed to the
@@ -38,16 +37,17 @@ export default function RecentWork() {
         <div className="h-[120px]" />
       </Rail>
 
-      <RuleAccordion title="Recent work" anchorId="work">
-        {/* pt-[40px] is the heading→title gap, carried by this rail now
-            rather than by a wrapper inside the old shared one — so the
-            rail's rule starts at the accordion's lower rule and the column
-            verticals resume exactly there.
-            pb-[20px] + Filmstrip's own pt-1 (4px, no rule) = 24px
-            title→carousel gap, with the elevated rule covering the 20px and
-            stopping 4px before the carousel. */}
+      <RuleAccordion title="Work" anchorId="work">
+        {/* Each project's title block sits optically 32px from the line
+            above and the divider below: line to the title's cap height, and
+            the year · type baseline to the divider. The title's caps start
+            2.9px into its box, so 29px of padding lands them at 31.9; the
+            label's baseline sits 7.5px above its 27px line box's bottom, so
+            pb-[20.5px] + Filmstrip's own pt-1 (4px, no rule) puts 32 under
+            it. The rail's rule starts at the accordion's lower rule, so the
+            column verticals resume exactly there. */}
         <CarouselJunctionButton>
-          <ProjectRail project={first} className="pt-[40px] pb-[20px]" />
+          <ProjectRail project={first} className="pt-[29px] pb-[20.5px]" />
           <Filmstrip count={first.imageCount} captions={first.captions} />
         </CarouselJunctionButton>
 
@@ -59,36 +59,43 @@ export default function RecentWork() {
           // continuous line across the project boundary, not two disjoint ones.
           <CarouselJunctionButton key={project.slug}>
             {/* mt-1 (4px, no rule) keeps the carousel's 4px stroke-gap above this rail;
-                pt-[37px] is the rest of the 41px divider→title gap, covered by the
-                elevated rule — the lower half of the space Filmstrip's closing
-                divider splits evenly (see there). pb-[20px] does the same for THIS
-                rail's own trailing gap down to its own carousel below (20px
-                covered + Filmstrip's 4px = 24px). */}
-            <ProjectRail project={project} className="mt-1 pt-[37px] pb-[20px]" />
+                pt-[25px] is the rest of the 29px divider→title box, so the caps
+                sit optically 32px below the divider, as the first project's sit
+                below the bar (see above). pb-[20.5px] likewise. The captions
+                above the divider sit 24px over it (Filmstrip). */}
+            <ProjectRail project={project} className="mt-1 pt-[25px] pb-[20.5px]" />
             <Filmstrip count={project.imageCount} captions={project.captions} />
           </CarouselJunctionButton>
         ))}
 
-        {/* The way into Experience, built like the way into Recent work: the
+        {/* The way into Experience, built like the way into Work: the
             last carousel closes on its divider like every other (the column
             rules now reach it, so it carries their junctions), then a ruled
-            80px gap and a rule for Experience's bar to share. Inside the content, so with
-            Recent work shut the two bars still stack on one line. */}
+            56px gap — the same as Contact's above the footer — and a rule
+            for Experience's bar to share. Inside the content, so with
+            Work shut the two bars still stack on one line. */}
         <Rail elevateRule>
-          <div className="h-[80px]" />
+          <div className="h-14" />
         </Rail>
         <AccordionRule />
       </RuleAccordion>
 
-      {/* sharesRuleAbove: whatever ends Recent work already draws this
+      {/* sharesRuleAbove: whatever ends Work already draws this
           section's upper boundary — its lower rule when it's shut, the rule
           closing its end gap when it's open — so drawing another here would
           put two 1px lines against each other. */}
       <RuleAccordion title="Experience" anchorId="experience" defaultOpen={false} sharesRuleAbove>
         <Resume />
+        <SectionEnd />
         {/* Closes the section and gives the rail's verticals something to
             land on, as Contact's does. Inside the content, so it collapses
             with it rather than stranding a line under a shut accordion. */}
+        <AccordionRule />
+      </RuleAccordion>
+
+      <RuleAccordion title="Teaching" anchorId="teaching" defaultOpen={false} sharesRuleAbove>
+        <Teaching />
+        <SectionEnd />
         <AccordionRule />
       </RuleAccordion>
 
@@ -139,27 +146,26 @@ export default function RecentWork() {
   );
 }
 
-/**
- * A project's text rail, with its year and type laid out as Experience lays
- * out its dates: from lg in the frame's left channel on the title's
- * baseline (a frame-width grid, baseline-aligned, the column track the
- * Rail's own 620px), below lg in the eyebrow slot above the title.
- */
+/** A project's text rail: title, with its year · type beneath it. */
 function ProjectRail({ project, className }: { project: Project; className: string }) {
-  const meta = `${project.year} · ${project.type}`;
   return (
-    <div className="lg:grid lg:grid-cols-[1fr_var(--container-column)_1fr] lg:items-baseline">
-      {/* nowrap: "2025 · Product Design" is 139px against the channel's
-          138 at exactly 1024, and wrapping there would leave "Design" on a
-          second line below the title's baseline. Unwrapped it runs 1px into
-          the 16px padding, still clear of the column rule. */}
-      <SectionLabel className="text-meta hidden whitespace-nowrap px-4 tabular-nums lg:col-start-1 lg:row-start-1 lg:block">
-        {meta}
-      </SectionLabel>
-      <Rail className={`${className} lg:col-start-2 lg:row-start-1 lg:w-full`} elevateRule>
-        <SectionLabel className="text-meta mb-2 tabular-nums lg:hidden">{meta}</SectionLabel>
-        <ProjectText project={project} />
-      </Rail>
-    </div>
+    <Rail className={className} elevateRule>
+      <ProjectText project={project} meta={`${project.year} · ${project.type}`} />
+    </Rail>
+  );
+}
+
+/**
+ * The gap that ends a list section, as Work ends: the last row closes on
+ * its rule, then a ruled 56px gap (Contact's, above the footer) down to
+ * the rule the next bar shares.
+ * Inside the accordion's content, so it collapses with it.
+ */
+function SectionEnd() {
+  return (
+    <Rail elevateRule>
+      <div className="mx-[-16px] rule-t" />
+      <div className="h-14" />
+    </Rail>
   );
 }

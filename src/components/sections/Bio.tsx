@@ -2,6 +2,7 @@
 
 import InlineLink from "@/components/ui/InlineLink";
 import Kbd from "@/components/ui/Kbd";
+import Tabular from "@/components/ui/Tabular";
 import { useHoverPreview } from "@/components/ui/HoverPreview";
 import { EMAIL } from "@/content/site";
 import { OPEN_CONTACT_EVENT } from "@/components/ContactDrawer";
@@ -37,7 +38,7 @@ export default function Bio() {
         their effort.
       </p>
       <p>
-        Currently leading product design at{" "}
+        I lead product design at{" "}
         <InlineLink
           href="https://www.useascend.com"
           external
@@ -49,15 +50,8 @@ export default function Bio() {
         >
           Ascend
         </InlineLink>
-        , I joined the company in 2024 to build its design function. Since
-        then, I’ve designed the core product that more than 4,000 insurance
-        businesses rely on to generate revenue, and over the same time, built
-        the team which now spans product and brand, along with the systems,
-        operations, and AI tooling it runs on.
-      </p>
-      <p>
-        I do my best work on opinionated teams, the kind that share a specific
-        conviction about how software should work, feel, look, and perform.
+        , where I built the design team and the core product more than{" "}
+        <Tabular>4,000</Tabular> insurance businesses run on.
       </p>
       {/* Two versions of one line, switched on input rather than width —
           the rule the "trust" note uses: the hotkeys only where there's a
