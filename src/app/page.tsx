@@ -15,8 +15,6 @@ export default async function Home() {
   // Vercel injects geo headers at the edge — no third-party API, no rate limits.
   // Absent in local dev, where LocationTime falls back to the viewer's own timezone.
   const h = await headers();
-  const rawCity = h.get("x-vercel-ip-city");
-  const city = rawCity ? decodeURIComponent(rawCity) : undefined;
   const tz = h.get("x-vercel-ip-timezone") ?? undefined;
 
   return (
@@ -28,22 +26,22 @@ export default async function Home() {
       <Frame>
       <BottomScrim />
       <CopyEmail />
+      <Header tz={tz} />
       <ContactDrawer />
-      <Header city={city} tz={tz} />
       {/* Outer vertical rule, pinned to the viewport (not page scroll): it used
           to be a single absolute box starting below Header's natural in-flow
           position, which only held at scrollY 0 — Header is sticky, so past
-          that it just sat on top of the rule's middle. Fixed + a static top
-          offset (header's own 45px height, no added gap) keeps it flush with
-          the header at every scroll position, running seamlessly on from
-          the header's own verticals with no break.
+          that it just sat on top of the rule's middle. Fixed, from the top
+          of the viewport, so it runs the window's full height at every
+          scroll position — the header is invisible at the top of the page,
+          and its own verticals sit on exactly these pixels once it shows.
           z-[17]: stays above the bottom fade overlays (z-[16]) — only the
           narrower rule-x column verticals (z-[15]) fall under that fade,
           by request; this wide outer rule is intentionally unaffected. */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-x-0 bottom-0 z-[17]"
-        style={{ top: 45 }}
+        style={{ top: 0 }}
       >
         <div className="mx-auto h-full max-w-frame px-5 sm:px-8 xl:px-0">
           {/* Plain block, not absolute — an absolutely-positioned inset-0

@@ -23,7 +23,7 @@ export async function copyEmailWithToast() {
 export default function CopyEmail() {
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key !== "c" || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key.toLowerCase() !== "c" || e.metaKey || e.ctrlKey || e.altKey) return;
       const el = document.activeElement as HTMLElement | null;
       if (
         el &&

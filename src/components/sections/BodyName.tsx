@@ -81,9 +81,9 @@ export default function BodyName() {
     };
   }, []);
 
-  // Fades exactly while crossing behind the nav — from the moment its top
-  // meets the bar to the moment its bottom clears it. The header is only
-  // semi-opaque, so without this the name would be legible through it.
+  // Fades exactly while crossing behind the header — from the moment its
+  // top meets the bar to the moment its bottom clears it. The header is
+  // only semi-opaque, so without this the name would be legible through it.
   const { progress, enteredNav, clearedNav } = handoff;
 
   return (

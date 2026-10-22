@@ -30,8 +30,7 @@ export default function RecentWork() {
   return (
     <>
       {/* The bio's column verticals carry on through this gap and stop at the
-          accordion's upper rule. This 120px used to be the heading block's
-          own top padding inside the project rail; it stays ruled so the
+          accordion's upper rule. 96px (from 120); it stays ruled so the
           verticals meet that rule rather than ending in mid-air above it. */}
       <Rail elevateRule>
         <div className="h-[120px]" />
@@ -71,11 +70,11 @@ export default function RecentWork() {
         {/* The way into Experience, built like the way into Work: the
             last carousel closes on its divider like every other (the column
             rules now reach it, so it carries their junctions), then a ruled
-            56px gap — the same as Contact's above the footer — and a rule
+            40px gap and a rule
             for Experience's bar to share. Inside the content, so with
             Work shut the two bars still stack on one line. */}
         <Rail elevateRule>
-          <div className="h-14" />
+          <div className="h-10" />
         </Rail>
         <AccordionRule />
       </RuleAccordion>
@@ -123,7 +122,7 @@ export default function RecentWork() {
               default, and Button.Root centres its own label, so the links
               sat centred in each column rather than flush left. */}
           <div className="-ml-2 grid grid-cols-[max-content_1fr] items-center justify-items-start gap-x-4 gap-y-0 md:flex md:flex-wrap md:gap-x-8">
-            <CopyEmailButton label={EMAIL} className="h-8 px-2 font-normal" />
+            <CopyEmailButton label={EMAIL} className="h-8 px-2 text-[17px] sm:text-[18px] font-normal" />
             {SOCIALS.map((c) => (
               <Button.Root
                 key={c.label}
@@ -131,7 +130,7 @@ export default function RecentWork() {
                 variant="neutral"
                 mode="ghost"
                 size="md"
-                className="h-8 px-2 font-normal"
+                className="h-8 px-2 text-[17px] sm:text-[18px] font-normal"
               >
                 <a href={c.href}>{c.label}</a>
               </Button.Root>
@@ -157,7 +156,7 @@ function ProjectRail({ project, className }: { project: Project; className: stri
 
 /**
  * The gap that ends a list section, as Work ends: the last row closes on
- * its rule, then a ruled 56px gap (Contact's, above the footer) down to
+ * its rule, then a ruled 40px gap down to
  * the rule the next bar shares.
  * Inside the accordion's content, so it collapses with it.
  */
@@ -165,7 +164,7 @@ function SectionEnd() {
   return (
     <Rail elevateRule>
       <div className="mx-[-16px] rule-t" />
-      <div className="h-14" />
+      <div className="h-10" />
     </Rail>
   );
 }

@@ -1,37 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import * as Button from "@/components/ui/Button";
 import LocationTime from "@/components/ui/LocationTime";
-import { SECTION_TARGET_EVENT } from "@/components/ui/RuleAccordion";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { phase } from "@/lib/phase";
 import type { NameHandoff } from "@/components/sections/BodyName";
-
-// All plain links: in-page targets are ordinary hrefs, so they keep anchor
-// behaviour — keyboard, middle-click, a shareable URL — without a scroll
-// handler. ProfileDrawer and Drawer are left in the codebase, unwired, for
-// whatever wants them next.
-//
-// Contact points at its own section rather than a mailto; the address lives
-// inside it, and copies rather than opening a mail client.
-const NAV: { label: string; href: string }[] = [
-  { label: "Work", href: "#work" },
-  { label: "Experience", href: "#experience" },
-  { label: "Contact", href: "#contact" },
-];
-
-/**
- * Tell the targeted section to open, alongside the browser's own scroll.
- * Dispatched on click rather than left to `hashchange`, which doesn't fire
- * when the hash is already the one being clicked.
- */
-function targetSection(href: string) {
-  if (!href.startsWith("#")) return;
-  window.dispatchEvent(
-    new CustomEvent(SECTION_TARGET_EVENT, { detail: href.slice(1) }),
-  );
-}
 
 const FULL_NAME = "Mukul Chakravarthi";
 
@@ -50,13 +23,7 @@ const FULL_NAME = "Mukul Chakravarthi";
 // moment the body name clears the nav bar (clearedNav) to the end of the
 // run, squared so it resolves late rather than reading as arrived early.
 
-export default function Header({
-  city,
-  tz,
-}: {
-  city?: string;
-  tz?: string;
-}) {
+export default function Header({ tz }: { tz?: string }) {
   const [handoff, setHandoff] = useState<NameHandoff>({
     progress: 0,
     clearedNav: 1,
@@ -103,10 +70,15 @@ export default function Header({
   }, []);
 
 
-  const { progress, clearedNav } = handoff;
+  const { progress, clearedNav, enteredNav } = handoff;
+  // The header's own run: from the moment the body name meets the nav's
+  // bottom edge to the moment it's fully behind it. Starting at the top of
+  // the page instead had the name typing while the bio's still sat well
+  // below the bar.
+  const run = phase(progress, enteredNav, 1);
   // Snapped to whole device pixels, so the caret stays exactly as crisp in
   // motion as at rest instead of thinning across sub-pixel phases.
-  const typed = reducedMotion ? 0 : progress;
+  const typed = reducedMotion ? 0 : run;
   // Characters typed so far. floor, with 1 itself mapping to the full name,
   // so each character gets an equal share of the run and the last lands
   // exactly at the end of it.
@@ -129,15 +101,19 @@ export default function Header({
   }, [count]);
   // Not once the name is done: the blink animates opacity, and would
   // override the fade-out.
-  const idle = !typing && !done;
-  // A quiet resting colour while it waits at the top of the page, the text
-  // colour from the first scroll, as it starts to type. Both follow the
-  // theme: caret-rest is slate-200 in light and slate-700 in dark (see
-  // globals.css), against strong-950's near-black and white.
-  const scrolled = progress > 0;
+  // And not before typing starts: the caret isn't shown at the very top,
+  // and the blink would override that too.
+  const idle = !typing && !done && run > 0;
   const crossfade = Math.pow(phase(progress, clearedNav, 1), 2);
   const nameOpacity = reducedMotion ? crossfade : 1;
-  const caretOpacity = reducedMotion ? 1 - crossfade : done ? 0 : 1;
+  // At the very top there's no header at all — no caret, bar, line, links
+  // or clock, just the frame's verticals running to the top edge. The
+  // caret first appears as typing starts; the bar's fill and bottom line,
+  // the nav links and the clock fade in with the name, on the same run
+  // (under reduced motion, with the name's crossfade).
+  const started = run > 0;
+  const caretOpacity = !started ? 0 : reducedMotion ? 1 - crossfade : done ? 0 : 1;
+  const chrome = reducedMotion ? crossfade : run;
 
   // z-[25]: above every z-20 element in the scrolling page (ThemeToggle)
   // that could otherwise visually collide with the sticky header — equal
@@ -146,8 +122,25 @@ export default function Header({
   // the z-40 spotlight scrim, so the header keeps dimming with everything
   // else during a hover preview.
   return (
-    <header className="sticky top-0 z-[25] bg-background/70 backdrop-blur-md">
-      <div className="relative border-b border-rule">
+    // -mb-[45px]: the header is invisible at the top of the page, so it no
+    // longer holds its 45px open — the bio starts that much higher and the
+    // header, still sticky, floats over the page as it appears.
+    <header className="sticky top-0 z-[25] -mb-[45px]">
+      {/* The bar's frosted fill, on its own layer so it can fade with the
+          name (a backdrop-filter can't be faded on the header itself). */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-background/70 backdrop-blur-md"
+        style={{ opacity: chrome }}
+      />
+      {/* The bottom line fades too. Its 1px border stays in place, only
+          transparent, so the header holds its 45px and nothing below moves. */}
+      <div
+        className="relative border-b"
+        style={{
+          borderBottomColor: `color-mix(in oklab, var(--color-rule) ${Math.round(chrome * 100)}%, transparent)`,
+        }}
+      >
         {/* Runs the header's full height, edge to edge: from the very top
             of the viewport (no 8px clearance any more — the frame's
             verticals start at the top of the screen) down to the header's
@@ -203,7 +196,7 @@ export default function Header({
                     // The fade after typing is a short transition rather
                     // than scroll-driven: the run ends on the last letter,
                     // so there's no scroll left to drive it with.
-                    className={`absolute bottom-[-0.25em] h-[1.1em] w-[2px] ${scrolled ? "bg-text-strong-950" : "bg-caret-rest"} transition-opacity duration-300 ease-[var(--ease-out)] ${idle ? "caret-blink" : ""}`}
+                    className={`absolute bottom-[-0.25em] h-[1.1em] w-[2px] bg-text-strong-950 transition-opacity duration-300 ease-[var(--ease-out)] ${idle ? "caret-blink" : ""}`}
                     style={{ left: caretX - 1, opacity: caretOpacity }}
                   />
                 </span>
@@ -229,41 +222,20 @@ export default function Header({
             </div>
           </div>
 
-          {/* Nav items: right-aligned, name is not in flex flow. Desktop
-              only — below md there's no nav, by choice: the page is short
-              enough to scroll, and the sections open where they sit.
-              h-7 holds the row at the nav buttons' 28px even when they're
-              hidden, so the header is 45px at every width — the height the
-              outer rule's top offset and the sticky offsets assume. On
-              mobile the 36px menu button used to set it (53px). */}
-          <div className="mx-auto flex h-7 max-w-column items-center justify-end">
-            <div className="flex items-center gap-1.5">
-              {/* Desktop nav */}
-              <nav className="hidden gap-0.5 md:flex">
-                {NAV.map((item) => (
-                  <Button.Root
-                    key={item.label}
-                    asChild
-                    variant="neutral"
-                    mode="ghost"
-                    size="xs"
-                    className="text-[17px] font-normal"
-                  >
-                    <a href={item.href} onClick={() => targetSection(item.href)}>
-                      {item.label}
-                    </a>
-                  </Button.Root>
-                ))}
-              </nav>
-            </div>
-          </div>
+          {/* No nav links — the header is just the name, the caret and
+              the clock. h-7 holds the row at 28px so the header stays 45px,
+              the height the sticky offsets below assume. */}
+          <div className="mx-auto h-7 max-w-column" />
 
-          {/* Location/time, at the outer stroke — from xl only. Below it
-              the right channel is too narrow for a long city name beside
-              the nav and the two overlapped; the footer carries the clock
-              there instead. */}
-          <div className="absolute right-4 top-1/2 hidden -translate-y-[calc(50%-2px)] xl:block">
-            <LocationTime city={city} tz={tz} />
+          {/* The clock, at the outer stroke, from md — date and 24-hour
+              time with seconds, as the footer sets it. With no nav links
+              there's nothing for it to run into from md up; below md the
+              name would, so the footer carries it there. */}
+          <div
+            className="absolute right-4 top-1/2 hidden -translate-y-[calc(50%-2px)] md:block"
+            style={{ opacity: chrome, visibility: started ? undefined : "hidden" }}
+          >
+            <LocationTime tz={tz} seconds />
           </div>
         </div>
       </div>

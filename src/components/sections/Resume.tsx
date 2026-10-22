@@ -38,12 +38,12 @@ export default function Resume() {
   return (
     <div className="relative">
       <Rail className="pt-8 pb-10" elevateRule>
-        {/* Below lg there's no channel, so the export sits above the
-            summary. */}
-        <div className="mb-2 lg:hidden">
+        <p className={ENTRY_TEXT}>{summary}</p>
+        {/* Under the summary at every width, with the summary's own 40px
+            (pb-10) still between it and the first row's rule. */}
+        <div className={`mt-4 ${ENTRY_TEXT}`}>
           <ResumeExport />
         </div>
-        <p className={ENTRY_TEXT}>{summary}</p>
       </Rail>
 
       {roles.map((role) => (
@@ -57,27 +57,6 @@ export default function Resume() {
           preview={preview}
         />
       ))}
-
-      {/* From lg the export lives in the left channel, sticky for as long
-          as the resume is on screen. The track spans the whole resume, from
-          the frame edge to the column's left rule (50% − half the column),
-          and the button sticks within it: it holds 45px down — just under
-          the sticky header — and leaves with the resume's last entry, then
-          scrolls on with the section like everything else.
-
-          The sticky box repeats the summary's pt-8 and its 18px / 1.5 line
-          box, so the inline-block button sits on the same baseline as the
-          summary's first line without an offset. Left-aligned, 16px in from
-          the outer rule. It sits below the rules' layers (z-15 column, z-17
-          outer), so both stay drawn over it. */}
-      <div
-        className="pointer-events-none absolute inset-y-0 left-0 hidden lg:block"
-        style={{ right: "calc(50% + var(--container-column) / 2)" }}
-      >
-        <div className={`pointer-events-auto sticky top-[45px] px-4 pt-8 ${ENTRY_TEXT}`}>
-          <ResumeExport />
-        </div>
-      </div>
 
       {preview.panel}
     </div>
