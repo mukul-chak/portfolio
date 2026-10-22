@@ -2,7 +2,6 @@
 
 import InlineLink from "@/components/ui/InlineLink";
 import Kbd from "@/components/ui/Kbd";
-import Tabular from "@/components/ui/Tabular";
 import { useHoverPreview } from "@/components/ui/HoverPreview";
 import { EMAIL } from "@/content/site";
 import { OPEN_CONTACT_EVENT } from "@/components/ContactDrawer";
@@ -19,59 +18,52 @@ export default function Bio() {
 
   return (
     <section
-      className="relative mt-4 space-y-6 text-[17px] sm:text-[18px] leading-[1.65] text-text-sub-600"
+      // md:pr-6: on desktop the lines stop 24px further from the column's
+      // right rule (40px of clearance, against the Rail's 16px), so the
+      // longest ones don't run up against it.
+      className="relative mt-4 space-y-6 text-[17px] sm:text-[18px] leading-[1.65] text-text-sub-600 md:pr-6"
     >
       <p>
-        I design products people{" "}
-        {/* Not a link — there's nowhere to go — so a dotted underline, the
-            convention for a term with a note attached, and only where the
-            note can actually open: md and up, with a fine pointer. On touch
-            or a phone it's plain text and the note doesn't exist. */}
-        <span
-          onMouseEnter={preview.show("trust")}
-          onMouseLeave={preview.hide}
-          className={`md:pointer-fine:cursor-default md:pointer-fine:underline md:pointer-fine:decoration-dotted md:pointer-fine:decoration-stroke-sub-300 md:pointer-fine:decoration-1 md:pointer-fine:underline-offset-[3px] md:pointer-fine:transition-colors md:pointer-fine:hover:text-text-strong-950 md:pointer-fine:hover:decoration-text-strong-950 ${preview.raised("trust")}`}
-        >
-          trust
-        </span>{" "}
-        with the things they can’t afford to lose: their money, their time, and
-        their effort.
+        Mukul is an art-director-turned-product designer with a knack for
+        turning paper-napkin ideas into scalable digital products.
       </p>
       <p>
-        I lead product design at{" "}
+        He currently leads product design for{" "}
         <InlineLink
           href="https://www.useascend.com"
           external
           onMouseEnter={preview.show("ascend")}
           onMouseLeave={preview.hide}
-          // One step up from the rule colour, so the two words with notes
-          // attached read as such against the body copy.
+          // One step up from the rule colour, so the word with a note
+          // attached reads as such against the body copy.
           className={`decoration-stroke-sub-300 ${preview.raised("ascend")}`}
         >
           Ascend
         </InlineLink>
-        , where I built the design team and the core product more than{" "}
-        <Tabular>4,000</Tabular> insurance businesses run on.
+        , an accounting automation platform purpose-built for insurance.
+      </p>
+      <p>
+        Give Mukul a distinctly nascent space, a deeply regulated industry, and
+        a team that moves fast, and he’ll fit right in.
       </p>
       {/* Two versions of one line, switched on input rather than width —
-          the rule the "trust" note uses: the hotkeys only where there's a
+          the rule the hover notes use: the hotkeys only where there's a
           keyboard and a fine pointer (md and up), the tap version
           everywhere else, tablets included. One <p>, so the section's
           spacing is the same either way. */}
       <p>
         <span className="hidden md:pointer-fine:inline">
-          Press <Kbd>c</Kbd> to copy my email or <Kbd>w</Kbd> to{" "}
+          <Kbd>C</Kbd> to copy email · <Kbd>W</Kbd> to{" "}
           <InlineLink href={`mailto:${EMAIL}`} onClick={openContact}>
-            write to me
+            reach out
           </InlineLink>
-          .
         </span>
         <span className="md:pointer-fine:hidden">
           <InlineLink
             href={`mailto:${EMAIL}`}
             onClick={(e) => {
               // Copies inside the tap itself, which iOS requires for
-              // clipboard access, with the same toast as the "c" hotkey.
+              // clipboard access, with the same toast as the C hotkey.
               e.preventDefault();
               void copyEmailWithToast();
             }}

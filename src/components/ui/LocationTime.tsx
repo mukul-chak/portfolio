@@ -20,8 +20,10 @@ function formatTime(tz?: string, seconds = false) {
   // The footer's clock: date and time, no city. Same zone as the time.
   const date = now.toLocaleDateString("en-US", {
     timeZone: tz,
-    month: "short",
-    day: "numeric",
+    // Numeric, zero-padded: 10/21/2026, 01/05/2027 — a fixed width, like
+    // the time beside it.
+    month: "2-digit",
+    day: "2-digit",
     year: "numeric",
   });
   return `${date}, ${time}`;

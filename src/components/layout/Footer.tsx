@@ -50,6 +50,17 @@ export default function Footer({ tz }: { tz?: string }) {
             <p className="text-text-strong-950">Mukul Chakravarthi</p>
             <p>{LOCATION}</p>
             <p>{EMAIL}</p>
+            {/* The clock on phones, under the name, place and address —
+                from md the header carries it. Date and 24-hour time with
+                ticking seconds, in the visitor's zone, set as footer text:
+                Reform at 14/1.5, sentence case. */}
+            <div className="mt-8 md:hidden">
+              <LocationTime
+                tz={tz}
+                seconds
+                className="text-left font-sans text-[14px] leading-[1.5] normal-case tracking-normal [--tnum-ls:0em]"
+              />
+            </div>
           </div>
 
           <div className="px-4">
@@ -72,31 +83,14 @@ export default function Footer({ tz }: { tz?: string }) {
             </p>
           </div>
 
-          {/* The quote's column also carries the clock wherever the header
-              can't: below xl the header's location and time ran into the
-              nav (the right channel is (100vw − 620px) / 2 wide, too narrow
-              for a long city name until ~1280), so there it's dropped from
-              the header and shown here, under the quote, in this column at
-              every layout: stacked, two up and four up. Date and 24-hour
-              time with ticking seconds, in the visitor's zone, set as
-              footer text — Reform at 14/1.5, sentence case. */}
-          <div className="px-4">
-            <figure>
-              <blockquote>
-                <p>Order itself is charismatic.</p>
-              </blockquote>
-              <figcaption className="text-text-soft-400">
-                — Saul Bellow, <cite>Ravelstein</cite>
-              </figcaption>
-            </figure>
-            <div className="mt-8 xl:hidden">
-              <LocationTime
-                tz={tz}
-                seconds
-                className="text-left font-sans text-[14px] leading-[1.5] normal-case tracking-normal [--tnum-ls:0em]"
-              />
-            </div>
-          </div>
+          <figure className="px-4">
+            <blockquote>
+              <p>Order itself is charismatic.</p>
+            </blockquote>
+            <figcaption className="text-text-soft-400">
+              — Saul Bellow, <cite>Ravelstein</cite>
+            </figcaption>
+          </figure>
         </div>
 
         <div className="rule-t" />
