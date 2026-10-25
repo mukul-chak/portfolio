@@ -36,7 +36,7 @@ export default function RecentWork() {
         <div className="h-[120px]" />
       </Rail>
 
-      <RuleAccordion title="Work" anchorId="work">
+      <RuleAccordion title="Work" anchorId="work" defaultOpen={false}>
         {/* Each project's title block sits optically 24px from the line
             above and the divider below: line to the title's cap height, and
             the year · type baseline to the divider. The title's caps start

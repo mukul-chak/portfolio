@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { RESUME_FILENAME } from "@/lib/resumeExport";
+import * as Button from "@/components/ui/Button";
 
 // Static files written to public/ by scripts/build-resume.tsx.
 const FORMATS = [
@@ -27,9 +28,8 @@ function ChevronIcon({ open }: { open: boolean }) {
 }
 
 /**
- * "Download resume" with a small menu of formats. Set in the eyebrow type
- * the dates use, so it reads as part of the channel rather than a control
- * dropped into it. The menu is the header's mobile menu — same panel, same
+ * "Download resume" with a small menu of formats, on a tertiary (ghost)
+ * button. The menu is the header's mobile menu — same panel, same
  * 180ms opacity/scale on --ease-out, anchored at the corner on the side the
  * trigger is aligned to, so it grows out of the trigger rather than across
  * it.
@@ -78,17 +78,24 @@ export default function ResumeExport({ align = "left" }: { align?: "left" | "rig
 
   return (
     <div ref={rootRef} className="relative inline-block">
-      <button
+      {/* Tertiary (ghost). -ml-3 pulls it back by its 12px padding, so the
+          label lines up with the text above it; -my-2 takes the 8px of box
+          above and below its 20px line back out of the layout, so the gaps
+          to the summary and the rule stay as they were. The hover fill
+          still shows the full 36px. */}
+      <Button.Root
         ref={triggerRef}
         type="button"
+        mode="ghost"
+        size="sm"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls={menuId}
-        className="inline-flex cursor-pointer items-center gap-1 rounded-sm font-[family-name:var(--font-eyebrow)] text-[16px] text-text-sub-600 transition-colors duration-100 hover:text-text-strong-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text-strong-950"
+        className="-my-2 -ml-3 cursor-pointer gap-1 font-[family-name:var(--font-eyebrow)] text-[16px] font-normal"
       >
         Download resume
         <ChevronIcon open={open} />
-      </button>
+      </Button.Root>
       {rendered && (
         <div
           id={menuId}
