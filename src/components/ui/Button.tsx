@@ -28,10 +28,13 @@ const buttonVariants = tv({
       // Text-only — no box, no padding, no fixed height. Just the label.
       link:    "bg-transparent text-text-sub-600 underline-offset-4 hover:underline hover:text-text-strong-950",
     },
+    // AlignUI's sizes: every one carries the 14px label (label-sm, spelled
+    // out so tailwind-merge reads it as a size, not a colour); only height,
+    // padding and gap step down. Radius stays the site's 4px.
     size: {
-      xs: "h-7 px-2.5 text-[13px]",
-      sm: "h-8 px-3 text-xs",
-      md: "h-9 px-4 text-[16px]",
+      xs: "h-8 gap-2.5 px-2.5 text-[14px] leading-5 tracking-[-0.006em]",
+      sm: "h-9 gap-3 px-3 text-[14px] leading-5 tracking-[-0.006em]",
+      md: "h-10 gap-3 px-3.5 text-[14px] leading-5 tracking-[-0.006em]",
     },
     // Icon-only — see the compound variant below for the actual squaring.
     square: {
