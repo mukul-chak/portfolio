@@ -881,6 +881,9 @@ body {
      below, where faded-base stays slate-500 and measured ~4.2:1 on the
      dark background. */
   --color-meta: var(--color-faded-base);
+  /* Toast title: one step softer than surface-800 (slate-800 → 700 in
+     light; neutral-200 → 300 in dark, remapped below). */
+  --color-toast-title: var(--color-neutral-700);
   /* Accordion hatch. The rule colour at reduced strength — the rules are
      already the lightest stroke in the system, and a solid field of them
      at full weight reads as a block of tone rather than as texture.
@@ -963,6 +966,7 @@ html.dark {
   /* slate-400: 7.13:1 on the dark background, still one step below
      sub-600 (slate-300 in dark), so dates stay quieter than the copy. */
   --color-meta: var(--color-neutral-400);
+  --color-toast-title: var(--color-neutral-300);
 }
 
 html,
