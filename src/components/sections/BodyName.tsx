@@ -23,6 +23,9 @@ export type NameHandoff = {
   /** The fraction at which this name's top first meets the nav's bottom
    *  edge, i.e. where it starts disappearing behind the bar. */
   enteredNav: number;
+  /** Whether the page can scroll far enough to finish the run. While it
+   *  can't, progress is held at 0. */
+  room: boolean;
 };
 
 export default function BodyName() {
@@ -31,6 +34,7 @@ export default function BodyName() {
     progress: 0,
     clearedNav: 1,
     enteredNav: 1,
+    room: true,
   });
 
   useEffect(() => {
@@ -52,14 +56,22 @@ export default function BodyName() {
       // name's bottom reaches y=0. Everything downstream is a fraction of
       // this, derived rather than hand-set, so the choreography survives any
       // change to the spacing above.
-      const progress = Math.min(1, Math.max(0, window.scrollY / docBottom));
+      //
+      // Only when the page can actually scroll that far. With the sections
+      // shut the page can end before the run does, and the header would
+      // stall a few letters in with nowhere left to go. Then the handoff
+      // doesn't happen at all: the name stays in the bio and the header
+      // stays hidden, until the page grows enough to finish it.
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const room = maxScroll >= docBottom;
+      const progress = room ? Math.min(1, Math.max(0, window.scrollY / docBottom)) : 0;
       const clearedNav = Math.max(0, (docBottom - TRIGGER_Y) / docBottom);
       const enteredNav = Math.max(0, (docBottom - rect.height - TRIGGER_Y) / docBottom);
 
-      const next = { progress: Math.round(progress * 1000) / 1000, clearedNav, enteredNav };
+      const next = { progress: Math.round(progress * 1000) / 1000, clearedNav, enteredNav, room };
       // Compare at a fine but bounded precision so we don't re-render (and
       // re-dispatch) on every sub-pixel scroll tick.
-      const key = `${next.progress}|${clearedNav.toFixed(4)}|${enteredNav.toFixed(4)}`;
+      const key = `${next.progress}|${clearedNav.toFixed(4)}|${enteredNav.toFixed(4)}|${room}`;
       if (key === last) return;
       last = key;
       setHandoff(next);
@@ -75,9 +87,14 @@ export default function BodyName() {
     measure();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    // The page's height changes without a scroll or resize whenever a
+    // section opens or shuts, and that decides whether there's room.
+    const ro = new ResizeObserver(onScroll);
+    ro.observe(document.body);
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      ro.disconnect();
     };
   }, []);
 
