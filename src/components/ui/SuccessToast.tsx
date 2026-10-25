@@ -31,7 +31,7 @@ export function showSuccessToast(title: string, detail: string) {
       // font-sans: Sonner's toaster sets its own system font stack, which
       // the page's Reform Grotesk on body can't reach through.
       <div className="inset-ring-1 inset-ring-stroke-soft-200 flex items-start gap-2 rounded-[2px] bg-background py-2 pl-2.5 pr-[13px] font-sans shadow-regular-md">
-        <svg className="mt-0.5 shrink-0" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <svg className="mt-1 shrink-0" width="16" height="16" viewBox="0 0 16 16" fill="none">
           {/* No exact AlignUI 700 tier (same gap flagged for the
               header MC animation earlier) — strong-950/white-0 is the
               nearest fit, and matches Button.tsx's own "filled"
@@ -51,8 +51,10 @@ export function showSuccessToast(title: string, detail: string) {
           />
         </svg>
         <div>
-          <p className="text-label-sm text-text-strong-950">{title}</p>
-          <p className="text-paragraph-sm text-text-sub-600">{detail}</p>
+          {/* 16px on a 24px line. The detail takes the dates' meta colour:
+              slate-500 in light, slate-400 in dark. */}
+          <p className="text-[16px] leading-6 font-medium text-toast-title">{title}</p>
+          <p className="text-[16px] leading-6 text-meta">{detail}</p>
         </div>
       </div>
     ),
