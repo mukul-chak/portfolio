@@ -26,7 +26,7 @@ export default function ProjectText({
             so it keeps its place on the title's line and shares its
             baseline. md and up, where the channel exists. */}
         {number && (
-          <span aria-hidden className="absolute right-full mr-8 hidden whitespace-nowrap font-normal text-text-sub-600 md:inline">
+          <span aria-hidden className="absolute right-full mr-8 hidden whitespace-nowrap font-normal text-meta md:inline">
             <Tabular>{number}</Tabular>
           </span>
         )}
