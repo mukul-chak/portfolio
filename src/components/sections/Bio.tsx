@@ -30,9 +30,27 @@ export default function Bio() {
       className="relative mt-4 space-y-6 text-[17px] sm:text-[18px] leading-[1.65] text-text-sub-600 md:pr-6"
     >
       <p>
-        Mukul is an art-director-turned-product designer with a knack for
-        turning paper-napkin ideas into scalable digital products. He
-        currently leads product design for{" "}
+        Mukul is a product designer with a natural bent towards craft and
+        systems. Over the last six years, he has built both products and teams
+        at{" "}
+        <InlineLink
+          href="https://www.fidelity.com"
+          external
+          onMouseEnter={preview.show("fidelity")}
+          onMouseLeave={preview.hide}
+          className={`decoration-stroke-sub-300 ${preview.raised("fidelity")}`}
+        >
+          Fidelity Labs
+        </InlineLink>,{" "}
+        <InlineLink
+          href="https://www.saaganthology.com"
+          external
+          onMouseEnter={preview.show("saag")}
+          onMouseLeave={preview.hide}
+          className={`decoration-stroke-sub-300 ${preview.raised("saag")}`}
+        >
+          SAAG
+        </InlineLink>, and now as head of design at{" "}
         <InlineLink
           href="https://www.useascend.com"
           external
@@ -44,14 +62,16 @@ export default function Bio() {
         >
           Ascend
         </InlineLink>
-        , an accounting automation platform purpose-built for insurance.
+        . He leads from the details upwards, convinced that building an ethos
+        of visual intelligence is what makes scalable products.
       </p>
       {/* Two versions of one line, switched on input rather than width —
           the rule the hover notes use: the hotkey badges only where there's
           a keyboard and a fine pointer (md and up), plain links everywhere
           else, tablets included. One <p>, so the section's spacing is the
-          same either way. */}
-      <p>
+          same either way. pt-4, not mt-4: a margin would collapse into the
+          section's 24px gap instead of adding to it. */}
+      <p className="pt-4">
         <InlineLink href="#about" onClick={openAbout} className="whitespace-nowrap">
           Learn more
         </InlineLink>
