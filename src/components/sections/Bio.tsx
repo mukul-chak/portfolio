@@ -5,7 +5,13 @@ import Kbd from "@/components/ui/Kbd";
 import { useHoverPreview } from "@/components/ui/HoverPreview";
 import { EMAIL } from "@/content/site";
 import { OPEN_CONTACT_EVENT } from "@/components/ContactDrawer";
+import { OPEN_ABOUT_EVENT } from "@/components/AboutDrawer";
 import { copyEmailWithToast } from "@/components/CopyEmail";
+
+function openAbout(e: React.MouseEvent) {
+  e.preventDefault();
+  window.dispatchEvent(new Event(OPEN_ABOUT_EVENT));
+}
 
 // mailto stays as the href for anyone without JavaScript.
 function openContact(e: React.MouseEvent) {
@@ -44,7 +50,11 @@ export default function Bio() {
       </p>
       <p>
         Give Mukul a distinctly nascent space, a deeply regulated industry, and
-        a team that moves fast, and he’ll fit right in.
+        a team that moves fast, and he’ll fit right in.{" "}
+        <InlineLink href="#about" onClick={openAbout}>
+          Read more about Mukul
+        </InlineLink>
+        .
       </p>
       {/* Two versions of one line, switched on input rather than width —
           the rule the hover notes use: the hotkeys only where there's a

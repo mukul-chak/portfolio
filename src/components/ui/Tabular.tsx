@@ -12,13 +12,20 @@
  *
  * Letter-spaced text (the header clock's tracking) sets --tnum-ls to the
  * same amount, so the slots keep it.
+ *
+ * The en dash in a range ("2021–2024", "2024–Now") gets 1px either side,
+ * so the figures don't crowd it.
  */
 export default function Tabular({ children }: { children: string }) {
   return (
     <>
-      {children.split(/(\d)/).map((part, i) =>
+      {children.split(/(\d|–)/).map((part, i) =>
         /^\d$/.test(part) ? (
           <span key={i} className="tnum-digit">
+            {part}
+          </span>
+        ) : part === "–" ? (
+          <span key={i} className="mx-px">
             {part}
           </span>
         ) : (
