@@ -7,6 +7,7 @@ import { phase } from "@/lib/phase";
 import type { NameHandoff } from "@/components/sections/BodyName";
 
 const FULL_NAME = "Mukul Chakravarthi";
+const LEAVE_MS = 200;
 
 // A caret types the name in. It rests blinking at the name's insertion
 // point, then, as the page scrolls, jumps one character at a time, each
@@ -28,7 +29,14 @@ export default function Header({ tz }: { tz?: string }) {
     progress: 0,
     clearedNav: 1,
     enteredNav: 1,
+    room: true,
   });
+  // When the page stops having room for the run while the header is
+  // showing (a section shut beneath it), the handoff drops straight to 0.
+  // Rather than snap away, the header holds its last frame and fades out
+  // whole, then takes the new state.
+  const lastRef = useRef(handoff);
+  const [leaving, setLeaving] = useState<NameHandoff | null>(null);
   const reducedMotion = useReducedMotion();
   const nameRef = useRef<HTMLSpanElement>(null);
   // Where the caret can stand: before each character and after the last,
@@ -38,11 +46,21 @@ export default function Header({ tz }: { tz?: string }) {
 
   useEffect(() => {
     function onNameScroll(e: Event) {
-      setHandoff((e as CustomEvent<NameHandoff>).detail);
+      const next = (e as CustomEvent<NameHandoff>).detail;
+      const prev = lastRef.current;
+      lastRef.current = next;
+      if (!next.room && prev.room && prev.progress > 0) setLeaving(prev);
+      setHandoff(next);
     }
     window.addEventListener("name-scroll-progress", onNameScroll);
     return () => window.removeEventListener("name-scroll-progress", onNameScroll);
   }, []);
+
+  useEffect(() => {
+    if (!leaving) return;
+    const id = setTimeout(() => setLeaving(null), LEAVE_MS);
+    return () => clearTimeout(id);
+  }, [leaving]);
 
   // Each character's position comes from the laid-out text itself (a
   // Range per character), so it has to be measured against the real
@@ -70,7 +88,7 @@ export default function Header({ tz }: { tz?: string }) {
   }, []);
 
 
-  const { progress, clearedNav, enteredNav } = handoff;
+  const { progress, clearedNav, enteredNav } = leaving ?? handoff;
   // The header's own run: from the moment the body name meets the nav's
   // bottom edge to the moment it's fully behind it. Starting at the top of
   // the page instead had the name typing while the bio's still sat well
@@ -125,7 +143,10 @@ export default function Header({ tz }: { tz?: string }) {
     // -mb-[45px]: the header is invisible at the top of the page, so it no
     // longer holds its 45px open — the bio starts that much higher and the
     // header, still sticky, floats over the page as it appears.
-    <header className="sticky top-0 z-[25] -mb-[45px]">
+    <header
+      className="sticky top-0 z-[25] -mb-[45px] transition-opacity ease-[var(--ease-out)]"
+      style={{ opacity: leaving ? 0 : 1, transitionDuration: `${LEAVE_MS}ms` }}
+    >
       {/* The bar's frosted fill, on its own layer so it can fade with the
           name (a backdrop-filter can't be faded on the header itself). */}
       <div
