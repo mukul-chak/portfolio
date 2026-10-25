@@ -6,7 +6,7 @@ import * as Button from "@/components/ui/Button";
 import { showSuccessToast } from "@/components/ui/SuccessToast";
 import { EMAIL } from "@/content/site";
 
-/** Dispatched by "write to me" links; the drawer opens on it, as on `w`. */
+/** Dispatched by the "Reach out" link; the drawer opens on it, as on `r`. */
 export const OPEN_CONTACT_EVENT = "open-contact";
 
 type Values = { email: string; subject: string; message: string };
@@ -84,8 +84,8 @@ function Row({
 }
 
 /**
- * "Write to me": a drawer with a short email form, opened by the `w` hotkey
- * (the companion to `c`) or a "write to me" link.
+ * "Write to me": a drawer with a short email form, opened by the `r` hotkey
+ * (the companion to `c`) or the "Reach out" link.
  *
  * Front end only for now. Send posts to /api/contact, which doesn't exist
  * yet, so every send fails honestly — the inline error, with the address to
@@ -113,7 +113,7 @@ export default function ContactDrawer() {
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key.toLowerCase() !== "w" || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key.toLowerCase() !== "r" || e.metaKey || e.ctrlKey || e.altKey) return;
       const el = document.activeElement as HTMLElement | null;
       if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
       setOpen(true);
