@@ -37,20 +37,20 @@ export default function RecentWork() {
       </Rail>
 
       <RuleAccordion title="Work" anchorId="work">
-        {/* Each project's title block sits optically 32px from the line
+        {/* Each project's title block sits optically 24px from the line
             above and the divider below: line to the title's cap height, and
             the year · type baseline to the divider. The title's caps start
-            2.9px into its box, so 29px of padding lands them at 31.9; the
+            2.9px into its box, so 21px of padding lands them at 23.9; the
             label's baseline sits 7.5px above its 27px line box's bottom, so
-            pb-[20.5px] + Filmstrip's own pt-1 (4px, no rule) puts 32 under
+            pb-[12.5px] + Filmstrip's own pt-1 (4px, no rule) puts 24 under
             it. The rail's rule starts at the accordion's lower rule, so the
             column verticals resume exactly there. */}
         <CarouselJunctionButton>
-          <ProjectRail project={first} className="pt-[29px] pb-[20.5px]" />
+          <ProjectRail project={first} index={0} className="pt-[21px] pb-[12.5px]" />
           <Filmstrip count={first.imageCount} captions={first.captions} />
         </CarouselJunctionButton>
 
-        {rest.map((project) => (
+        {rest.map((project, i) => (
           // Not a bare Fragment — CarouselJunctionButton needs a real DOM
           // wrapper to (a) anchor its own rail/divider connectors and (b)
           // reach the PREVIOUS project's own wrapper via previousElementSibling
@@ -58,11 +58,11 @@ export default function RecentWork() {
           // continuous line across the project boundary, not two disjoint ones.
           <CarouselJunctionButton key={project.slug}>
             {/* mt-1 (4px, no rule) keeps the carousel's 4px stroke-gap above this rail;
-                pt-[25px] is the rest of the 29px divider→title box, so the caps
-                sit optically 32px below the divider, as the first project's sit
-                below the bar (see above). pb-[20.5px] likewise. The captions
+                pt-[17px] is the rest of the 21px divider→title box, so the caps
+                sit optically 24px below the divider, as the first project's sit
+                below the bar (see above). pb-[12.5px] likewise. The captions
                 above the divider sit 24px over it (Filmstrip). */}
-            <ProjectRail project={project} className="mt-1 pt-[25px] pb-[20.5px]" />
+            <ProjectRail project={project} index={i + 1} className="mt-1 pt-[17px] pb-[12.5px]" />
             <Filmstrip count={project.imageCount} captions={project.captions} />
           </CarouselJunctionButton>
         ))}
@@ -145,11 +145,23 @@ export default function RecentWork() {
   );
 }
 
-/** A project's text rail: title, with its year · type beneath it. */
-function ProjectRail({ project, className }: { project: Project; className: string }) {
+/** A project's text rail: number, title, with its year · type beneath it. */
+function ProjectRail({
+  project,
+  index,
+  className,
+}: {
+  project: Project;
+  index: number;
+  className: string;
+}) {
   return (
     <Rail className={className} elevateRule>
-      <ProjectText project={project} meta={`${project.year} · ${project.type}`} />
+      <ProjectText
+        project={project}
+        meta={`${project.year} · ${project.type}`}
+        number={String(index + 1).padStart(2, "0")}
+      />
     </Rail>
   );
 }

@@ -53,10 +53,20 @@ export default function Bio() {
           spacing is the same either way. */}
       <p>
         <span className="hidden md:pointer-fine:inline">
-          <Kbd>C</Kbd> to copy email · <Kbd>W</Kbd> to{" "}
+          <InlineLink
+            href={`mailto:${EMAIL}`}
+            onClick={(e) => {
+              e.preventDefault();
+              void copyEmailWithToast();
+            }}
+          >
+            Copy my email
+          </InlineLink>{" "}
+          <Kbd>C</Kbd>, or{" "}
           <InlineLink href={`mailto:${EMAIL}`} onClick={openContact}>
-            reach out
-          </InlineLink>
+            write to me
+          </InlineLink>{" "}
+          <Kbd>W</Kbd>
         </span>
         <span className="md:pointer-fine:hidden">
           <InlineLink
