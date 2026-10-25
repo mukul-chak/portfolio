@@ -31,10 +31,8 @@ export default function Bio() {
     >
       <p>
         Mukul is an art-director-turned-product designer with a knack for
-        turning paper-napkin ideas into scalable digital products.
-      </p>
-      <p>
-        He currently leads product design for{" "}
+        turning paper-napkin ideas into scalable digital products. He
+        currently leads product design for{" "}
         <InlineLink
           href="https://www.useascend.com"
           external
@@ -48,57 +46,53 @@ export default function Bio() {
         </InlineLink>
         , an accounting automation platform purpose-built for insurance.
       </p>
-      <p>
-        Give Mukul a distinctly nascent space, a deeply regulated industry, and
-        a team that moves fast, and he’ll fit right in.{" "}
-        <InlineLink href="#about" onClick={openAbout}>
-          Read more about Mukul
-        </InlineLink>
-        .
-      </p>
       {/* Two versions of one line, switched on input rather than width —
-          the rule the hover notes use: the hotkeys only where there's a
-          keyboard and a fine pointer (md and up), the tap version
-          everywhere else, tablets included. One <p>, so the section's
-          spacing is the same either way. */}
+          the rule the hover notes use: the hotkey badges only where there's
+          a keyboard and a fine pointer (md and up), plain links everywhere
+          else, tablets included. One <p>, so the section's spacing is the
+          same either way. */}
       <p>
+        <InlineLink href="#about" onClick={openAbout} className="whitespace-nowrap">
+          Learn more
+        </InlineLink>
         <span className="hidden md:pointer-fine:inline">
-          <InlineLink
-            href={`mailto:${EMAIL}`}
-            onClick={(e) => {
-              e.preventDefault();
-              void copyEmailWithToast();
-            }}
-          >
-            Copy my email
-          </InlineLink>{" "}
-          <Kbd>C</Kbd>, or{" "}
-          <InlineLink href={`mailto:${EMAIL}`} onClick={openContact}>
-            write to me
-          </InlineLink>{" "}
-          <Kbd>W</Kbd>
+          {" "}
+          <Kbd>L</Kbd>
         </span>
-        <span className="md:pointer-fine:hidden">
-          <InlineLink
-            href={`mailto:${EMAIL}`}
-            onClick={(e) => {
-              // Copies inside the tap itself, which iOS requires for
-              // clipboard access, with the same toast as the C hotkey.
-              e.preventDefault();
-              void copyEmailWithToast();
-            }}
-          >
-            Copy my email
-          </InlineLink>{" "}
-          or{" "}
-          <InlineLink href={`mailto:${EMAIL}`} onClick={openContact}>
-            write to me
-          </InlineLink>
-          .
+        {/* The badges' own 2px margin counts toward the 16px. */}
+        <Slash className="md:pointer-fine:ml-[14px]" />
+        <InlineLink
+          href={`mailto:${EMAIL}`}
+          onClick={(e) => {
+            // Copies inside the click itself, which iOS requires for
+            // clipboard access, with the same toast as the C hotkey.
+            e.preventDefault();
+            void copyEmailWithToast();
+          }}
+          className="whitespace-nowrap"
+        >
+          Copy email
+        </InlineLink>
+        <span className="hidden md:pointer-fine:inline">
+          {" "}
+          <Kbd>C</Kbd>
+        </span>
+        <Slash className="md:pointer-fine:ml-[14px]" />
+        <InlineLink href={`mailto:${EMAIL}`} onClick={openContact} className="whitespace-nowrap">
+          Reach out
+        </InlineLink>
+        <span className="hidden md:pointer-fine:inline">
+          {" "}
+          <Kbd>R</Kbd>
         </span>
       </p>
 
       {preview.panel}
     </section>
   );
+}
+
+/** The CTA line's separator: 16px either side. */
+function Slash({ className = "" }: { className?: string }) {
+  return <span aria-hidden className={`mx-4 ${className}`}>/</span>;
 }
