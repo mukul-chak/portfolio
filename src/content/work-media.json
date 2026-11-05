@@ -1,0 +1,22 @@
+{
+  "direct-bill-automation": [
+    {
+      "src": "/work/direct-bill-automation/01.mp4",
+      "kind": "video",
+      "source": "01_DBA_Demo_Full_Scaled.mp4",
+      "hash": "f76a0274e2b0cc7fcd7be79421c5fd9f77162d9c7e57cf6c218bcdb831062a8f"
+    },
+    {
+      "src": "/work/direct-bill-automation/02.mp4",
+      "kind": "video",
+      "source": "02_Detail_Processing_Demo.mp4",
+      "hash": "bb9d8eac6de2ebe90071bcd5e9e211486cd51f5bb7ba3e06c22ff54e3dcef963"
+    },
+    {
+      "src": "/work/direct-bill-automation/03.mp4",
+      "kind": "video",
+      "source": "03_DBA_Matching_Demo_B.mp4",
+      "hash": "78c08984856effeddca62e5f508492e7b15ead2e497a8b65acc1342891f877ee"
+    }
+  ]
+}

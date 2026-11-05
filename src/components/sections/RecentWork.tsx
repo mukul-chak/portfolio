@@ -1,6 +1,7 @@
 import Rail from "@/components/layout/Rail";
 import ProjectText from "@/components/sections/ProjectText";
 import Filmstrip from "@/components/sections/Filmstrip";
+import { workMedia } from "@/content/workMedia";
 import CarouselJunctionButton from "@/components/sections/CarouselJunctionButton";
 import RuleAccordion, { AccordionRule } from "@/components/ui/RuleAccordion";
 import Resume, { Teaching } from "@/components/sections/Resume";
@@ -47,7 +48,7 @@ export default function RecentWork() {
             column verticals resume exactly there. */}
         <CarouselJunctionButton>
           <ProjectRail project={first} index={0} className="pt-[21px] pb-[12.5px]" />
-          <Filmstrip count={first.imageCount} captions={first.captions} />
+          <Filmstrip count={first.imageCount} captions={first.captions} media={workMedia(first.slug)} />
         </CarouselJunctionButton>
 
         {rest.map((project, i) => (
@@ -63,7 +64,7 @@ export default function RecentWork() {
                 below the bar (see above). pb-[12.5px] likewise. The captions
                 above the divider sit 24px over it (Filmstrip). */}
             <ProjectRail project={project} index={i + 1} className="mt-1 pt-[17px] pb-[12.5px]" />
-            <Filmstrip count={project.imageCount} captions={project.captions} />
+            <Filmstrip count={project.imageCount} captions={project.captions} media={workMedia(project.slug)} />
           </CarouselJunctionButton>
         ))}
 
