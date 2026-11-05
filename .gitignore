@@ -50,3 +50,7 @@ next-env.d.ts
 
 # Raw renders (PNG sequences etc.): source material, never shipped
 /renders/
+
+# Work carousel sources (raw recordings); scripts/build-work.ts commits
+# what the site serves to public/work/ and src/content/work-media.json.
+/work-src/

@@ -1,3 +1,4 @@
+import previewVideos from "@/content/preview-videos.json";
 /**
  * Captions for the hover preview panel, keyed by organisation. Shared by
  * the bio's inline links and the resume's titles, so an org reads the same
@@ -30,13 +31,14 @@ export const PREVIEW_NOTES: ReadonlySet<PreviewKey> = new Set<PreviewKey>(["trus
 
 /**
  * A video for the panel's image slot, by key; anything without one keeps
- * the placeholder. Exported at 640×400 (the slot's 1.6:1, 2.3× its ~278px
- * width), H.264 with no audio, looping. Shared keys show it everywhere the
- * org is hovered — Ascend's plays in the bio and on the resume.
+ * the placeholder. Built by scripts/build-previews.ts from whatever is in
+ * previews-src/ (drop in <key>.gif/.mov/.mp4): 640×400, H.264, no audio,
+ * looping. Shared keys show it everywhere the org is hovered — Ascend's
+ * plays in the bio and on the resume.
  */
-export const PREVIEW_VIDEOS: Partial<Record<PreviewKey, string>> = {
-  ascend: "/previews/Ascend-Y-Rotation.mp4",
-};
+export const PREVIEW_VIDEOS: Partial<Record<PreviewKey, string>> = Object.fromEntries(
+  Object.keys(previewVideos).map((key) => [key, `/previews/${key}.mp4`]),
+);
 
 /**
  * A still image for the panel's image slot, by key — same 1.6:1 slot and

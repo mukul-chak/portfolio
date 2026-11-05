@@ -1,0 +1,10 @@
+{
+  "ascend": {
+    "source": "ascend.mp4",
+    "hash": "03ed6e1961178112a61f773e39bde9611cdadff7f43028912487ee9427503da2"
+  },
+  "saag": {
+    "source": "saag.gif",
+    "hash": "ff315f94dafc2da39112a9700ce809e807a50e33cda88ec5461d1d3590be9187"
+  }
+}
