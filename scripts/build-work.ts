@@ -7,8 +7,8 @@
  * - Videos (.mp4/.mov/.m4v/.webm/.gif) become a silent 1008×630 H.264 MP4
  *   (the card's 1.6:1 at 2×, cropped from the centre), fast-start. One
  *   already in that shape is copied rather than re-encoded.
- * - Images (.png/.jpg/.jpeg/.webp) are copied as they are; the card crops
- *   them to 1.6:1 itself.
+ * - Images (.png/.jpg/.jpeg/.webp) become a WebP at most 1512px wide (3×
+ *   the card), quality 85; the card crops them to 1.6:1 itself.
  *
  * Runs before `next dev` and `next build` (see package.json). The manifest
  * it writes, src/content/work-media.json, is what the carousels read, and
@@ -19,7 +19,7 @@
  */
 import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
-import { readFile, readdir, writeFile, rm, access, copyFile, mkdir } from "node:fs/promises";
+import { readFile, readdir, writeFile, rm, access, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import { projects } from "@/content/projects";
@@ -70,7 +70,7 @@ for (const slug of (await readdir(SRC)).sort()) {
     const image = IMAGE.exec(file);
     if (!video && !image) continue;
     const n = (video ?? image)![1].padStart(2, "0");
-    const ext = video ? "mp4" : image![2].toLowerCase().replace("jpeg", "jpg");
+    const ext = video ? "mp4" : "webp";
     const input = path.join(SRC, slug, file);
     const outName = `${n}.${ext}`;
     if (items.some((m) => path.basename(m.src).startsWith(`${n}.`))) {
@@ -85,10 +85,16 @@ for (const slug of (await readdir(SRC)).sort()) {
     if (before?.hash === hash && (await exists(out))) continue;
     await mkdir(path.dirname(out), { recursive: true });
 
+    const ffmpeg = await ffmpegPath();
     if (image) {
-      await copyFile(input, out);
+      await run(ffmpeg, [
+        "-hide_banner", "-loglevel", "error", "-y",
+        "-i", input,
+        "-vf", "scale='min(1512,iw)':-2",
+        "-c:v", "libwebp", "-quality", "85", "-compression_level", "6",
+        out,
+      ]);
     } else {
-      const ffmpeg = await ffmpegPath();
       const info = await run(ffmpeg, ["-hide_banner", "-i", input]).then(
         (r) => r.stderr,
         (e: { stderr?: string }) => e.stderr ?? "",

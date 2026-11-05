@@ -13,10 +13,22 @@
       "hash": "bb9d8eac6de2ebe90071bcd5e9e211486cd51f5bb7ba3e06c22ff54e3dcef963"
     },
     {
-      "src": "/work/direct-bill-automation/03.mp4",
+      "src": "/work/direct-bill-automation/03.webp",
+      "kind": "image",
+      "source": "03_LOB_Detail.png",
+      "hash": "e5dbda97930394a1b5768df08304bc55862daef10305a499756cd6a2f8fd7e93"
+    },
+    {
+      "src": "/work/direct-bill-automation/04.mp4",
       "kind": "video",
-      "source": "03_DBA_Matching_Demo_B.mp4",
+      "source": "04_DBA_Matching_Demo_B.mp4",
       "hash": "78c08984856effeddca62e5f508492e7b15ead2e497a8b65acc1342891f877ee"
+    },
+    {
+      "src": "/work/direct-bill-automation/05.webp",
+      "kind": "image",
+      "source": "05_DBA_Statement_History.png",
+      "hash": "45c0b78c5080faba645bab293612a206780e771de6fea6a95add73d5bbc96b96"
     }
   ]
 }
