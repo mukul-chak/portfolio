@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDragScroll } from "@/lib/useDragScroll";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import Tabular from "@/components/ui/Tabular";
+import * as DotStepper from "@/components/ui/DotStepper";
 import type { WorkMedia } from "@/content/workMedia";
 
-const CARD_MEDIA = "aspect-[1.6] w-full rounded-[4px] bg-card object-cover";
+const CARD_MEDIA = "aspect-[1.6] w-full rounded-[4px] bg-card object-cover max-sm:rounded-none";
 
 /**
  * A card's video: muted, looping, inline. Plays only while at least half of
@@ -87,6 +88,20 @@ export default function Filmstrip({
 }) {
   const drag = useDragScroll<HTMLDivElement>();
   const cards = Array.from({ length: media.length || count }, (_, i) => i + 1);
+  const reducedMotion = useReducedMotion();
+  // Phones only: which card the strip has snapped to, for the dots.
+  const [active, setActive] = useState(0);
+
+  function cardStep(row: HTMLDivElement) {
+    const first = row.firstElementChild?.firstElementChild as HTMLElement | null;
+    return first ? first.offsetWidth + 16 : row.clientWidth;
+  }
+
+  function goTo(i: number) {
+    const row = drag.ref.current;
+    if (!row) return;
+    row.scrollTo({ left: i * cardStep(row), behavior: reducedMotion ? "auto" : "smooth" });
+  }
   return (
     <div className="px-4 pt-1">
       {/* Solid divider above the carousel, 8px above the images. Carries
@@ -101,11 +116,16 @@ export default function Filmstrip({
         onPointerUp={drag.onPointerUp}
         onPointerCancel={drag.onPointerCancel}
         onClickCapture={drag.onClickCapture}
-        className="mt-3 cursor-grab select-none overflow-x-auto active:cursor-grabbing [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        onScroll={(e) => {
+          const row = e.currentTarget;
+          setActive(Math.round(row.scrollLeft / cardStep(row)));
+        }}
+        // On phones the strip spans the gap between the page rules, one card at a time.
+        className="mt-3 cursor-grab select-none overflow-x-auto active:cursor-grabbing [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-sm:-mx-[15px] max-sm:snap-x max-sm:snap-mandatory"
       >
         <div className="flex gap-4">
           {cards.map((n) => (
-            <div key={n} className="w-[300px] shrink-0 sm:w-[504px]">
+            <div key={n} className="w-full shrink-0 snap-center sm:w-[504px]">
               {media[n - 1]?.kind === "video" ? (
                 <CardVideo src={media[n - 1].src} />
               ) : media[n - 1] ? (
@@ -121,9 +141,9 @@ export default function Filmstrip({
                   className={CARD_MEDIA}
                 />
               ) : (
-                <div className="aspect-[1.6] rounded-[4px] bg-card" />
+                <div className="aspect-[1.6] rounded-[4px] bg-card max-sm:rounded-none" />
               )}
-              <div className="mt-2 flex items-baseline gap-6 overflow-hidden whitespace-nowrap font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-left text-text-soft-400">
+              <div className="mt-2 flex items-baseline gap-6 max-sm:hidden overflow-hidden whitespace-nowrap font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-left text-text-soft-400">
                 <span className="shrink-0">
                   <Tabular>{String(n).padStart(2, "0")}</Tabular>
                 </span>
@@ -135,13 +155,27 @@ export default function Filmstrip({
           ))}
         </div>
       </div>
+      {/* Phones show no captions; these dots say the strip swipes and
+          where in it you are. */}
+      <DotStepper.Root aria-label="Images" className="mt-4 sm:hidden">
+        {cards.map((n, i) => (
+          <DotStepper.Item
+            key={n}
+            active={i === active}
+            className="size-1.5"
+            aria-label={`Image ${n} of ${cards.length}`}
+            aria-current={i === active ? "true" : undefined}
+            onClick={() => goTo(i)}
+          />
+        ))}
+      </DotStepper.Root>
       {/* Solid divider between projects (not the dotted rule), optically
           24px below the captions: their baseline sits 4.5px inside the 18px
           line box, so 19.5px of margin puts the line 24px under it. The
           next title sits 32px below it (RecentWork). data-rule-divider-close
           lets the NEXT project's connector reach backward and bridge its own
           rule-x up to this line, closing the gap from below. */}
-      <Divider data-rule-divider-close className="mt-[19.5px]" />
+      <Divider data-rule-divider-close className="mt-6 sm:mt-[19.5px]" />
     </div>
   );
 }
