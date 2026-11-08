@@ -1,5 +1,6 @@
 import { EMAIL, LOCATION } from "@/content/site";
 import LocationTime from "@/components/ui/LocationTime";
+import BackToTop from "@/components/ui/BackToTop";
 
 /** Placeholder destinations, as in the Contact section. */
 const SOCIALS: { label: string; href: string }[] = [
@@ -32,7 +33,7 @@ export default function Footer({ tz }: { tz?: string }) {
             below sm, two up at sm. The 16px column padding applies at every
             width, matching the accordion bars' inset from the rules; with
             no column gap, two padded columns at sm still sit 32px apart. */}
-        <div className="relative grid grid-cols-1 gap-y-8 pt-12 pb-10 text-[14px] leading-[1.5] text-text-sub-600 sm:grid-cols-2 md:grid-cols-4 md:gap-y-0">
+        <div className="relative grid grid-cols-1 gap-y-8 pt-12 pb-10 text-[14px] leading-[1.5] max-sm:text-[16px] text-text-sub-600 sm:grid-cols-2 md:grid-cols-4 md:gap-y-0">
           {[25, 50, 75].map((pct) => (
             <div
               key={pct}
@@ -58,7 +59,7 @@ export default function Footer({ tz }: { tz?: string }) {
               <LocationTime
                 tz={tz}
                 seconds
-                className="text-left font-sans text-[14px] leading-[1.5] normal-case tracking-normal [--tnum-ls:0em]"
+                className="text-left font-sans text-[14px] leading-[1.5] max-sm:text-[16px] normal-case tracking-normal [--tnum-ls:0em]"
               />
             </div>
           </div>
@@ -98,8 +99,13 @@ export default function Footer({ tz }: { tz?: string }) {
       {/* Below md the theme toggle is a horizontal bar fixed 24px off the
           bottom, 48px tall, so it lands on this band at full scroll. 96px
           = 24 + 48 + 24 clears it with the same 24px gap above as below.
-          From md it stands vertically outside the frame. */}
-      <div className="h-24 md:h-6" />
+          From md it stands vertically outside the frame.
+          Phones put Back to top in that gap, centred on the toggle's line. */}
+      <div className="h-24 md:h-6">
+        <div className="mx-auto flex h-full max-w-frame items-center px-5 sm:hidden">
+          <BackToTop className="px-4" />
+        </div>
+      </div>
     </footer>
   );
 }
