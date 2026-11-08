@@ -20,7 +20,7 @@ const CLICK_THROUGH_PX = 24;
 
 function CloseIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden className="max-sm:size-4">
       <path
         d="M3 3l8 8M11 3l-8 8"
         stroke="currentColor"
@@ -233,13 +233,13 @@ export default function Drawer({
               type="button"
               onClick={closeFromClick}
               aria-label={`Close ${title}`}
-              className="flex h-8 w-8 items-center justify-center rounded-[4px] text-text-soft-400 transition-colors duration-100 ease-out hover:bg-bg-weak-50 hover:text-text-strong-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text-strong-950"
+              className="flex h-8 w-8 max-sm:h-9 max-sm:w-9 items-center justify-center rounded-[4px] text-text-soft-400 transition-colors duration-100 ease-out hover:bg-bg-weak-50 hover:text-text-strong-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text-strong-950"
             >
               <CloseIcon />
             </button>
             {/* One step softer than strong-950, not full black — the same
                 surface-800 the contact drawer's Send and focus line use. */}
-            <h2 className="text-[16px] text-bg-surface-800">{title}</h2>
+            <h2 className="text-[16px] text-bg-surface-800 max-sm:text-[18px]">{title}</h2>
           </div>
           <div className="border-b border-rule" />
         </div>

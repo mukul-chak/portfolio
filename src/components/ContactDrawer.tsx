@@ -25,7 +25,7 @@ function validate(v: Values): Errors {
 
 function LockIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden className="shrink-0">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden className="shrink-0 max-sm:size-4">
       <rect x="2.75" y="6.25" width="8.5" height="6" rx="1.25" stroke="currentColor" strokeWidth="1.2" />
       <path d="M4.75 6.25V4.5a2.25 2.25 0 0 1 4.5 0v1.75" stroke="currentColor" strokeWidth="1.2" />
     </svg>
@@ -39,7 +39,7 @@ function LockIcon() {
 // hairline included, with its field stretched to fill — a field sized to
 // 48px on its own made those rows a pixel taller than the To row.
 const ROW = "flex h-12 items-center gap-3 border-b transition-colors duration-100 ease-out";
-const ROW_LABEL = "w-[72px] shrink-0 font-[family-name:var(--font-eyebrow)] text-[14px] text-text-sub-600";
+const ROW_LABEL = "w-[72px] shrink-0 font-[family-name:var(--font-eyebrow)] text-[14px] text-text-sub-600 max-sm:text-[16px]";
 // Borderless, so focus shows on the row's hairline instead (focus-within),
 // darkening to bg-surface-800 — one step softer than black, as Mukul asked;
 // AlignUI has no stroke tier between soft-200/sub-300 and strong-950, so the
@@ -50,7 +50,7 @@ const ROW_LABEL = "w-[72px] shrink-0 font-[family-name:var(--font-eyebrow)] text
 // copy's sub-600 so it reads as their input, but not strong-950's full
 // black — the same step the title, focus line and Send use.
 const FIELD =
-  "min-w-0 flex-1 bg-transparent text-[16px] text-bg-surface-800 outline-none placeholder:text-text-soft-400";
+  "min-w-0 flex-1 bg-transparent text-[16px] text-bg-surface-800 max-sm:text-[18px] outline-none placeholder:text-text-soft-400";
 
 function Row({
   id,
@@ -199,8 +199,16 @@ export default function ContactDrawer() {
           <p className="hidden font-[family-name:var(--font-eyebrow)] text-[14px] text-text-soft-400 md:block">
             Esc to close · {isMac ? "⌘" : "Ctrl"} Enter to send
           </p>
-          <div className="ml-auto flex gap-2">
-            <Button.Root type="button" variant="neutral" mode="stroke" size="md" onClick={() => setOpen(false)}>
+          {/* Phones: full-width stack, Send on top, and taller for thumbs. */}
+          <div className="ml-auto flex gap-2 max-sm:w-full max-sm:flex-col-reverse">
+            <Button.Root
+              type="button"
+              variant="neutral"
+              mode="stroke"
+              size="md"
+              className="max-sm:h-11 max-sm:text-[16px]"
+              onClick={() => setOpen(false)}
+            >
               Cancel
             </Button.Root>
             <Button.Root
@@ -211,7 +219,7 @@ export default function ContactDrawer() {
               size="md"
               // One step softer than filled's strong-950, matching the
               // focused row's line.
-              className="bg-bg-surface-800"
+              className="bg-bg-surface-800 max-sm:h-11 max-sm:text-[16px]"
               aria-busy={status === "sending"}
             >
               {status === "sending" ? "Sending…" : "Send"}
@@ -234,7 +242,7 @@ export default function ContactDrawer() {
       >
         <div className={`${ROW} border-rule`}>
           <span className={ROW_LABEL}>To</span>
-          <span className="flex items-center gap-1.5 text-[16px] text-text-sub-600">
+          <span className="flex items-center gap-1.5 text-[16px] text-text-sub-600 max-sm:text-[18px]">
             <span className="text-text-soft-400">
               <LockIcon />
             </span>
