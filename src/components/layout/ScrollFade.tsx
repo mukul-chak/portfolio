@@ -27,7 +27,10 @@ export default function ScrollFade() {
   return (
     <div
       aria-hidden
-      className={`pointer-events-none fixed inset-x-0 bottom-0 z-[16] h-32 bg-gradient-to-t from-background from-20% to-transparent transition-opacity duration-200 ease-[var(--ease-out)] ${
+      // Off on phones: iOS Safari scrolls the page on under its floating
+      // toolbar, below where any fixed element can paint, so the fade
+      // ended mid-screen with content showing beneath it.
+      className={`pointer-events-none fixed inset-x-0 bottom-0 z-[16] h-32 max-sm:hidden bg-gradient-to-t from-background from-20% to-transparent transition-opacity duration-200 ease-[var(--ease-out)] ${
         atEnd ? "opacity-0" : "opacity-100"
       }`}
     />
