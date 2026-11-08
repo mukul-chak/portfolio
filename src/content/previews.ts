@@ -58,6 +58,9 @@ export const PREVIEW_IMAGES: Partial<
     caption: "Centre Pompidou, Piano\u00a0&\u00a0Rogers.",
     credit: "Photo: RSHP.",
   },
+  // 1920\u00d71200 PNG sources kept in renders/previews/ (not committed).
+  fidelity: { src: "/previews/fidelity.webp" },
+  bd: { src: "/previews/bd.webp" },
 };
 
 /** A source line under the caption, set like a citation's URL. */
