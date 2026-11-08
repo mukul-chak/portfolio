@@ -23,7 +23,8 @@ export default function BottomScrim() {
       // bar whole — the one case where real, readable content sits at the
       // very bottom of a short page. The fade still reads; nothing under it
       // is now fully hidden.
-      className={`pointer-events-none fixed inset-x-0 bottom-0 z-[16] h-[16vh] bg-gradient-to-t from-background from-0% to-transparent transition-opacity duration-700 ease-[var(--ease-out)] ${
+      // Off on phones, for the same reason as ScrollFade.
+      className={`pointer-events-none fixed inset-x-0 bottom-0 z-[16] h-[16vh] max-sm:hidden bg-gradient-to-t from-background from-0% to-transparent transition-opacity duration-700 ease-[var(--ease-out)] ${
         scrolled ? "opacity-0" : "opacity-100"
       }`}
     />
