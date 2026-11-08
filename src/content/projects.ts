@@ -28,7 +28,14 @@ export const projects: Project[] = [
     description: PITHY,
     caseStudyHref: "#",
     imageCount: 6,
-    captions: placeholderCaptions(6),
+    captions: [
+      "Every carrier statement, reconciled to zero",
+      "From carrier statement to AMS, in one pass",
+      "Cora AI matches 130 commission entries as they load",
+      "Map a carrier’s terms once, and matching reruns itself",
+      "Cora AI finds the near miss and shows the difference",
+      "Every post to the AMS, on the record",
+    ],
   },
   {
     slug: "cash-application",
