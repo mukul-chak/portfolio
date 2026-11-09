@@ -58,7 +58,7 @@ export type Role = {
  * four lines in the column at 1512.
  */
 export const summary =
-  "My experience comes down to three themes: shipping software, cohering product and brand systems, and building teams centered on an ethos of craft and ownership.";
+  "Three themes define my experience: shipping software, cohering product and brand systems, and building teams centered on an ethos of craft and ownership.";
 
 /** The Teaching section's opening line, as `summary` opens Experience.
  *  Site only; the PDF doesn't carry it. A draft — to be confirmed. */

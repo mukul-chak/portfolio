@@ -38,7 +38,7 @@ export default function Resume() {
   return (
     <div className="relative">
       <Rail className="pt-8 pb-10" elevateRule>
-        <p className={ENTRY_TEXT}>{summary}</p>
+        <p className={`${ENTRY_TEXT} md:pr-6`}>{summary}</p>
         {/* Under the summary at every width, with the summary's own 40px
             (pb-10) still between it and the first row's rule. */}
         <div className={`mt-4 ${ENTRY_TEXT}`}>
