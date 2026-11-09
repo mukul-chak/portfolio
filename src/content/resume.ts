@@ -58,7 +58,7 @@ export type Role = {
  * four lines in the column at 1512.
  */
 export const summary =
-  "I do my best work on complex operational software that handles money and carries an audit trail, turning dense, rule-bound workflows into something people can move through quickly and trust. Building a design function from the ground up has taught me that design earns its influence through what it ships.";
+  "My experience comes down to three themes: shipping software, cohering product and brand systems, and building teams centered on an ethos of craft and ownership.";
 
 /** The Teaching section's opening line, as `summary` opens Experience.
  *  Site only; the PDF doesn't carry it. A draft — to be confirmed. */
@@ -151,18 +151,17 @@ export const education: ListEntry[] = [
 // Newest and ongoing first. Dates per the May 2025 resume.
 export const teaching: ListEntry[] = [
   {
-    org: "MassArt",
-    siteOrg: "Massachusetts College of Art and Design",
-    id: "massart",
-    href: "https://massart.edu",
-    detail: "Guest Lecturer · Communication Design",
-    dates: "2021–2024",
-  },
-  {
     org: "Boston University",
     id: "bu",
     href: "https://www.bu.edu",
     detail: "Guest Critic · Graphic Design",
+    dates: "2021–2024",
+  },
+  {
+    org: "MassArt",
+    id: "massart",
+    href: "https://massart.edu",
+    detail: "Guest Lecturer · Communication Design",
     dates: "2021–2024",
   },
   {
