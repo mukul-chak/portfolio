@@ -115,6 +115,8 @@ function lightChannel() {
 
 type ActivePreview = {
   key: PreviewKey;
+  /** Bullets in place of the image and caption: the resume's roles. */
+  points?: string[];
   top: number;
   left: number;
   width: number;
@@ -156,6 +158,10 @@ export function useHoverPreview() {
   const panelRef = useRef<HTMLDivElement>(null);
   // How far the panel is pulled up to stay clear of the footer (≤ 0).
   const [lift, setLift] = useState(0);
+  // With points, the panel rises so their first baseline, not its top,
+  // sits on the hovered title's baseline; the image hangs above it.
+  const baselineRef = useRef<HTMLSpanElement>(null);
+  const [shift, setShift] = useState(0);
   const reducedMotion = useReducedMotion();
 
   useEffect(() => setMounted(true), []);
@@ -197,7 +203,7 @@ export function useHoverPreview() {
     };
   }, [active]);
 
-  function show(key: PreviewKey) {
+  function show(key: PreviewKey, points?: string[]) {
     return (e: MouseEvent<HTMLElement>) => {
       // Guard against touch: a tap fires a synthetic mouseenter too, which
       // would otherwise populate the anchor and trigger the page-wide
@@ -242,7 +248,7 @@ export function useHoverPreview() {
         ? footer.getBoundingClientRect().top - anchorRect.top
         : Number.POSITIVE_INFINITY;
 
-      setActive({ key, top, left, width, strokeWidth, maxBottom });
+      setActive({ key, points, top, left, width, strokeWidth, maxBottom });
     };
   }
 
@@ -255,7 +261,14 @@ export function useHoverPreview() {
     const panel = panelRef.current;
     if (!rendered || !panel) return;
     const height = parseFloat(getComputedStyle(panel).height) || 0;
-    const bottom = rendered.top + height + STROKE_BELOW;
+    // offsetTop, like the computed height, ignores the entrance scale.
+    const marker = baselineRef.current;
+    const nextShift =
+      rendered.points && marker?.parentElement
+        ? -(marker.parentElement.offsetTop + marker.offsetTop)
+        : 0;
+    setShift(nextShift);
+    const bottom = rendered.top + nextShift + height + STROKE_BELOW;
     setLift(Math.min(0, rendered.maxBottom - bottom));
   }, [rendered]);
 
@@ -283,6 +296,7 @@ export function useHoverPreview() {
   const video = rendered ? PREVIEW_VIDEOS[rendered.key] : undefined;
   const image = rendered ? PREVIEW_IMAGES[rendered.key] : undefined;
   const note = rendered ? PREVIEW_NOTES.has(rendered.key) : false;
+  const points = rendered?.points;
   const hasMedia = Boolean(video || image || !note);
   const gapAbove = hasMedia ? MEDIA_GAP_ABOVE : 12;
 
@@ -297,7 +311,7 @@ export function useHoverPreview() {
             }`}
             style={{
               left: rendered.left,
-              top: rendered.top + lift,
+              top: rendered.top + shift + lift,
               width: rendered.width,
               transitionTimingFunction: "var(--ease-out)",
               transformOrigin: "top left",
@@ -362,20 +376,43 @@ export function useHoverPreview() {
               ) : hasMedia ? (
                 <div className="aspect-[1.6] w-full rounded-[4px] bg-card" />
               ) : null}
-            <p
-              className={`font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600 ${
-                // A figure caption sits between image and note: a wider
-                // gap separates the note from it.
-                image?.caption || image?.credit ? "mt-3" : hasMedia ? "mt-2" : ""
-              } ${note ? "" : "line-clamp-3"}`}
-            >
-              {PREVIEW_CAPTIONS[rendered.key]}
-            </p>
+            {points && (
+              <ul className="mt-[19px] space-y-3 pr-2 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600">
+                {points.map((point, i) => {
+                  // The first sentence leads in the titles' weight; a
+                  // one-sentence point stays regular throughout.
+                  const split = point.indexOf(". ");
+                  const lead = split === -1 ? "" : point.slice(0, split + 1);
+                  const rest = split === -1 ? point : point.slice(split + 2);
+                  return (
+                  <li key={point} className="relative pl-3.5">
+                    <span aria-hidden className="absolute left-0 top-[7px] size-[3px] bg-current" />
+                    {/* Marks the first line's baseline, which the panel
+                        sets on the hovered title's. */}
+                    {i === 0 && <span ref={baselineRef} className="inline-block h-0 w-0" />}
+                    {lead && <span className="font-medium text-text-strong-950">{lead} </span>}
+                    {rest}
+                  </li>
+                );
+                })}
+              </ul>
+            )}
+            {!points && (
+              <p
+                className={`font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600 ${
+                  // A figure caption sits between image and note: a wider
+                  // gap separates the note from it.
+                  image?.caption || image?.credit ? "mt-3" : hasMedia ? "mt-2" : ""
+                } ${note ? "" : "line-clamp-3"}`}
+              >
+                {PREVIEW_CAPTIONS[rendered.key]}
+              </p>
+            )}
             {/* Text, not a link: the panel is pointer-events-none and closes
                 as the cursor leaves the word, so it can't be clicked — the
                 hovered word itself is the link. One step softer than the
                 caption, so it reads as the source rather than more prose. */}
-            {PREVIEW_SITES[rendered.key] && (
+            {!points && PREVIEW_SITES[rendered.key] && (
               <p className="mt-1 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-soft-400">
                 {PREVIEW_SITES[rendered.key]}
               </p>
