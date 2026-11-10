@@ -19,8 +19,8 @@ const siteDates = (dates: string) => dates.replace("Present", "Now");
 
 /**
  * The Experience section's content: a resume, set in the page's own
- * language, and deliberately pithy — company, title, years, nothing else.
- * The full history (points, captions) lives in the downloadable PDF.
+ * language, and deliberately pithy — company, title, years. Hovering a
+ * company opens its points in the right channel, in place of the image.
  *
  * Every entry is one row, as on Frank Chimero's: the company on the left
  * with its years flush right on the same baseline (items-baseline), the
@@ -54,6 +54,7 @@ export default function Resume() {
           id={role.id}
           dates={siteDates(role.dates)}
           detail={role.siteTitle ?? role.title}
+          points={role.points}
           preview={preview}
         />
       ))}
@@ -100,6 +101,7 @@ function EntryRow({
   id,
   dates,
   detail,
+  points,
   preview,
 }: {
   org: string;
@@ -107,6 +109,7 @@ function EntryRow({
   id: ListEntry["id"];
   dates: string;
   detail: string;
+  points?: string[];
   preview: ReturnType<typeof useHoverPreview>;
 }) {
   return (
@@ -123,7 +126,7 @@ function EntryRow({
           <InlineLink
             href={href}
             external
-            onMouseEnter={preview.show(id)}
+            onMouseEnter={preview.show(id, points)}
             onMouseLeave={preview.hide}
             className={`${TITLE_LINK} ${preview.raised(id)}`}
           >

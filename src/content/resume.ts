@@ -73,10 +73,9 @@ export const roles: Role[] = [
     title: "Head of Design",
     dates: "2024–Present",
     points: [
-      "First design hire. Built the practice, the system and the patterns the platform now runs on.",
-      "Own design across the financial stack: billing and invoicing, premium financing, cash application, carrier payables and direct bill automation.",
-      "Shaped the house approach to applied AI — models read the documents, people keep the judgment — so automation earns trust in a domain that audits everything.",
-      "Partner with founders and engineering on what gets built and in what order, not only on how it looks.",
+      "Designed the products Ascend sells. As one of the first design hires, I shaped Direct Bill Automation, Payables, and Cash Application, now the main drivers of customer acquisition, and led the rebrand so product and brand speak with one voice.",
+      "Made quality systemic. I put the design system into code, built AI tooling to audit UX and copy, and brought design in before specs are written, cutting complex builds from weeks to one or two.",
+      "Built the practice from the ground up. I grew design into a team spanning product and brand, wrote the standards and growth framework it runs on, and helped shape Ascend’s first company-wide leveling.",
     ],
   },
   {
@@ -89,7 +88,7 @@ export const roles: Role[] = [
     // roles read together.
     dates: "2022–Present",
     points: [
-      "One of its earliest designers: joined as motion graphics designer for Volume 2, then became design director and advisor from Volume 3.",
+      "Grew with the magazine from its early issues. I joined as motion graphics designer for Volume 2, and have led design as director and advisor since Volume 3.",
     ],
     // Start years per volume still unknown, so dates stay undated.
     needsConfirming: true,
@@ -103,9 +102,9 @@ export const roles: Role[] = [
     siteTitle: "Principal Product Designer",
     dates: "2021–2024",
     points: [
-      "Led product design for Calico from zero to launch: a Fidelity Labs startup building account-aggregation infrastructure for crypto, one API connecting exchanges, wallets and banks for teams building consumer and institutional products.",
-      "Designed Calico’s core surfaces: the API docs, the end-user account connection flow, and an integrations hub where people manage the web3 apps linked to their accounts.",
-      "Led design of an AI copilot for planning and advice inside Fidelity’s retail trading platform, which serves 30 million+ customers.",
+      "Took Calico from zero to launch. I led product design for this Fidelity Labs startup, building account-aggregation infrastructure for crypto: one API connecting exchanges, wallets and banks for teams building consumer and institutional products.",
+      "Designed every surface people touch. I shaped Calico’s API docs, the end-user account connection flow, and an integrations hub where people manage the web3 apps linked to their accounts.",
+      "Brought AI into retail investing. I led design of an AI copilot for planning and advice inside Fidelity’s retail trading platform, which serves 30 million+ customers.",
     ],
   },
   {
@@ -115,7 +114,7 @@ export const roles: Role[] = [
     title: "Interaction Designer",
     dates: "2020–2021",
     points: [
-      "Led UX for HealthSight Diversion Management, BD’s cloud analytics product that flags likely opioid diversion across hospital systems, designing the workflows clinicians use to triage alerts and see an investigation through.",
+      "Designed for clinicians tracking opioid diversion. I led UX for HealthSight Diversion Management, BD’s cloud analytics product that flags likely diversion across hospital systems, and the workflows clinicians use to triage alerts and see an investigation through.",
     ],
   },
 ];
