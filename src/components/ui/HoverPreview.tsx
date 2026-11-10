@@ -263,10 +263,7 @@ export function useHoverPreview() {
     const height = parseFloat(getComputedStyle(panel).height) || 0;
     // offsetTop, like the computed height, ignores the entrance scale.
     const marker = baselineRef.current;
-    const nextShift =
-      rendered.points && marker?.parentElement
-        ? -(marker.parentElement.offsetTop + marker.offsetTop)
-        : 0;
+    const nextShift = rendered.points && marker ? -marker.offsetTop : 0;
     setShift(nextShift);
     const bottom = rendered.top + nextShift + height + STROKE_BELOW;
     setLift(Math.min(0, rendered.maxBottom - bottom));
@@ -377,7 +374,7 @@ export function useHoverPreview() {
                 <div className="aspect-[1.6] w-full rounded-[4px] bg-card" />
               ) : null}
             {points && (
-              <ul className="mt-[19px] space-y-3 pr-2 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600">
+              <div className="mt-[19px] space-y-[15px] pr-2 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600">
                 {points.map((point, i) => {
                   // The first sentence leads in the titles' weight; a
                   // one-sentence point stays regular throughout.
@@ -385,17 +382,16 @@ export function useHoverPreview() {
                   const lead = split === -1 ? "" : point.slice(0, split + 1);
                   const rest = split === -1 ? point : point.slice(split + 2);
                   return (
-                  <li key={point} className="relative pl-3.5">
-                    <span aria-hidden className="absolute left-0 top-[7px] size-[3px] bg-current" />
+                  <p key={point}>
                     {/* Marks the first line's baseline, which the panel
                         sets on the hovered title's. */}
                     {i === 0 && <span ref={baselineRef} className="inline-block h-0 w-0" />}
                     {lead && <span className="font-medium text-text-strong-950">{lead} </span>}
                     {rest}
-                  </li>
+                  </p>
                 );
                 })}
-              </ul>
+              </div>
             )}
             {!points && (
               <p
