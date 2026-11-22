@@ -3,6 +3,7 @@
 import { useId } from "react";
 import * as Button from "@/components/ui/Button";
 import { copyEmailWithToast } from "@/components/CopyEmail";
+import { copy } from "@/content/copy";
 
 /**
  * The email in the Contact row. A button, not a link: clicking copies the
@@ -56,7 +57,7 @@ export default function CopyEmailButton({
         role="tooltip"
         className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1 -translate-x-1/2 whitespace-nowrap rounded-md bg-bg-strong-950 px-1.5 py-0.5 text-[12px] leading-[16px] text-text-white-0 opacity-0 shadow-[var(--shadow-tooltip)] transition-opacity duration-150 ease-[var(--ease-out)] peer-hover/email:opacity-100 peer-focus-visible/email:opacity-100"
       >
-        Click to copy
+        {copy.contact.copyHint}
       </span>
     </span>
   );

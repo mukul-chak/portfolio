@@ -4,7 +4,11 @@ import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } fr
 import Drawer from "@/components/ui/Drawer";
 import * as Button from "@/components/ui/Button";
 import { showSuccessToast } from "@/components/ui/SuccessToast";
-import { EMAIL } from "@/content/site";
+import { copy, fill } from "@/content/copy";
+
+const FORM = copy.contactForm;
+// The address in the failure line is a link, so the line splits around it.
+const [failedBefore, failedAfter = ""] = FORM.sendFailed.split("{email}");
 
 /** Dispatched by the "Reach out" link; the drawer opens on it, as on `r`. */
 export const OPEN_CONTACT_EVENT = "open-contact";
@@ -16,10 +20,10 @@ const EMPTY: Values = { email: "", subject: "", message: "" };
 
 function validate(v: Values): Errors {
   const errors: Errors = {};
-  if (!v.email.trim()) errors.email = "Enter your email";
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email.trim())) errors.email = "Enter a valid email";
-  if (!v.subject.trim()) errors.subject = "Add a subject";
-  if (!v.message.trim()) errors.message = "Write a message";
+  if (!v.email.trim()) errors.email = FORM.missingEmail;
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email.trim())) errors.email = FORM.invalidEmail;
+  if (!v.subject.trim()) errors.subject = FORM.missingSubject;
+  if (!v.message.trim()) errors.message = FORM.missingMessage;
   return errors;
 }
 
@@ -152,7 +156,7 @@ export default function ContactDrawer() {
         body: JSON.stringify({ ...values, company: honeypot }),
       });
       if (!res.ok) throw new Error(String(res.status));
-      showSuccessToast("Message sent", `Thanks. I’ll be in touch at ${values.email.trim()}`);
+      showSuccessToast(FORM.sentTitle, fill(FORM.sentBody, { email: values.email.trim() }));
       setValues(EMPTY);
       setStatus("idle");
       setOpen(false);
@@ -192,12 +196,12 @@ export default function ContactDrawer() {
     <Drawer
       open={open}
       onClose={() => setOpen(false)}
-      title="Write to me"
+      title={FORM.title}
       initialFocusRef={finePointer ? firstFieldRef : undefined}
       footer={
         <div className="flex items-center justify-between gap-4 pt-3">
           <p className="hidden font-[family-name:var(--font-eyebrow)] text-[14px] text-text-soft-400 md:block">
-            Esc to close · {isMac ? "⌘" : "Ctrl"} Enter to send
+            {fill(FORM.hint, { modifier: isMac ? "⌘" : "Ctrl" })}
           </p>
           {/* Phones: full-width stack, Send on top, and taller for thumbs. */}
           <div className="ml-auto flex gap-2 max-sm:w-full max-sm:flex-col-reverse">
@@ -209,7 +213,7 @@ export default function ContactDrawer() {
               className="max-sm:h-11 max-sm:text-[16px]"
               onClick={() => setOpen(false)}
             >
-              Cancel
+              {FORM.cancel}
             </Button.Root>
             <Button.Root
               type="submit"
@@ -222,7 +226,7 @@ export default function ContactDrawer() {
               className="bg-bg-surface-800 max-sm:h-11 max-sm:text-[16px]"
               aria-busy={status === "sending"}
             >
-              {status === "sending" ? "Sending…" : "Send"}
+              {status === "sending" ? FORM.sending : FORM.send}
             </Button.Root>
           </div>
         </div>
@@ -241,22 +245,22 @@ export default function ContactDrawer() {
         className="relative flex min-h-full flex-col"
       >
         <div className={`${ROW} border-rule`}>
-          <span className={ROW_LABEL}>To</span>
+          <span className={ROW_LABEL}>{FORM.toLabel}</span>
           <span className="flex items-center gap-1.5 text-[16px] text-text-sub-600 max-sm:text-[18px]">
             <span className="text-text-soft-400">
               <LockIcon />
             </span>
-            {EMAIL}
+            {copy.site.email}
           </span>
         </div>
 
-        <Row id={ids.email} label="From" error={errors.email}>
+        <Row id={ids.email} label={FORM.fromLabel} error={errors.email}>
           <input
             ref={firstFieldRef}
             id={ids.email}
             type="email"
             autoComplete="email"
-            placeholder="you@company.com"
+            placeholder={FORM.fromPlaceholder}
             value={values.email}
             onChange={(e) => update("email", e.target.value)}
             className={`${FIELD} self-stretch`}
@@ -264,10 +268,10 @@ export default function ContactDrawer() {
           />
         </Row>
 
-        <Row id={ids.subject} label="Subject" error={errors.subject}>
+        <Row id={ids.subject} label={FORM.subjectLabel} error={errors.subject}>
           <input
             id={ids.subject}
-            placeholder={narrow ? "A note about your kerning" : "A strongly worded note about your kerning"}
+            placeholder={narrow ? FORM.shortSubjectPlaceholder : FORM.subjectPlaceholder}
             value={values.subject}
             onChange={(e) => update("subject", e.target.value)}
             className={`${FIELD} self-stretch`}
@@ -278,11 +282,11 @@ export default function ContactDrawer() {
         {/* The message fills whatever height is left, down to the footer's
             stroke, as the body of a compose window does. */}
         <label htmlFor={ids.message} className="sr-only">
-          Message
+          {copy.a11y.messageField}
         </label>
         <textarea
           id={ids.message}
-          placeholder="Hi Mukul,"
+          placeholder={FORM.messagePlaceholder}
           maxLength={5000}
           value={values.message}
           onChange={(e) => update("message", e.target.value)}
@@ -309,11 +313,11 @@ export default function ContactDrawer() {
 
         {status === "error" && (
           <p role="alert" className="pb-3 text-[14px] text-error-base">
-            Your message couldn’t be sent. Email me at{" "}
-            <a href={`mailto:${EMAIL}`} className="underline underline-offset-[3px]">
-              {EMAIL}
-            </a>{" "}
-            instead.
+            {failedBefore}
+            <a href={`mailto:${copy.site.email}`} className="underline underline-offset-[3px]">
+              {copy.site.email}
+            </a>
+            {failedAfter}
           </p>
         )}
       </form>

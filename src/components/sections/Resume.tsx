@@ -6,16 +6,13 @@ import { useHoverPreview } from "@/components/ui/HoverPreview";
 import SectionLabel from "@/components/ui/SectionLabel";
 import Tabular from "@/components/ui/Tabular";
 import ResumeExport from "@/components/sections/ResumeExport";
-import { summary, teachingSummary, roles, teaching, type ListEntry } from "@/content/resume";
+import { copy, siteDates, type OrgKey } from "@/content/copy";
 
 // Titles keep their strong-950 at rest; InlineLink supplies the underline,
 // the hover darkening and the focus ring, as it does in the bio.
 const TITLE_LINK = "text-text-strong-950";
 
 const ENTRY_TEXT = "text-[17px] sm:text-[18px] leading-[1.5] text-text-sub-600";
-
-// The page says "Now" where the PDF says "Present".
-const siteDates = (dates: string) => dates.replace("Present", "Now");
 
 /**
  * The Experience section's content: a resume, set in the page's own
@@ -38,7 +35,7 @@ export default function Resume() {
   return (
     <div className="relative">
       <Rail className="py-6" elevateRule>
-        <p className={`${ENTRY_TEXT} md:pr-6`}>{summary}</p>
+        <p className={`${ENTRY_TEXT} md:pr-6`}>{copy.experience.summary}</p>
         {/* Under the summary at every width, with 24px (py-6)
             between it and the first row's rule. */}
         <div className={`mt-4 ${ENTRY_TEXT}`}>
@@ -46,7 +43,7 @@ export default function Resume() {
         </div>
       </Rail>
 
-      {roles.map((role) => (
+      {copy.experience.roles.map((role) => (
         <EntryRow
           key={`${role.org}-${role.title}`}
           org={role.siteOrg ?? role.org}
@@ -73,12 +70,12 @@ export function Teaching() {
   return (
     <div className="relative">
       <Rail className="pt-8 pb-10" elevateRule>
-        <p className={ENTRY_TEXT}>{teachingSummary}</p>
+        <p className={ENTRY_TEXT}>{copy.teaching.summary}</p>
       </Rail>
-      {teaching.map((entry) => (
+      {copy.teaching.entries.map((entry) => (
         <EntryRow
           key={entry.org}
-          org={entry.siteOrg ?? entry.org}
+          org={entry.org}
           href={entry.href}
           id={entry.id}
           dates={siteDates(entry.dates)}
@@ -106,7 +103,7 @@ function EntryRow({
 }: {
   org: string;
   href: string;
-  id: ListEntry["id"];
+  id: OrgKey;
   dates: string;
   detail: string;
   points?: string[];

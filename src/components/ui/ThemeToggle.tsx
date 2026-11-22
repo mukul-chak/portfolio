@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { copy } from "@/content/copy";
 
 function MonitorIcon() {
   return (
@@ -30,9 +31,9 @@ function MoonIcon() {
 }
 
 const OPTIONS = [
-  { value: "system", label: "System", Icon: MonitorIcon },
-  { value: "light",  label: "Light",  Icon: SunIcon },
-  { value: "dark",   label: "Dark",   Icon: MoonIcon },
+  { value: "system", label: copy.a11y.themeSystem, Icon: MonitorIcon },
+  { value: "light",  label: copy.a11y.themeLight,  Icon: SunIcon },
+  { value: "dark",   label: copy.a11y.themeDark,   Icon: MoonIcon },
 ] as const;
 
 export default function ThemeToggle({

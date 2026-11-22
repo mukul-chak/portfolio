@@ -3,11 +3,12 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { RESUME_FILENAME } from "@/lib/resumeExport";
 import * as Button from "@/components/ui/Button";
+import { copy } from "@/content/copy";
 
 // Static files written to public/ by scripts/build-resume.tsx.
 const FORMATS = [
-  { label: "PDF", file: `${RESUME_FILENAME}.pdf` },
-  { label: "Markdown", file: `${RESUME_FILENAME}.md` },
+  { label: copy.experience.pdfFormat, file: `${RESUME_FILENAME}.pdf` },
+  { label: copy.experience.markdownFormat, file: `${RESUME_FILENAME}.md` },
 ];
 
 const EXIT_MS = 180;
@@ -93,7 +94,7 @@ export default function ResumeExport({ align = "left" }: { align?: "left" | "rig
         aria-controls={menuId}
         className="-my-2 -ml-3 cursor-pointer gap-1 font-[family-name:var(--font-eyebrow)] text-[16px] font-normal"
       >
-        Download resume
+        {copy.experience.downloadResume}
         <ChevronIcon open={open} />
       </Button.Root>
       {rendered && (

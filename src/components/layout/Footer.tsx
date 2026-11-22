@@ -1,13 +1,6 @@
-import { EMAIL, LOCATION } from "@/content/site";
 import LocationTime from "@/components/ui/LocationTime";
 import BackToTop from "@/components/ui/BackToTop";
-
-/** Placeholder destinations, as in the Contact section. */
-const SOCIALS: { label: string; href: string }[] = [
-  { label: "LinkedIn", href: "#" },
-  { label: "X (Twitter)", href: "#" },
-  { label: "Are.na", href: "#" },
-];
+import { copy } from "@/content/copy";
 
 /**
  * Closing footer: four equal columns across the frame.
@@ -48,9 +41,9 @@ export default function Footer({ tz }: { tz?: string }) {
               column's measure sit the same distance inside the frame's
               own rules rather than on them. */}
           <div className="px-4">
-            <p className="text-text-strong-950">Mukul Chakravarthi</p>
-            <p>{LOCATION}</p>
-            <p>{EMAIL}</p>
+            <p className="text-text-strong-950">{copy.site.name}</p>
+            <p>{copy.site.location}</p>
+            <p>{copy.site.email}</p>
             {/* The clock on phones, under the name, place and address —
                 from md the header carries it. Date and 24-hour time with
                 ticking seconds, in the visitor's zone, set as footer text:
@@ -65,7 +58,7 @@ export default function Footer({ tz }: { tz?: string }) {
           </div>
 
           <div className="px-4">
-            {SOCIALS.map((s) => (
+            {copy.socials.map((s) => (
               <p key={s.label}>
                 <a
                   href={s.href}
@@ -78,18 +71,16 @@ export default function Footer({ tz }: { tz?: string }) {
           </div>
 
           <div className="px-4">
-            <p>
-              Set in Reform Grotesk and Monument by Forgotten Shapes. Built with
-              Next.js and Tailwind on AlignUI, deployed on Vercel.
-            </p>
+            <p>{copy.footer.colophon}</p>
           </div>
 
           <figure className="px-4">
             <blockquote>
-              <p>Order itself is charismatic.</p>
+              <p>{copy.footer.quote}</p>
             </blockquote>
             <figcaption className="text-text-soft-400">
-              — Saul Bellow, <cite>Ravelstein</cite>
+              {`— ${copy.footer.quoteAuthor}, `}
+              <cite>{copy.footer.quoteSource}</cite>
             </figcaption>
           </figure>
         </div>

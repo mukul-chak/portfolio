@@ -22,7 +22,7 @@ import { execFile } from "node:child_process";
 import { readFile, readdir, writeFile, rm, access, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
-import { projects } from "@/content/projects";
+import { copy } from "@/content/copy";
 import type { WorkMedia } from "@/content/workMedia";
 
 const run = promisify(execFile);
@@ -48,7 +48,7 @@ const previous: Manifest = (await exists(MANIFEST))
   ? JSON.parse(await readFile(MANIFEST, "utf8"))
   : {};
 const next: Manifest = {};
-const slugs = new Set(projects.map((p) => p.slug));
+const slugs = new Set(copy.work.projects.map((p) => p.slug));
 let built = 0;
 
 async function ffmpegPath() {

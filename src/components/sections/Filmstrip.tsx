@@ -6,6 +6,7 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
 import Tabular from "@/components/ui/Tabular";
 import * as DotStepper from "@/components/ui/DotStepper";
 import type { WorkMedia } from "@/content/workMedia";
+import { copy, fill } from "@/content/copy";
 
 const CARD_MEDIA = "aspect-[1.6] w-full rounded-[4px] bg-card object-cover max-sm:rounded-none";
 
@@ -71,23 +72,22 @@ function Divider({
 /**
  * Horizontal image filmstrip. A plain overflow-x container (no scrollbar) clips
  * cards at its right edge, inset 16px from the outer rules. Mouse drag-to-pan
- * via useDragScroll; touch/trackpad scroll natively. Up to 6 cards.
+ * via useDragScroll; touch/trackpad scroll natively. Up to 6 cards: one
+ * per real file, or one placeholder per caption until the files land.
  *
  * Each card carries a single-line caption below it (index + text, truncated),
  * so caption and image travel together through the horizontal scroll.
  */
 export default function Filmstrip({
-  count = 6,
   captions,
   media = [],
 }: {
-  count?: number;
-  captions?: string[];
+  captions: string[];
   /** Real files, in order. When there are any, they set the card count. */
   media?: WorkMedia[];
 }) {
   const drag = useDragScroll<HTMLDivElement>();
-  const cards = Array.from({ length: media.length || count }, (_, i) => i + 1);
+  const cards = Array.from({ length: media.length || captions.length }, (_, i) => i + 1);
   const reducedMotion = useReducedMotion();
   // Phones only: which card the strip has snapped to, for the dots.
   const [active, setActive] = useState(0);
@@ -148,7 +148,7 @@ export default function Filmstrip({
                   <Tabular>{String(n).padStart(2, "0")}</Tabular>
                 </span>
                 <span className="truncate">
-                  <Tabular>{captions?.[n - 1] ?? ""}</Tabular>
+                  <Tabular>{captions[n - 1] ?? ""}</Tabular>
                 </span>
               </div>
             </div>
@@ -157,13 +157,13 @@ export default function Filmstrip({
       </div>
       {/* Phones show no captions; these dots say the strip swipes and
           where in it you are. */}
-      <DotStepper.Root aria-label="Images" className="mt-4 sm:hidden">
+      <DotStepper.Root aria-label={copy.a11y.imageDots} className="mt-4 sm:hidden">
         {cards.map((n, i) => (
           <DotStepper.Item
             key={n}
             active={i === active}
             className="size-1.5"
-            aria-label={`Image ${n} of ${cards.length}`}
+            aria-label={fill(copy.a11y.imageDot, { n, total: cards.length })}
             aria-current={i === active ? "true" : undefined}
             onClick={() => goTo(i)}
           />

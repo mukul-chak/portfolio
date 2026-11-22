@@ -2,7 +2,8 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { PREVIEW_CAPTIONS, PREVIEW_IMAGES, PREVIEW_NOTES, PREVIEW_SITES, PREVIEW_VIDEOS, type PreviewKey } from "@/content/previews";
+import { PREVIEW_IMAGES, PREVIEW_NOTES, PREVIEW_VIDEOS, type PreviewKey } from "@/content/previews";
+import { copy } from "@/content/copy";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 // The hovered link's baseline, as an offset from its box top. An inline
@@ -401,16 +402,16 @@ export function useHoverPreview() {
                   image?.caption || image?.credit ? "mt-3" : hasMedia ? "mt-2" : ""
                 } ${note ? "" : "line-clamp-3"}`}
               >
-                {PREVIEW_CAPTIONS[rendered.key]}
+                {copy.orgs[rendered.key].preview}
               </p>
             )}
             {/* Text, not a link: the panel is pointer-events-none and closes
                 as the cursor leaves the word, so it can't be clicked — the
                 hovered word itself is the link. One step softer than the
                 caption, so it reads as the source rather than more prose. */}
-            {!points && PREVIEW_SITES[rendered.key] && (
+            {!points && copy.orgs[rendered.key].siteLine && (
               <p className="mt-1 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-soft-400">
-                {PREVIEW_SITES[rendered.key]}
+                {copy.orgs[rendered.key].siteLine}
               </p>
             )}
             <div
