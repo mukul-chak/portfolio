@@ -30,7 +30,9 @@ Every word on the site lives in [`src/content/copy.md`](src/content/copy.md). Th
 | Hover-preview videos | `previews-src/<org-key>.{gif,mov,mp4}` | `public/previews/` + `src/content/preview-videos.json` | `npm run previews` |
 | Resume PDF + Markdown | (copy.md) | `public/Mukul-Chakravarthi-Resume.*` | `npm run resume` |
 
-`work-src/` and `renders/` hold raw sources and are not committed. Hover-preview stills are listed in `src/content/previews.ts`.
+`work-src/` holds raw recordings and is not committed. Hover-preview stills are listed in `src/content/previews.ts`.
+
+Everything else raw or archived (renders, full-size stills, old avatar videos, project sources) lives outside the repo, in `~/Documents/01_Design/Portfolio`. The repo keeps only what the site or its build steps read.
 
 ## Layout
 
