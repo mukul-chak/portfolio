@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { showSuccessToast } from "@/components/ui/SuccessToast";
-import { EMAIL } from "@/content/site";
+import { copy } from "@/content/copy";
 import { copyText } from "@/lib/copyText";
 
 /**
@@ -13,9 +13,9 @@ import { copyText } from "@/lib/copyText";
  * that drifts from this one.
  */
 export async function copyEmailWithToast() {
-  const ok = await copyText(EMAIL);
+  const ok = await copyText(copy.site.email);
   if (!ok) return false;
-  showSuccessToast("Email copied", EMAIL);
+  showSuccessToast(copy.notices.emailCopied, copy.site.email);
   return true;
 }
 

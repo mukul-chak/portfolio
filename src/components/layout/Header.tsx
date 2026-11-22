@@ -5,8 +5,9 @@ import LocationTime from "@/components/ui/LocationTime";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { phase } from "@/lib/phase";
 import type { NameHandoff } from "@/components/sections/BodyName";
+import { copy, fill } from "@/content/copy";
 
-const FULL_NAME = "Mukul Chakravarthi";
+const FULL_NAME = copy.site.name;
 const LEAVE_MS = 200;
 
 // A caret types the name in. It rests blinking at the name's insertion
@@ -196,7 +197,7 @@ export default function Header({ tz }: { tz?: string }) {
                   top too. */}
               <a
                 href="#"
-                aria-label={`${FULL_NAME}, back to top`}
+                aria-label={fill(copy.a11y.nameLink, { name: FULL_NAME })}
                 onClick={(e) => {
                   e.preventDefault();
                   window.scrollTo({ top: 0 });

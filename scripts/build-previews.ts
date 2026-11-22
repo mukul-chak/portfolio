@@ -17,7 +17,7 @@ import { execFile } from "node:child_process";
 import { readFile, readdir, writeFile, rm, access } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
-import { PREVIEW_CAPTIONS } from "@/content/previews";
+import { ORG_KEYS } from "@/content/copy";
 
 const run = promisify(execFile);
 const root = process.cwd();
@@ -40,7 +40,7 @@ for (const file of (await readdir(SRC)).sort()) {
   const match = SOURCE.exec(file);
   if (!match) continue;
   const key = match[1].toLowerCase();
-  if (!(key in PREVIEW_CAPTIONS)) {
+  if (!(ORG_KEYS as readonly string[]).includes(key)) {
     console.warn(`previews: skipping ${file}, "${key}" isn't a preview key`);
     continue;
   }

@@ -1,9 +1,5 @@
-import { roles, education, teaching, summary } from "@/content/resume";
-import { PREVIEW_CAPTIONS } from "@/content/previews";
-import { EMAIL, LOCATION } from "@/content/site";
+import { copy } from "@/content/copy";
 
-export const RESUME_NAME = "Mukul Chakravarthi";
-export const RESUME_ROLE = "Product Designer";
 export const RESUME_FILENAME = "Mukul-Chakravarthi-Resume";
 
 /**
@@ -12,38 +8,36 @@ export const RESUME_FILENAME = "Mukul-Chakravarthi-Resume";
  * them on hover; a flat document has nowhere else to put them.
  */
 export function resumeMarkdown() {
+  const { site, experience, education, teaching, orgs } = copy;
   const lines: string[] = [
-    `# ${RESUME_NAME}`,
+    `# ${site.name}`,
     "",
-    `${RESUME_ROLE} · ${EMAIL} · ${LOCATION}`,
+    `${site.role} · ${site.email} · ${site.location}`,
     "",
-    summary,
+    experience.summary,
     "",
-    "## Experience",
+    `## ${experience.title}`,
   ];
-  for (const role of roles) {
+  for (const role of experience.roles) {
     lines.push(
       "",
       `### [${role.org}](${role.href}) — ${role.title}`,
       "",
       `${role.dates}  `,
-      `*${PREVIEW_CAPTIONS[role.id]}*`,
+      `*${orgs[role.id].preview}*`,
       "",
       ...role.points.map((p) => (role.points.length > 1 ? `- ${p}` : p)),
     );
   }
-  for (const [label, items] of [
-    ["Education", education],
-    ["Teaching", teaching],
-  ] as const) {
-    lines.push("", `## ${label}`);
-    for (const entry of items) {
+  for (const section of [education, teaching]) {
+    lines.push("", `## ${section.title}`);
+    for (const entry of section.entries) {
       lines.push(
         "",
         `### [${entry.org}](${entry.href}) — ${entry.detail}`,
         "",
         `${entry.dates}  `,
-        `*${PREVIEW_CAPTIONS[entry.id]}*`,
+        `*${orgs[entry.id].preview}*`,
       );
     }
   }

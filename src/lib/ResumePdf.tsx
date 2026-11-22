@@ -1,9 +1,8 @@
 import path from "node:path";
 import { Document, Font, Link, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
-import { roles, education, teaching, summary } from "@/content/resume";
-import { PREVIEW_CAPTIONS } from "@/content/previews";
-import { EMAIL, LOCATION } from "@/content/site";
-import { RESUME_NAME, RESUME_ROLE } from "@/lib/resumeExport";
+import { copy, fill } from "@/content/copy";
+
+const { site, experience, education, teaching, orgs } = copy;
 
 const FONTS = path.join(process.cwd(), "public/fonts");
 
@@ -131,18 +130,18 @@ const DATE_BASELINE_SHIFT = REFORM_ASCENT * BODY - MONUMENT_ASCENT * DATE;
 
 export default function ResumePdf() {
   return (
-    <Document title={`${RESUME_NAME} — Resume`} author={RESUME_NAME}>
+    <Document title={fill(experience.resumeDocumentTitle, { name: site.name })} author={site.name}>
       <Page size="LETTER" style={s.page}>
         <View style={s.header}>
           <View>
-            <Text style={s.name}>{RESUME_NAME}</Text>
-            <Text style={s.text}>{RESUME_ROLE}</Text>
+            <Text style={s.name}>{site.name}</Text>
+            <Text style={s.text}>{site.role}</Text>
           </View>
           <View style={{ marginTop: DATE_BASELINE_SHIFT }}>
-            <Link src={`mailto:${EMAIL}`} style={[s.contact, { color: C.sub, textDecoration: "none" }]}>
-              {EMAIL}
+            <Link src={`mailto:${site.email}`} style={[s.contact, { color: C.sub, textDecoration: "none" }]}>
+              {site.email}
             </Link>
-            <Text style={s.contact}>{LOCATION}</Text>
+            <Text style={s.contact}>{site.location}</Text>
           </View>
         </View>
 
@@ -150,11 +149,11 @@ export default function ResumePdf() {
         <View style={s.row}>
           <View style={s.dateCol} />
           <View style={s.mainCol}>
-            <Text style={s.text}>{summary}</Text>
+            <Text style={s.text}>{experience.summary}</Text>
           </View>
         </View>
 
-        {roles.map((role) => (
+        {experience.roles.map((role) => (
           <View key={role.id}>
             <View style={s.rule} />
             <Entry
@@ -162,7 +161,7 @@ export default function ResumePdf() {
               org={role.org}
               href={role.href}
               subtitle={role.title}
-              caption={PREVIEW_CAPTIONS[role.id]}
+              caption={orgs[role.id].preview}
             >
               <View style={s.points}>
                 {role.points.map((point) => (
@@ -182,16 +181,11 @@ export default function ResumePdf() {
             lines each: org with its dates, then the detail. */}
         <View style={s.rule} />
         <View style={s.columns}>
-          {(
-            [
-              ["Education", education],
-              ["Teaching", teaching],
-            ] as const
-          ).map(([label, items]) => (
-            <View key={label} style={s.column}>
-              <Text style={s.label}>{label}</Text>
-              {items.map((entry, i) => (
-                <View key={`${label}-${entry.id}`} style={{ marginTop: i === 0 ? 0 : 5 }}>
+          {[education, teaching].map(({ title, entries }) => (
+            <View key={title} style={s.column}>
+              <Text style={s.label}>{title}</Text>
+              {entries.map((entry, i) => (
+                <View key={`${title}-${entry.id}`} style={{ marginTop: i === 0 ? 0 : 5 }}>
                   {/* Org left, dates right on its baseline; detail below. */}
                   <View style={s.columnHead}>
                     <Link src={entry.href} style={s.org}>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode, type RefObject } from "react";
 import { createPortal } from "react-dom";
+import { copy, fill } from "@/content/copy";
 
 // Emil Kowalski's drawer recipe: 500ms on --ease-drawer (the iOS/Ionic curve
 // Vaul uses). Shared by the slide, the scrim fade, and the unmount delay, so
@@ -232,7 +233,7 @@ export default function Drawer({
               ref={closeRef}
               type="button"
               onClick={closeFromClick}
-              aria-label={`Close ${title}`}
+              aria-label={fill(copy.a11y.closeDrawer, { title })}
               className="flex h-8 w-8 max-sm:h-9 max-sm:w-9 items-center justify-center rounded-[4px] text-text-soft-400 transition-colors duration-100 ease-out hover:bg-bg-weak-50 hover:text-text-strong-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text-strong-950"
             >
               <CloseIcon />

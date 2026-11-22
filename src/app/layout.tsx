@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toast";
 import Providers from "@/components/Providers";
+import { copy } from "@/content/copy";
 
 const reformGrotesk = localFont({
   src: [
@@ -24,8 +25,8 @@ const monument = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Mukul Chakravarthi",
-  description: "Personal portfolio",
+  title: copy.site.pageTitle,
+  description: copy.site.pageDescription,
 };
 
 export default function RootLayout({

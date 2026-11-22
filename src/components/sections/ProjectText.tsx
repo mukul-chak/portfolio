@@ -1,4 +1,4 @@
-import { type Project } from "@/content/projects";
+import type { Project } from "@/content/copy";
 import SectionLabel from "@/components/ui/SectionLabel";
 import Tabular from "@/components/ui/Tabular";
 

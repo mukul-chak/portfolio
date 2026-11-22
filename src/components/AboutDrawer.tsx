@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Drawer from "@/components/ui/Drawer";
+import { copy } from "@/content/copy";
 
 /** Dispatched by the bio's "Learn more" link; the drawer opens on it, as on `l`. */
 export const OPEN_ABOUT_EVENT = "open-about";
@@ -32,7 +33,7 @@ export default function AboutDrawer() {
   }, []);
 
   return (
-    <Drawer open={open} onClose={() => setOpen(false)} title="About">
+    <Drawer open={open} onClose={() => setOpen(false)} title={copy.about.title}>
       {null}
     </Drawer>
   );

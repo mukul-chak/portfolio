@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import { phase } from "@/lib/phase";
 import Avatar from "@/components/ui/Avatar";
+import { copy } from "@/content/copy";
 
 // The header's own height — the y at which something has passed below the nav.
 const TRIGGER_Y = 45;
@@ -112,9 +113,9 @@ export default function BodyName() {
         <Avatar />
       </div>
       <h1 ref={ref} className="mt-6 text-[17px] sm:text-[18px] font-medium text-text-strong-950">
-        Mukul Chakravarthi
+        {copy.site.name}
       </h1>
-      <p className="text-[17px] sm:text-[18px] font-normal text-text-sub-600">Product Designer</p>
+      <p className="text-[17px] sm:text-[18px] font-normal text-text-sub-600">{copy.site.role}</p>
     </div>
   );
 }
