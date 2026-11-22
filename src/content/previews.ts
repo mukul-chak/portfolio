@@ -7,9 +7,6 @@ import type { OrgKey } from "@/content/copy";
  */
 export type PreviewKey = OrgKey;
 
-/** Keys shown as margin notes: the panel without its image or line clamp. */
-export const PREVIEW_NOTES: ReadonlySet<PreviewKey> = new Set<PreviewKey>();
-
 /**
  * A video for the panel's image slot, by key; anything without one keeps
  * the placeholder. Built by scripts/build-previews.ts from whatever is in
@@ -22,14 +19,11 @@ export const PREVIEW_VIDEOS: Partial<Record<PreviewKey, string>> = Object.fromEn
 );
 
 /**
- * A still image for the panel's image slot, by key — same 1.6:1 slot and
- * 640×400 export as the videos. `caption` and `credit` set under the image,
- * as a figure's are. 1920×1200 PNG sources are kept in renders/previews/
+ * A still for the panel's image slot, by key — same 1.6:1 slot and 640×400
+ * export as the videos. 1920×1200 PNG sources are kept in renders/previews/
  * (not committed).
  */
-export const PREVIEW_IMAGES: Partial<
-  Record<PreviewKey, { src: string; caption?: string; credit?: string }>
-> = {
-  fidelity: { src: "/previews/fidelity.webp" },
-  bd: { src: "/previews/bd.webp" },
+export const PREVIEW_IMAGES: Partial<Record<PreviewKey, string>> = {
+  fidelity: "/previews/fidelity.webp",
+  bd: "/previews/bd.webp",
 };

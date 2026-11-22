@@ -36,27 +36,14 @@ const OPTIONS = [
   { value: "dark",   label: copy.a11y.themeDark,   Icon: MoonIcon },
 ] as const;
 
-export default function ThemeToggle({
-  orientation = "horizontal",
-}: {
-  /** "responsive" lays out as a row on mobile and a column from md. */
-  orientation?: "horizontal" | "vertical" | "responsive";
-}) {
+/** A row on mobile, a column from md. */
+export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   return (
-    <div
-      className={[
-        "flex items-center rounded-full bg-bg-weak-50 p-1 gap-0.5",
-        orientation === "vertical"
-          ? "flex-col"
-          : orientation === "responsive"
-            ? "flex-row md:flex-col"
-            : "flex-row",
-      ].join(" ")}
-    >
+    <div className="flex flex-row items-center gap-0.5 rounded-full bg-bg-weak-50 p-1 md:flex-col">
       {OPTIONS.map(({ value, label, Icon }) => {
         const active = mounted && theme === value;
         return (

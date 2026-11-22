@@ -92,7 +92,7 @@ export default function ResumeExport({ align = "left" }: { align?: "left" | "rig
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls={menuId}
-        className="-my-2 -ml-3 cursor-pointer gap-1 font-[family-name:var(--font-eyebrow)] text-[16px] font-normal"
+        className="-my-2 -ml-3 cursor-pointer gap-1 font-eyebrow text-[16px] font-normal"
       >
         {copy.experience.downloadResume}
         <ChevronIcon open={open} />

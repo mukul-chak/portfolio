@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { PREVIEW_IMAGES, PREVIEW_NOTES, PREVIEW_VIDEOS, type PreviewKey } from "@/content/previews";
+import { PREVIEW_IMAGES, PREVIEW_VIDEOS, type PreviewKey } from "@/content/previews";
 import { copy } from "@/content/copy";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
@@ -132,14 +132,12 @@ const PREVIEW_EXIT_MS = 180;
 // The bottom stroke hangs below the panel: mt-3 (12px) plus its 1px border.
 const STROKE_BELOW = 12 + 1;
 
-// The top stroke's gap above a panel that leads with its image. Below, the
-// 12px is measured from the last line's box, and the text's own leading
-// puts its baseline 16.5px from the stroke — that's the space the eye
-// reads. An image's top is a hard edge with no leading, so at the same 12px
-// it read tighter; 16.5px matches the optical gap below. A note leads with
-// text, whose cap top already sits ~4.5px into its line box, so it keeps
-// 12px and reads the same.
-const MEDIA_GAP_ABOVE = 16.5;
+// The top stroke's gap above the panel, which always leads with its image.
+// Below, the 12px is measured from the last line's box, and the text's own
+// leading puts its baseline 16.5px from the stroke — that's the space the
+// eye reads. An image's top is a hard edge with no leading, so at the same
+// 12px it read tighter; 16.5px matches the optical gap below.
+const GAP_ABOVE = 16.5;
 
 /**
  * Hover preview for an org name: a panel in the right channel, top on the
@@ -289,14 +287,11 @@ export function useHoverPreview() {
 
   const anchor = mounted ? document.getElementById("bio-preview-anchor") : null;
 
-  // What fills the image slot: a video, a still, the placeholder (an org
-  // without media yet), or nothing (a note without an image).
+  // What fills the image slot: a video, a still, or the placeholder (an org
+  // without media yet).
   const video = rendered ? PREVIEW_VIDEOS[rendered.key] : undefined;
   const image = rendered ? PREVIEW_IMAGES[rendered.key] : undefined;
-  const note = rendered ? PREVIEW_NOTES.has(rendered.key) : false;
   const points = rendered?.points;
-  const hasMedia = Boolean(video || image || !note);
-  const gapAbove = hasMedia ? MEDIA_GAP_ABOVE : 12;
 
   const panel: ReactNode =
     anchor && rendered
@@ -324,19 +319,16 @@ export function useHoverPreview() {
                 content inside the panel's stacking context. */}
             <div
               className="absolute -z-10 -bottom-3 bg-background"
-              style={{ left: -15, width: rendered.strokeWidth - 2, top: -gapAbove }}
+              style={{ left: -15, width: rendered.strokeWidth - 2, top: -GAP_ABOVE }}
             />
-            {/* Solid strokes hugging the panel, 12px below and gapAbove above — same style
+            {/* Solid strokes hugging the panel, 12px below and GAP_ABOVE above — same style
                 as the outer frame's solid stroke (border-rule) — and running
                 edge-to-edge, touching the rail's and frame's vertical rules
                 on either side (see strokeWidth above). */}
             <div
               className="absolute bottom-full border-b border-rule"
-              style={{ left: -16, width: rendered.strokeWidth, marginBottom: gapAbove }}
+              style={{ left: -16, width: rendered.strokeWidth, marginBottom: GAP_ABOVE }}
             />
-            {/* A note reads as a margin note rather than a preview of
-                somewhere: its text is never clamped, and it shows an image
-                only when it has one of its own — no placeholder. */}
             {/* A video, where the key has one, fills the same slot: muted,
                 looping and inline, so it reads as a moving image rather than
                 a player. It mounts with the panel, so each hover starts it
@@ -354,28 +346,19 @@ export function useHoverPreview() {
                   className="aspect-[1.6] w-full rounded-[4px] bg-card object-cover"
                 />
               ) : image ? (
-                <figure>
-                  {/* eslint-disable-next-line @next/next/no-img-element -- a fixed 640×400 export into a fixed slot; next/image would add nothing but a wrapper */}
-                  <img
-                    src={image.src}
-                    alt=""
-                    width={640}
-                    height={400}
-                    className="aspect-[1.6] w-full rounded-[4px] bg-card object-cover"
-                  />
-                  {/* The image's own caption and credit, a step softer than
-                      the note so they read as the figure's, not the note's. */}
-                  {(image.caption || image.credit) && (
-                    <figcaption className="mt-2 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-soft-400">
-                      {[image.caption, image.credit].filter(Boolean).join(" ")}
-                    </figcaption>
-                  )}
-                </figure>
-              ) : hasMedia ? (
+                // eslint-disable-next-line @next/next/no-img-element -- a fixed 640×400 export into a fixed slot; next/image would add nothing but a wrapper
+                <img
+                  src={image}
+                  alt=""
+                  width={640}
+                  height={400}
+                  className="aspect-[1.6] w-full rounded-[4px] bg-card object-cover"
+                />
+              ) : (
                 <div className="aspect-[1.6] w-full rounded-[4px] bg-card" />
-              ) : null}
+              )}
             {points && (
-              <div className="mt-[19px] space-y-[15px] pr-2 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600">
+              <div className="mt-[19px] space-y-[15px] pr-2 font-eyebrow text-[14px] leading-[18px] text-text-sub-600">
                 {points.map((point, i) => {
                   // The first sentence leads in the titles' weight; a
                   // one-sentence point stays regular throughout.
@@ -395,13 +378,7 @@ export function useHoverPreview() {
               </div>
             )}
             {!points && (
-              <p
-                className={`font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-sub-600 ${
-                  // A figure caption sits between image and note: a wider
-                  // gap separates the note from it.
-                  image?.caption || image?.credit ? "mt-3" : hasMedia ? "mt-2" : ""
-                } ${note ? "" : "line-clamp-3"}`}
-              >
+              <p className="mt-2 line-clamp-3 font-eyebrow text-[14px] leading-[18px] text-text-sub-600">
                 {copy.orgs[rendered.key].preview}
               </p>
             )}
@@ -410,7 +387,7 @@ export function useHoverPreview() {
                 hovered word itself is the link. One step softer than the
                 caption, so it reads as the source rather than more prose. */}
             {!points && copy.orgs[rendered.key].siteLine && (
-              <p className="mt-1 font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-text-soft-400">
+              <p className="mt-1 font-eyebrow text-[14px] leading-[18px] text-text-soft-400">
                 {copy.orgs[rendered.key].siteLine}
               </p>
             )}

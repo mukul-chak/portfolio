@@ -17,7 +17,7 @@ const DURATION_MS = 200;
  * same link twice leaves the hash untouched and fires no event, so a section
  * closed by hand would never reopen from the nav.
  */
-export const SECTION_TARGET_EVENT = "section-target";
+const SECTION_TARGET_EVENT = "section-target";
 
 function Chevron() {
   return (

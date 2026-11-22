@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
 import { showSuccessToast } from "@/components/ui/SuccessToast";
 import { copy } from "@/content/copy";
 import { copyText } from "@/lib/copyText";
+import { useHotkey } from "@/lib/useHotkey";
 
 /**
  * Copies the email and raises the confirmation toast.
@@ -21,23 +21,6 @@ export async function copyEmailWithToast() {
 
 /** Global "c" hotkey: copies the email to the clipboard and shows a toast. */
 export default function CopyEmail() {
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key.toLowerCase() !== "c" || e.metaKey || e.ctrlKey || e.altKey) return;
-      const el = document.activeElement as HTMLElement | null;
-      if (
-        el &&
-        (el.tagName === "INPUT" ||
-          el.tagName === "TEXTAREA" ||
-          el.isContentEditable)
-      ) {
-        return;
-      }
-      void copyEmailWithToast();
-    }
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
-
+  useHotkey("c", () => void copyEmailWithToast());
   return null;
 }

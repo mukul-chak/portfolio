@@ -74,7 +74,7 @@ export default function Frame({ children }: { children: ReactNode }) {
           marginRight: "env(safe-area-inset-right, 0px)",
         }}
       >
-        <ThemeToggle orientation="responsive" />
+        <ThemeToggle />
       </div>
       {children}
     </div>

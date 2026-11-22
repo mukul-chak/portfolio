@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# mukul.work
 
-## Getting Started
+Mukul Chakravarthi's portfolio. Next.js 15 (App Router), React 18, Tailwind v4 on AlignUI tokens.
 
-First, run the development server:
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev     # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`npm run dev` and `npm run build` first run the three build steps below, so generated files always match their sources. Don't run `npm run build` while the dev server is up: both write to `.next/`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run lint    # ESLint, then the copy check
+npx tsc --noEmit
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Editing copy
 
-## Learn More
+Every word on the site lives in [`src/content/copy.md`](src/content/copy.md). The site reads it directly: edit it and the page, the PDF resume and the Markdown resume all change. Its conventions are at the top of the file.
 
-To learn more about Next.js, take a look at the following resources:
+`npm run lint` fails if copy.md has a missing, misspelled or unused entry, or if a component carries copy of its own instead of reading it from copy.md.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Media
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| What | Drop sources in | Built into | By |
+| --- | --- | --- | --- |
+| Work carousels | `work-src/<project-slug>/` | `public/work/` + `src/content/work-media.json` | `npm run work` |
+| Hover-preview videos | `previews-src/<org-key>.{gif,mov,mp4}` | `public/previews/` + `src/content/preview-videos.json` | `npm run previews` |
+| Resume PDF + Markdown | (copy.md) | `public/Mukul-Chakravarthi-Resume.*` | `npm run resume` |
 
-## Deploy on Vercel
+`work-src/` and `renders/` hold raw sources and are not committed. Hover-preview stills are listed in `src/content/previews.ts`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Layout
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+  app/            layout, page, global styles and tokens
+  components/
+    layout/       frame, header, footer, rails, scrims
+    sections/     the page's sections: bio, work carousels, experience and teaching
+    drawers/      About and Write to me
+    ui/           shared primitives (buttons, accordion, hover preview, …)
+  content/        copy.md and the modules that read it; media manifests
+  lib/            hooks and helpers; the resume PDF and Markdown builders
+scripts/          build steps, the copy check, and the .md loaders
+```
+
+## Deploy
+
+Manual, from `main`:
+
+```bash
+npx vercel deploy --prod
+```

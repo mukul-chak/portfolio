@@ -143,7 +143,7 @@ export default function Filmstrip({
               ) : (
                 <div className="aspect-[1.6] rounded-[4px] bg-card max-sm:rounded-none" />
               )}
-              <div className="mt-2 flex items-baseline gap-6 max-sm:hidden overflow-hidden whitespace-nowrap font-[family-name:var(--font-eyebrow)] text-[14px] leading-[18px] text-left text-text-soft-400">
+              <div className="mt-2 flex items-baseline gap-6 max-sm:hidden overflow-hidden whitespace-nowrap font-eyebrow text-[14px] leading-[18px] text-left text-text-soft-400">
                 <span className="shrink-0">
                   <Tabular>{String(n).padStart(2, "0")}</Tabular>
                 </span>

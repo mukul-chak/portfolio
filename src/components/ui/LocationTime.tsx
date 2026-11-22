@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { cn } from "@/utils/cn";
+import { cn } from "@/lib/cn";
 import Tabular from "@/components/ui/Tabular";
 
 function formatTime(tz?: string, seconds = false) {
@@ -79,7 +79,7 @@ export default function LocationTime({
   return (
     <div
       className={cn(
-        "whitespace-nowrap text-right font-[family-name:var(--font-eyebrow)] text-[13px] uppercase tracking-[0.12em] text-text-sub-600 [--tnum-ls:0.12em]",
+        "whitespace-nowrap text-right font-eyebrow text-[13px] uppercase tracking-[0.12em] text-text-sub-600 [--tnum-ls:0.12em]",
         className,
       )}
     >

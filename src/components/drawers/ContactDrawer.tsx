@@ -5,6 +5,7 @@ import Drawer from "@/components/ui/Drawer";
 import * as Button from "@/components/ui/Button";
 import { showSuccessToast } from "@/components/ui/SuccessToast";
 import { copy, fill } from "@/content/copy";
+import { useHotkey, useWindowEvent } from "@/lib/useHotkey";
 
 const FORM = copy.contactForm;
 // The address in the failure line is a link, so the line splits around it.
@@ -43,7 +44,7 @@ function LockIcon() {
 // hairline included, with its field stretched to fill — a field sized to
 // 48px on its own made those rows a pixel taller than the To row.
 const ROW = "flex h-12 items-center gap-3 border-b transition-colors duration-100 ease-out";
-const ROW_LABEL = "w-[72px] shrink-0 font-[family-name:var(--font-eyebrow)] text-[14px] text-text-sub-600 max-sm:text-[16px]";
+const ROW_LABEL = "w-[72px] shrink-0 font-eyebrow text-[14px] text-text-sub-600 max-sm:text-[16px]";
 // Borderless, so focus shows on the row's hairline instead (focus-within),
 // darkening to bg-surface-800 — one step softer than black, as Mukul asked;
 // AlignUI has no stroke tier between soft-200/sub-300 and strong-950, so the
@@ -115,23 +116,8 @@ export default function ContactDrawer() {
     message: `${formId}-message`,
   };
 
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key.toLowerCase() !== "r" || e.metaKey || e.ctrlKey || e.altKey) return;
-      const el = document.activeElement as HTMLElement | null;
-      if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
-      setOpen(true);
-    }
-    function onOpen() {
-      setOpen(true);
-    }
-    window.addEventListener("keydown", onKeyDown);
-    window.addEventListener(OPEN_CONTACT_EVENT, onOpen);
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener(OPEN_CONTACT_EVENT, onOpen);
-    };
-  }, []);
+  useHotkey("r", () => setOpen(true));
+  useWindowEvent(OPEN_CONTACT_EVENT, () => setOpen(true));
 
   function update(key: keyof Values, value: string) {
     setValues((v) => ({ ...v, [key]: value }));
@@ -200,7 +186,7 @@ export default function ContactDrawer() {
       initialFocusRef={finePointer ? firstFieldRef : undefined}
       footer={
         <div className="flex items-center justify-between gap-4 pt-3">
-          <p className="hidden font-[family-name:var(--font-eyebrow)] text-[14px] text-text-soft-400 md:block">
+          <p className="hidden font-eyebrow text-[14px] text-text-soft-400 md:block">
             {fill(FORM.hint, { modifier: isMac ? "⌘" : "Ctrl" })}
           </p>
           {/* Phones: full-width stack, Send on top, and taller for thumbs. */}

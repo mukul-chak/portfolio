@@ -1,5 +1,5 @@
 import { type MouseEventHandler, type ReactNode } from "react";
-import { cn } from "@/utils/cn";
+import { cn } from "@/lib/cn";
 
 /** Inline underlined link used within body copy (Ascend, SAAG, write to me). */
 export default function InlineLink({

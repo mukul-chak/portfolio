@@ -4,8 +4,8 @@ import InlineLink from "@/components/ui/InlineLink";
 import Kbd from "@/components/ui/Kbd";
 import { useHoverPreview } from "@/components/ui/HoverPreview";
 import { copy } from "@/content/copy";
-import { OPEN_CONTACT_EVENT } from "@/components/ContactDrawer";
-import { OPEN_ABOUT_EVENT } from "@/components/AboutDrawer";
+import { OPEN_CONTACT_EVENT } from "@/components/drawers/ContactDrawer";
+import { OPEN_ABOUT_EVENT } from "@/components/drawers/AboutDrawer";
 import { copyEmailWithToast } from "@/components/CopyEmail";
 
 function openAbout(e: React.MouseEvent) {
