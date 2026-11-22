@@ -386,7 +386,7 @@ export function useHoverPreview() {
                     {/* Marks the first line's baseline, which the panel
                         sets on the hovered title's. */}
                     {i === 0 && <span ref={baselineRef} className="inline-block h-0 w-0" />}
-                    {lead && <span className="font-medium text-text-strong-950">{lead} </span>}
+                    {lead && <span className="font-medium text-neutral-700 [.dark_&]:text-text-strong-950">{lead} </span>}
                     {rest}
                   </p>
                 );
