@@ -27,7 +27,7 @@ reading it from here, or if a field below is misspelled or unused.
 # Site
 - Name: Mukul Chakravarthi
 - Role: Product Designer
-- Email: mukul@useascend.com
+- Email: mukulchakravarthi@gmail.com
 - Location: San Francisco, CA
 - Page title: Mukul Chakravarthi
 - Page description: Personal portfolio
