@@ -4,9 +4,9 @@
 
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { tv, type VariantProps } from "@/utils/tv";
+import { tv, type VariantProps } from "@/lib/tv";
 
-export const dotStepperVariants = tv({
+const dotStepperVariants = tv({
   slots: {
     root: "flex flex-wrap",
     item: [

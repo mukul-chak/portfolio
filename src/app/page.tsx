@@ -7,8 +7,8 @@ import Bio from "@/components/sections/Bio";
 import BodyName from "@/components/sections/BodyName";
 import RecentWork from "@/components/sections/RecentWork";
 import CopyEmail from "@/components/CopyEmail";
-import ContactDrawer from "@/components/ContactDrawer";
-import AboutDrawer from "@/components/AboutDrawer";
+import ContactDrawer from "@/components/drawers/ContactDrawer";
+import AboutDrawer from "@/components/drawers/AboutDrawer";
 import BottomScrim from "@/components/layout/BottomScrim";
 import Footer from "@/components/layout/Footer";
 
