@@ -70,15 +70,18 @@ Mukul is a product designer with a natural bent towards craft and systems. Over 
 4. Caption for image 4 — replace with real copy.
 5. Caption for image 5 — replace with real copy.
 
-## project-three
-- Title: Ascend Project Three
-- Year: 2025
-- Type: Brand
+## gohan
+- Title: Fidelity Gohan
+- Year: 2023
+- Type: Product Design
 
-1. Caption for image 1 — replace with real copy.
-2. Caption for image 2 — replace with real copy.
-3. Caption for image 3 — replace with real copy.
-4. Caption for image 4 — replace with real copy.
+1. Social payments in Bitcoin, piloted at Fidelity Labs
+2. Pay a friend over Lightning, settled in under a second
+3. Sign up with a go-tag, never a wallet address
+4. Split a group expense and request every share at once
+5. Fund the wallet once, then pay anyone by go-tag
+6. Send a birthday gift without leaving iMessage
+7. Every payment shows the network, the fee and what’s left
 
 ## project-four
 - Title: Ascend Project Four
